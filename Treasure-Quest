@@ -1,0 +1,718 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "Treasure Quest", HidePremium = false, SaveConfig = false, ConfigFolder = "asdsahgjasdhkgjbdsa"})
+
+-------------------------------------------------  Star Players  -------------------------------------------------
+--------
+------
+-----
+----
+---
+--
+---------------------------------------------------------------------------------------------------------------------
+local Tab1 = Window:MakeTab({
+	Name = "Player",
+	Icon = "rbxassetid://12836323838",
+	PremiumOnly = false
+})
+-------------------------------------------
+local Tab2 = Window:MakeTab({
+	Name = "Auto Farm",
+	Icon = "rbxassetid://12836287616",
+	PremiumOnly = false
+})
+-------------------------------------------
+
+--------------------------------------------
+
+--- local All
+ local Get = setmetatable(
+    {},
+    {
+        __index = function(A, B)
+            return game:GetService(B)
+        end
+    }
+)
+
+repeat wait() until game:IsLoaded()
+local ReplicatedStorage = Get.ReplicatedStorage
+local Players = Get.Players
+local RunService = Get.RunService
+local TweenService = Get.TweenService
+local Workspace = Get.Workspace
+local HttpService = Get.HttpService
+local Player = Players.LocalPlayer
+
+
+Player.Idled:connect(function()
+game:GetService("VirtualUser"):ClickButton2(Vector2.new())
+end)
+
+local h = require(ReplicatedStorage.Shared.Modules.DungeonLibrary)
+
+local Settings = {}
+
+local Dungeons = {}
+for i, v in pairs(h.Dungeons) do
+    table.insert(Dungeons, i)
+end
+GameModes = {}
+for i, v in pairs(h.GameModes) do
+    table.insert(GameModes, i)
+end
+Difficulties = {}
+for i, v in pairs(h.Difficulties) do
+    table.insert(Difficulties, i)
+end
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+InfJump = false
+Tab1:AddToggle({
+    Name = "InfJump",
+    Default = false,
+    Callback = function(value)
+        InfJump = value
+    end
+})
+
+local function onJumpRequest()
+    if InfJump then
+        game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+    end
+end
+
+game:GetService("UserInputService").JumpRequest:connect(onJumpRequest)
+
+-----------------------------------------------------------------------------------------------------------------------------------
+
+local Speed = 80
+
+Tab1:AddButton({
+    Name = "Speed",
+    Callback = function(value)
+        if Speed then
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Speed
+        end
+    end
+})
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+local NoClip = false
+
+Tab1:AddToggle({
+    Name = "No Clip",
+    Default = false,
+    Callback = function(value)
+        NoClip = value
+        if NoClip then
+            local character = game.Players.LocalPlayer.Character
+            while NoClip do
+                for i,v in pairs(character:GetDescendants()) do
+                    pcall(function()
+                        if v:IsA("BasePart") then
+                            v.CanCollide = false
+                        end
+                    end)
+                end
+                task.wait()
+                if not NoClip then
+                    break
+                end
+            end
+        else
+            local character = game.Players.LocalPlayer.Character
+            for i,v in pairs(character:GetDescendants()) do
+                pcall(function()
+                    if v:IsA("BasePart") then
+                        v.CanCollide = true
+                    end
+                end)
+            end
+        end
+    end
+})
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+AntiAFK = false
+
+Tab1:AddToggle({
+    Name = "Anti AFK",
+    Default = false,
+        Callback = function(value)
+        AntiAFK = value
+        if AntiAFK then
+            wait(3)
+            local VirtualUser=game:service'VirtualUser'
+            game:service('Players').LocalPlayer.Idled:connect(function()
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new())
+            end)
+            end
+        end
+})
+
+
+---------------------------------------------------------------------------------------------------------------------------------------
+Invisicam = true
+Tab1:AddToggle({
+    Name = "Invisicam",
+    Default = false,
+    Callback = function(value)
+        Invisicam = value
+        if Invisicam then
+            Player.DevCameraOcclusionMode = "Invisicam"
+        else
+            Player.DevCameraOcclusionMode = "Zoom"
+        end
+    end
+})
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+WalkAir = false
+
+Tab1:AddToggle({
+    Name = "WalkAir",
+    Default = false,
+    Callback = function(value)
+        WalkAir = value
+
+        local air = Instance.new("Part", workspace)
+        air.Size = Vector3.new(7, 2, 3)
+        air.CFrame = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, -4, 0)
+        air.Transparency = 1
+        air.Anchored = true
+        air.Name = "Airwalk"
+
+        if WalkAir then
+            while WalkAir do
+                air.CFrame = game:GetService("Players").LocalPlayer.Character.HumanoidRootPart.CFrame + Vector3.new(0, -4, 0)
+                wait(0.1)
+            end
+        end
+
+        air:Destroy()
+    end
+})
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+FullBright = true
+
+Tab1:AddToggle({
+    Name = "FullBright",
+    Default = false,
+    Callback = function(value)
+        FullBright = value
+        
+        _G.FullBrightEnabled = FullBright
+        
+    if not _G.FullBrightExecuted then
+
+	_G.FullBrightEnabled = false
+
+	_G.NormalLightingSettings = {
+		Brightness = game:GetService("Lighting").Brightness,
+		ClockTime = game:GetService("Lighting").ClockTime,
+	}
+
+	game:GetService("Lighting"):GetPropertyChangedSignal("Brightness"):Connect(function()
+		if game:GetService("Lighting").Brightness ~= 1 and game:GetService("Lighting").Brightness ~= _G.NormalLightingSettings.Brightness then
+			_G.NormalLightingSettings.Brightness = game:GetService("Lighting").Brightness
+			if not _G.FullBrightEnabled then
+				repeat
+					wait()
+				until _G.FullBrightEnabled
+			end
+			game:GetService("Lighting").Brightness = 1
+		end
+	end)
+
+	game:GetService("Lighting"):GetPropertyChangedSignal("ClockTime"):Connect(function()
+		if game:GetService("Lighting").ClockTime ~= 12 and game:GetService("Lighting").ClockTime ~= _G.NormalLightingSettings.ClockTime then
+			_G.NormalLightingSettings.ClockTime = game:GetService("Lighting").ClockTime
+			if not _G.FullBrightEnabled then
+				repeat
+					wait()
+				until _G.FullBrightEnabled
+			end
+			game:GetService("Lighting").ClockTime = 12
+		end
+	end)
+
+
+	game:GetService("Lighting").Brightness = 1
+	game:GetService("Lighting").ClockTime = 12
+
+	local LatestValue = true
+	spawn(function()
+		repeat
+			wait()
+		until _G.FullBrightEnabled
+		while wait() do
+			if _G.FullBrightEnabled ~= LatestValue then
+				if not _G.FullBrightEnabled then
+					game:GetService("Lighting").Brightness = _G.NormalLightingSettings.Brightness
+					game:GetService("Lighting").ClockTime = _G.NormalLightingSettings.ClockTime
+
+				else
+					game:GetService("Lighting").Brightness = 1
+					game:GetService("Lighting").ClockTime = 12
+				end
+				LatestValue = not LatestValue
+			end
+		end
+	end)
+end
+_G.FullBrightExecuted = true
+
+    end
+})
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+local CollectMedkits = true
+
+Tab2:AddToggle({
+    Name = "Collect Medkit",
+    Default = false,
+    Callback = function(value)
+    CollectMedkits = value
+    if CollectMedkits then
+        while wait() and CollectMedkits do
+            pcall(function()
+                if CollectMedkits and Player.Character then
+                    local humanoid = Player.Character:FindFirstChild("Humanoid")
+                    if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
+                        for i,v in pairs(Workspace.Ignore:GetChildren()) do
+                            if v.Name == "Medkit" and v:FindFirstChildWhichIsA("TouchTransmitter",true) then
+                                if humanoid.Health < humanoid.MaxHealth then
+                                        firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true), v, 0)
+                                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true), v, 1)
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+end
+})
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+local CollectChest = false
+
+Tab2:AddToggle({
+    Name = "Collect Chest",
+    Default = false,
+    Callback = function(value)
+        CollectChest = value
+        if CollectChest then
+            spawn(function()
+                while true do 
+                    wait()
+                    if not CollectChest then
+                        break
+                    end
+                    pcall(function()
+                        for i,v in pairs(Workspace:GetDescendants()) do
+                            if v.Name == "Chest"  then
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),1)
+                            end 
+                        end 
+                    end)
+                end 
+            end)
+        end
+    end
+})
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+if game.PlaceId == 2960777560 then
+pcall(function()
+ReplicatedStorage.Lobby.Remotes.ClaimDailyReward:FireServer()
+ReplicatedStorage.Lobby.Remotes.ClaimTreasureReward:FireServer()
+end)
+end
+
+local function GetClosestt()
+    local TargetDistance = math.huge
+    local Target = nil
+    for i, v in pairs(Workspace:GetChildren()) do
+        if v.ClassName == "Folder" then
+            for i, x in pairs(v:GetChildren()) do
+                if x.ClassName == "Folder" then
+                    for i, c in pairs(x:GetChildren()) do
+                        if c.ClassName == "Model" and c:FindFirstChild("EvilHumanoid") then
+                            local humanoid = c:FindFirstChildOfClass("Humanoid")
+                            if humanoid and humanoid.Health ~= 0 then
+                                local mag = (Player.Character.HumanoidRootPart.Position - c.HumanoidRootPart.Position).magnitude
+                                if mag < TargetDistance then
+                                    TargetDistance = mag
+                                    Target = c
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return Target
+end
+
+local TweenMon = function(A,B,C)
+    if A and B and C then
+        local tween1 = TweenService:Create(A, TweenInfo.new((B.Position - A.Position).magnitude / C, Enum.EasingStyle.Linear), {CFrame = CFrame.new(B.Position + Vector3.new(0, 0, 0))}):Play()
+    end
+end
+
+local TweenP1 = function(A,B,C)
+    if A and B and C then
+        local tween1 = TweenService:Create(A, TweenInfo.new((B.Position - A.Position).magnitude / C, Enum.EasingStyle.Linear), {CFrame = CFrame.new(B.Position + Vector3.new(0, 50, 20))}):Play()
+    end
+end
+
+local TweenP2 = function(A,B,C)
+    if A and B and C then
+        local tween1 = TweenService:Create(A, TweenInfo.new((B.Position - A.Position).magnitude / C, Enum.EasingStyle.Linear), {CFrame = CFrame.new(B.Position + Vector3.new(0, 50, 100))}):Play()
+    end
+end
+
+local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
+local ScriptFunction = Script.BasicAttack
+local ScriptFunction2 = Script.UseAbility
+
+local AutoMobs = true
+local Monsa = true
+
+Tab2:AddToggle({
+    Name = "Auto TP Farm",
+    Default = false,
+    Callback = function(value)
+            AutoMobs = value
+            Monsa = value
+
+            if AutoMobs then
+                    local region = Region3.new(Vector3.new(-999,0,-999), Vector3.new(999,999,999))
+                    region = region:ExpandToGrid(4)
+                    game.Workspace.Terrain:FillRegion(region, 4, Enum.Material.Water)
+                    else    
+                    local region = Region3.new(Vector3.new(-999,0,-999), Vector3.new(999,999,999))
+                    region = region:ExpandToGrid(4)
+                    game.Workspace.Terrain:FillRegion(region, 4, Enum.Material.Air)
+                end
+            
+            if AutoMobs then
+                game:GetService("RunService").Stepped:connect(function()
+                    pcall(function()
+                        if Monsa then
+                        ScriptFunction(Script)
+                        ScriptFunction2(Script, GetClosestt().PrimaryPart.Position)
+                        end
+                    end)
+                end)
+                
+            spawn(function()
+                while wait() and AutoMobs do
+                    pcall(function()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                        
+
+            ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
+            for i,v in pairs(Workspace:GetChildren()) do
+                if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
+                end
+            end
+
+                local SpeedPla = 50
+                local closestPlayer = GetClosestt()
+                local closestHumanoid = closestPlayer:FindFirstChildWhichIsA("Humanoid", true)
+                if closestHumanoid and closestHumanoid.Health > 0 then
+                    TweenP1(Player.Character:FindFirstChild("HumanoidRootPart", true), closestPlayer.HumanoidRootPart, SpeedPla)
+                    wait(1.5)
+                    TweenP2(Player.Character:FindFirstChild("HumanoidRootPart", true), closestPlayer.HumanoidRootPart, SpeedPla)
+                    wait(1.5)
+                end
+
+                     local closestPlayer = nil
+                    local Distance = 100000000
+                    spawn(function()
+                    while Monsa do
+                    closestPlayer = GetClosestt()
+                        if closestPlayer then
+                            local ignoreFolder = game:GetService("Workspace"):FindFirstChild("Ignore")
+                            if ignoreFolder then
+                                local SpeedMon = 1500
+                                for _, obj in ipairs(ignoreFolder:GetDescendants()) do
+                                    if obj.Name ~= "Medkit" and (obj:IsA("BasePart") or obj:IsA("Model")) then
+                                        local targetPart = obj.Position
+                                        if (targetPart - closestPlayer.HumanoidRootPart.Position).magnitude <= Distance then
+                                            TweenMon(obj, closestPlayer.HumanoidRootPart, SpeedMon)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        wait(0.1)
+                        end
+                    end)
+                end)
+            end
+        end)
+    end
+end
+})
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+local function GetClosestt()
+    local TargetDistance = math.huge
+    local Target = nil
+    for i, v in pairs(Workspace:GetChildren()) do
+        if v.ClassName == "Folder" then
+            for i, x in pairs(v:GetChildren()) do
+                if x.ClassName == "Folder" then
+                    for i, c in pairs(x:GetChildren()) do
+                        if c.ClassName == "Model" and c:FindFirstChild("EvilHumanoid") then
+                            local humanoid = c:FindFirstChildOfClass("Humanoid")
+                            if humanoid and humanoid.Health ~= 0 then
+                                local mag = (Player.Character.HumanoidRootPart.Position - c.HumanoidRootPart.Position).magnitude
+                                if mag < TargetDistance then
+                                    TargetDistance = mag
+                                    Target = c
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return Target
+end
+
+local TweenMon = function(A, B, C)
+    if A and B and C then
+        local tween1 = TweenService:Create(A, TweenInfo.new((B.Position - A.Position).magnitude / C, Enum.EasingStyle.Linear), {CFrame = CFrame.new(B.Position + Vector3.new(0, 0, 0))}):Play()
+    end 
+end 
+
+local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
+local ScriptFunction = Script.BasicAttack
+local ScriptFunction2 = Script.UseAbility
+
+local AutoMobs = true
+local Monsa = true
+
+Tab2:AddToggle({
+    Name = "Auto No TP Farm",
+    Default = false,
+    Callback = function(value)
+            AutoMobs = value
+            Monsa = value
+            if AutoMobs then
+                
+                game:GetService("RunService").Stepped:connect(function()
+                    pcall(function()
+                        if Monsa then
+                        ScriptFunction(Script)
+                        ScriptFunction2(Script, GetClosestt().PrimaryPart.Position)
+                        end
+                    end)
+                end)
+                
+            spawn(function()
+                while wait() and AutoMobs do
+                    pcall(function()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                        
+
+            ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
+            for i,v in pairs(Workspace:GetChildren()) do
+                if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
+                end
+            end
+                    local closestPlayer = nil
+                    local Distance = 100000000
+                    spawn(function()
+                    while Monsa do
+                    closestPlayer = GetClosestt()
+                        if closestPlayer then
+                            local ignoreFolder = game:GetService("Workspace"):FindFirstChild("Ignore")
+                            if ignoreFolder then
+                                local SpeedMon = 1500
+                                for _, obj in ipairs(ignoreFolder:GetDescendants()) do
+                                    if obj.Name ~= "Medkit" and (obj:IsA("BasePart") or obj:IsA("Model")) then
+                                        local targetPart = obj.Position
+                                        if (targetPart - closestPlayer.HumanoidRootPart.Position).magnitude <= Distance then
+                                            TweenMon(obj, closestPlayer.HumanoidRootPart, SpeedMon)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        wait(0.1)
+                        end
+                    end)
+                end)
+            end
+        end)
+    end
+end
+})
+
+
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+local function GetClosestt()
+    local TargetDistance = math.huge
+    local Target = nil
+    for i, v in pairs(Workspace:GetChildren()) do
+        if v.ClassName == "Folder" then
+            for i, x in pairs(v:GetChildren()) do
+                if x.ClassName == "Folder" then
+                    for i, c in pairs(x:GetChildren()) do
+                        if c.ClassName == "Model" and c:FindFirstChild("EvilHumanoid") then
+                            local humanoid = c:FindFirstChildOfClass("Humanoid")
+                            if humanoid and humanoid.Health ~= 0 then
+                                local mag = (Player.Character.HumanoidRootPart.Position - c.HumanoidRootPart.Position).magnitude
+                                if mag < TargetDistance then
+                                    TargetDistance = mag
+                                    Target = c
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+    return Target
+end
+
+local TweenMon = function(A,B,C)
+    if A and B and C then
+        local tween1 = TweenService:Create(A, TweenInfo.new((B.Position - A.Position).magnitude / C, Enum.EasingStyle.Linear), {CFrame = CFrame.new(B.Position + Vector3.new(0, 0, 0))}):Play()
+    end 
+end 
+
+local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
+local ScriptFunction = Script.BasicAttack
+local ScriptFunction2 = Script.UseAbility
+
+local AutoMobs = true
+local Monsa = true
+local TPL = false
+
+Tab2:AddToggle({
+    Name = "Auto Farm WAVE",
+    Default = false,
+    Callback = function(value)
+        AutoMobs = value
+        TPL = value
+        Monsa = value
+
+            local tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(0.5, Enum.EasingStyle.Linear)
+            local tweenServiceClose, tweenInfoClose = game:GetService("TweenService"), TweenInfo.new(0.5, Enum.EasingStyle.Linear)
+            local player = game:GetService("Players").LocalPlayer
+            local char = player.Character
+                
+        spawn(function()
+            while TPL do
+                if TPL then
+                    local distance = (CFrame.new(-1331.7265625, 1360.235107421875, -1266.052978515625).Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                    local speed = 50
+                    local time = distance / speed
+                    local Tw = tweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(time, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), 
+                        {CFrame = CFrame.new(-1331.7265625, 1360.235107421875, -1266.052978515625)})
+                    Tw:Play()
+                    wait(4)
+                    wait(0.5)
+                    
+                    local distance = (CFrame.new(-70.50364685058594, 543.898681640625, 1151.0472412109375).Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                    local speed = 50
+                    local time = distance / speed
+                    local Tw = tweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(time, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), 
+                        {CFrame = CFrame.new(-70.50364685058594, 543.898681640625, 1151.0472412109375)})
+                    Tw:Play()
+                    wait(4)
+                    wait(0.5)
+                end
+            end
+            end)
+
+            if AutoMobs then
+                game:GetService("RunService").Stepped:connect(function()
+                    pcall(function()
+                        ScriptFunction(Script)
+                        ScriptFunction2(Script, GetClosestt().PrimaryPart.Position)
+                    end)
+                end)
+
+            spawn(function()
+                while wait() and AutoMobs do
+                    pcall(function()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                        
+
+            ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
+            for i,v in pairs(Workspace:GetChildren()) do
+                if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
+                end
+            end
+
+                    local closestPlayer = nil
+                    local Distance = 100000000
+                    spawn(function()
+                    while Monsa do
+                    closestPlayer = GetClosestt()
+                        if closestPlayer then
+                            local ignoreFolder = game:GetService("Workspace"):FindFirstChild("Ignore")
+                            if ignoreFolder then
+                                local SpeedMon = 1500
+                                for _, obj in ipairs(ignoreFolder:GetDescendants()) do
+                                    if obj.Name ~= "Medkit" and (obj:IsA("BasePart") or obj:IsA("Model")) then
+                                        local targetPart = obj.Position
+                                        if (targetPart - closestPlayer.HumanoidRootPart.Position).magnitude <= Distance then
+                                            TweenMon(obj, closestPlayer.HumanoidRootPart, SpeedMon)
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                        wait(0.1)
+                        end
+                    end)
+                end)
+            end
+        end)
+    end
+end
+})
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+OrionLib:Init()
