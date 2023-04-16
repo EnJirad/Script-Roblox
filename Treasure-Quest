@@ -633,29 +633,54 @@ Tab3:AddToggle({
         TPL = value
         Monsa = value
 
-            local tweenService, tweenInfo = game:GetService("TweenService"), TweenInfo.new(0.5, Enum.EasingStyle.Linear)
-            local tweenServiceClose, tweenInfoClose = game:GetService("TweenService"), TweenInfo.new(0.5, Enum.EasingStyle.Linear)
-            local player = game:GetService("Players").LocalPlayer
-            local char = player.Character
+            local TweenService = game:GetService("TweenService")
+            local Character = game.Players.LocalPlayer.Character
+            local HumanoidRootPart = Character.HumanoidRootPart
+
+            local destination = CFrame.new(-2180.531005859375, 3207.893798828125, -1607.8236083984375)
+            local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
+            local speed = 250
+            local time = distance / speed
+            
+            local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
+            local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
+            tween:Play()
+
+            if noclip then
+                game:GetService("Players").LocalPlayer.Character.Humanoid:ChangeState(11)
+            end
+                
                 
         spawn(function()
             while TPL do
                 if TPL then
-                    local distance = (CFrame.new(-2180.531005859375, 3207.893798828125, -1607.8236083984375).Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-                    local speed = 50
+                    local destination = CFrame.new(-2180.531005859375, 3207.893798828125, -1607.8236083984375)
+                    local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
+                    local speed = 250
                     local time = distance / speed
-                    local Tw = tweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(time, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), 
-                        {CFrame = CFrame.new(-2180.531005859375, 3207.893798828125, -1607.8236083984375)})
-                    Tw:Play()
+                    
+                    local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
+                    local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
+                    tween:Play()
+        
+                    if noclip then
+                        game:GetService("Players").LocalPlayer.Character.Humanoid:ChangeState(11)
+                    end
                     wait(2)
                     wait(0.5)
                     
-                    local distance = (CFrame.new(-2201.022216796875, 3207.893798828125, -1507.5743408203125).Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-                    local speed = 50
+                    local destination = CFrame.new(-2201.022216796875, 3207.893798828125, -1507.5743408203125)
+                    local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
+                    local speed = 250
                     local time = distance / speed
-                    local Tw = tweenService:Create(game.Players.LocalPlayer.Character.HumanoidRootPart, TweenInfo.new(time, Enum.EasingStyle.Linear, Enum.EasingDirection.Out, 0, false, 0), 
-                        {CFrame = CFrame.new(-2201.022216796875, 3207.893798828125, -1507.5743408203125)})
-                    Tw:Play()
+                    
+                    local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
+                    local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
+                    tween:Play()
+        
+                    if noclip then
+                        game:GetService("Players").LocalPlayer.Character.Humanoid:ChangeState(11)
+                    end
                     wait(2)
                     wait(0.5)
                 end
@@ -676,15 +701,13 @@ Tab3:AddToggle({
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                        
-
-            ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
-            for i,v in pairs(Workspace:GetChildren()) do
-                if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
-                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
-                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
-                end
-            end
+                        ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
+                        for i,v in pairs(Workspace:GetChildren()) do
+                            if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
+                            end
+                        end
 
                     local closestPlayer = nil
                     local Distance = 100000000
@@ -714,6 +737,14 @@ Tab3:AddToggle({
     end
 end
 })
+game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
+    if input.KeyCode == Enum.KeyCode.V then
+        noclip = not noclip
+        if noclip then
+            game:GetService("Players").LocalPlayer.Character.Humanoid:ChangeState(11)
+        end
+    end
+end)
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
