@@ -355,13 +355,13 @@ end
 
 local TweenP1 = function(A,B,C)
     if A and B and C then
-        local tween1 = TweenService:Create(A, TweenInfo.new((B.Position - A.Position).magnitude / C, Enum.EasingStyle.Linear), {CFrame = CFrame.new(B.Position + Vector3.new(0, 50, 20))}):Play()
+        local tween1 = TweenService:Create(A, TweenInfo.new((B.Position - A.Position).magnitude / C, Enum.EasingStyle.Linear), {CFrame = CFrame.new(B.Position + Vector3.new(0, 40, 20))}):Play()
     end
 end
 
 local TweenP2 = function(A,B,C)
     if A and B and C then
-        local tween1 = TweenService:Create(A, TweenInfo.new((B.Position - A.Position).magnitude / C, Enum.EasingStyle.Linear), {CFrame = CFrame.new(B.Position + Vector3.new(0, 50, 100))}):Play()
+        local tween1 = TweenService:Create(A, TweenInfo.new((B.Position - A.Position).magnitude / C, Enum.EasingStyle.Linear), {CFrame = CFrame.new(B.Position + Vector3.new(0, 40, 100))}):Play()
     end
 end
 
@@ -380,14 +380,18 @@ Tab2:AddToggle({
             Monsa = value
 
             if AutoMobs then
-                    local region = Region3.new(Vector3.new(-999,0,-999), Vector3.new(999,999,999))
-                    region = region:ExpandToGrid(4)
-                    game.Workspace.Terrain:FillRegion(region, 4, Enum.Material.Water)
-                    else    
-                    local region = Region3.new(Vector3.new(-999,0,-999), Vector3.new(999,999,999))
-                    region = region:ExpandToGrid(4)
-                    game.Workspace.Terrain:FillRegion(region, 4, Enum.Material.Air)
-                end
+            local air = Instance.new("Part", workspace)
+            air.Size = Vector3.new(5000, 2, 5000)
+            air.CFrame = CFrame.new(109.36772155761719, 61.6656608581543, -129.2198028564453)
+            air.Transparency = 0
+            air.Anchored = true
+            air.Name = "Airwalk"
+        else
+            local air = workspace:FindFirstChild("Airwalk")
+            if air then
+                air:Destroy()
+            end
+        end
             
             if AutoMobs then
                 game:GetService("RunService").Stepped:connect(function()
@@ -415,10 +419,11 @@ Tab2:AddToggle({
                 end
             end
 
-                local SpeedPla = 50
+                local SpeedPla = 80
                 local closestPlayer = GetClosestt()
                 local closestHumanoid = closestPlayer:FindFirstChildWhichIsA("Humanoid", true)
                 if closestHumanoid and closestHumanoid.Health > 0 then
+                    wait(1)
                     TweenP1(Player.Character:FindFirstChild("HumanoidRootPart", true), closestPlayer.HumanoidRootPart, SpeedPla)
                     wait(1.5)
                     TweenP2(Player.Character:FindFirstChild("HumanoidRootPart", true), closestPlayer.HumanoidRootPart, SpeedPla)
@@ -568,12 +573,11 @@ Tab3:AddToggle({
 
         if WalkAir then
             local air = Instance.new("Part", workspace)
-            air.Size = Vector3.new(500, 2, 500)
+            air.Size = Vector3.new(5000, 2, 5000)
             air.CFrame = CFrame.new(-2183.82861328125, 3203.896484375, -1519.5120849609375)
             air.Transparency = 0
             air.Anchored = true
             air.Name = "Airwalk"
-
         else
             local air = workspace:FindFirstChild("Airwalk")
             if air then
@@ -632,14 +636,29 @@ Tab3:AddToggle({
         AutoMobs = value
         TPL = value
         Monsa = value
-
+        
+            if AutoMobs then
+            local air = Instance.new("Part", workspace)
+            air.Size = Vector3.new(5000, 2, 5000)
+            air.CFrame = CFrame.new(-2183.82861328125, 3203.896484375, -1519.5120849609375)
+            air.Transparency = 0
+            air.Anchored = true
+            air.Name = "Airwalk"
+        else
+            local air = workspace:FindFirstChild("Airwalk")
+            if air then
+                air:Destroy()
+            end
+        end
+        
+        if AutoMobs then
             local TweenService = game:GetService("TweenService")
             local Character = game.Players.LocalPlayer.Character
             local HumanoidRootPart = Character.HumanoidRootPart
 
             local destination = CFrame.new(-2180.531005859375, 3207.893798828125, -1607.8236083984375)
             local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
-            local speed = 250
+            local speed = 100
             local time = distance / speed
             
             local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
@@ -649,14 +668,13 @@ Tab3:AddToggle({
             if noclip then
                 game:GetService("Players").LocalPlayer.Character.Humanoid:ChangeState(11)
             end
-                
+            wait(1)
                 
         spawn(function()
             while TPL do
-                if TPL then
                     local destination = CFrame.new(-2180.531005859375, 3207.893798828125, -1607.8236083984375)
                     local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
-                    local speed = 250
+                    local speed = 50
                     local time = distance / speed
                     
                     local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
@@ -671,7 +689,7 @@ Tab3:AddToggle({
                     
                     local destination = CFrame.new(-2201.022216796875, 3207.893798828125, -1507.5743408203125)
                     local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
-                    local speed = 250
+                    local speed = 50
                     local time = distance / speed
                     
                     local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
@@ -684,7 +702,6 @@ Tab3:AddToggle({
                     wait(2)
                     wait(0.5)
                 end
-            end
             end)
 
             if AutoMobs then
@@ -735,6 +752,7 @@ Tab3:AddToggle({
             end
         end)
     end
+end
 end
 })
 game:GetService("UserInputService").InputBegan:Connect(function(input, gameProcessed)
