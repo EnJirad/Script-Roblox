@@ -382,7 +382,7 @@ Tab2:AddToggle({
 
             ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
             for i,v in pairs(Workspace:GetChildren()) do
-                if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
+                if v:FindFirstChild("FinishRoom",true) and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
                     firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
                     firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
                 end
@@ -496,10 +496,10 @@ end
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-WalkAir = true
+local WalkAir = true
 
 Tab3:AddToggle({
-    Name = "WalkAir",
+    Name = "Part Sky WAVE",
     Default = false,
     Callback = function(value)
         WalkAir = value
@@ -562,11 +562,6 @@ Tab3:AddToggle({
             local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
             tween:Play()
 
-            if noclip then
-                game:GetService("Players").LocalPlayer.Character.Humanoid:ChangeState(11)
-            end
-            wait(1)
-                
         spawn(function()
             while TPL do
                     local destination = CFrame.new(-2180.531005859375, 3207.893798828125, -1607.8236083984375)
@@ -577,10 +572,7 @@ Tab3:AddToggle({
                     local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
                     local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
                     tween:Play()
-        
-                    if noclip then
-                        game:GetService("Players").LocalPlayer.Character.Humanoid:ChangeState(11)
-                    end
+
                     wait(2)
                     wait(0.5)
                     
@@ -592,10 +584,7 @@ Tab3:AddToggle({
                     local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
                     local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
                     tween:Play()
-        
-                    if noclip then
-                        game:GetService("Players").LocalPlayer.Character.Humanoid:ChangeState(11)
-                    end
+
                     wait(2)
                     wait(0.5)
                 end
@@ -604,8 +593,10 @@ Tab3:AddToggle({
             if AutoMobs then
                 game:GetService("RunService").Stepped:connect(function()
                     pcall(function()
+                        if Monsa then
                         ScriptFunction(Script)
                         ScriptFunction2(Script, GetClosestt().PrimaryPart.Position)
+                        end
                     end)
                 end)
 
@@ -655,10 +646,8 @@ end
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-WalkAir = true
-
 Tab3:AddToggle({
-    Name = "WalkAir 1",
+    Name = "Part Sky Monolith's Revenge",
     Default = false,
     Callback = function(value)
         WalkAir = value
@@ -666,7 +655,7 @@ Tab3:AddToggle({
         if WalkAir then
             local air = Instance.new("Part", workspace)
             air.Size = Vector3.new(5000, 2, 5000)
-            air.CFrame = CFrame.new(-2398.7900390625, 4557.3291015625, -1443.430908203125)
+            air.CFrame = CFrame.new(-2398.7900390625, 5000.3291015625, -1443.430908203125)
             air.Transparency = 0
             air.Anchored = true
             air.Name = "Airwalk"
@@ -679,47 +668,21 @@ Tab3:AddToggle({
     end
 })
 
-Tab3:AddToggle({
-    Name = "Auto Farm WAVE1",
+Tab3:AddToggle({            
+    Name = "Monolith's Revenge",
     Default = false,
     Callback = function(value)
         AutoMobs = value
         TPL = value
         Monsa = value
-        
-            if AutoMobs then
-            local air = Instance.new("Part", workspace)
-            air.Size = Vector3.new(5000, 2, 5000)
-            air.CFrame = CFrame.new(-2398.7900390625, 4557.3291015625, -1443.430908203125)
-            air.Transparency = 0
-            air.Anchored = true
-            air.Name = "Airwalk"
-        else
-            local air = workspace:FindFirstChild("Airwalk")
-            if air then
-                air:Destroy()
-            end
-        end
-        
+
         if AutoMobs then
-            local TweenService = game:GetService("TweenService")
-            local Character = game.Players.LocalPlayer.Character
-            local HumanoidRootPart = Character.HumanoidRootPart
-
-            local destination = CFrame.new(-2388.9716796875, 4722.2587890625, -1451.3760986328125)
-            local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
-            local speed = 100
-            local time = distance / speed
-            
-            local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
-            local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
-            tween:Play()
-
-            if AutoMobs then
                 game:GetService("RunService").Stepped:connect(function()
                     pcall(function()
+                        if Monsa then
                         ScriptFunction(Script)
                         ScriptFunction2(Script, GetClosestt().PrimaryPart.Position)
+                        end
                     end)
                 end)
 
@@ -731,43 +694,116 @@ Tab3:AddToggle({
                         ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                         ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
                         for i,v in pairs(Workspace:GetChildren()) do
-                            if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
+                            if v:FindFirstChild("FinishRoom",true) and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
                                 firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
                                 firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
                             end
                         end
 
-                    local closestPlayer = nil
-                    local Distance = 100000000
-                    spawn(function()
-                    while Monsa do
-                    closestPlayer = GetClosestt()
-                        if closestPlayer then
-                            local ignoreFolder = game:GetService("Workspace"):FindFirstChild("Ignore")
-                            if ignoreFolder then
-                                local SpeedMon = 1500
-                                for _, obj in ipairs(ignoreFolder:GetDescendants()) do
-                                    if obj.Name ~= "Medkit" and (obj:IsA("BasePart") or obj:IsA("Model")) then
-                                        local targetPart = obj.Position
-                                        if (targetPart - closestPlayer.HumanoidRootPart.Position).magnitude <= Distance then
-                                            TweenMon(obj, closestPlayer.HumanoidRootPart, SpeedMon)
+                        local closestPlayer = nil
+                        local Distance = 100000000
+                        spawn(function()
+                            while Monsa do
+                                closestPlayer = GetClosestt()
+                                if closestPlayer then
+                                    local ignoreFolder = game:GetService("Workspace"):FindFirstChild("Ignore")
+                                    if ignoreFolder then
+                                        local SpeedMon = 1500
+                                        for _, obj in ipairs(ignoreFolder:GetDescendants()) do
+                                            if obj.Name ~= "Medkit" and (obj:IsA("BasePart") or obj:IsA("Model")) then
+                                                local targetPart = obj.Position
+                                                if (targetPart - closestPlayer.HumanoidRootPart.Position).magnitude <= Distance then
+                                                    TweenMon(obj, closestPlayer.HumanoidRootPart, SpeedMon)
+                                                end
+                                            end
                                         end
                                     end
                                 end
+                                wait(0.1)
                             end
-                        end
-                        wait(0.1)
-                        end
+                        end)
                     end)
-                end)
+                    wait(18)
+            if AutoMobs then
+            local air = Instance.new("Part", workspace)
+            air.Size = Vector3.new(5000, 2, 5000)
+            air.CFrame = CFrame.new(-2398.7900390625, 5000.3291015625, -1443.430908203125)
+            air.Transparency = 0
+            air.Anchored = true
+            air.Name = "Airwalk"
+        else
+            local air = workspace:FindFirstChild("Airwalk")
+            if air then
+                air:Destroy()
+            end
+        end
+        
+                if AutoMobs then
+                    local TweenService = game:GetService("TweenService")
+                    local Character = game.Players.LocalPlayer.Character
+                    local HumanoidRootPart = Character.HumanoidRootPart
+                    
+                    local destination = CFrame.new(-2388.9716796875, 5100.2587890625, -1451.3760986328125)
+                    local distance = 100
+                    local speed = distance / 10
+                    local time = distance / speed -- คำนวณเวลาตามระยะทางและความเร็ว
+                    
+                    local tweenInfo = TweenInfo.new(time, Enum.EasingStyle.Linear)
+                    local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
+                    tween:Play()
+                    end
+if AutoMobs then
+    local debounce = false
+    
+    local function onTouched(part)
+    if part.Parent and part.Parent:FindFirstChild("Humanoid") then -- ตรวจสอบว่ามี Humanoid บน Part นั้นหรือไม่
+        local humanoid = part.Parent:FindFirstChild("Humanoid")
+        if humanoid and not debounce then -- ตรวจสอบ debounce อีกครั้งก่อนดำเนินการต่อ
+            debounce = true -- กำหนด debounce เป็น true เพื่อป้องกันการเรียกใช้งานซ้ำซ้อน
+            humanoid.PlatformStand = true -- กำหนด PlatformStand ให้ Humanoid เพื่อทำให้เขาติดอยู่บน Part ที่ลอยขึ้น
+            wait(2) -- รอ 2 วินาทีก่อนกำหนดค่า PlatformStand เป็น false เพื่อให้เขาลอยขึ้นไปตาม Part ได้อย่างสมบูรณ์แบบ
+            humanoid.PlatformStand = false -- กำหนด PlatformStand ให้เป็น false เพื่อให้เขาเคลื่อนที่ได้อย่างปกติ
+            debounce = false -- กำหนด debounce เป็น false เพื่อเปิดใช้งานอีกครั้ง
+        end
+    end
+end
+
+air.Touched:Connect(onTouched) -- เชื่อมต่อ Touched event ของ Part เพื่อเรียกใช้งานฟังก์ชัน onTouched เมื่อมีการชน
+else
+local air = workspace:FindFirstChild("Airwalk")
+if air then
+air:Destroy()
+end
+end
             end
         end)
     end
 end
-end
-}) 
+})
 
 ----------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 OrionLib:Init()
