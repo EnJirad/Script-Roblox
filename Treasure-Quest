@@ -123,7 +123,7 @@ Tab2:AddToggle({
     CollectMedkits = value
     
     if CollectMedkits then
-        while wait() and CollectMedkits do
+        while wait(0.000001) and CollectMedkits do
             pcall(function()
                 if CollectMedkits and Player.Character then
                     local humanoid = Player.Character:FindFirstChild("Humanoid")
@@ -259,7 +259,7 @@ Tab2:AddToggle({
                 end)
                 
             spawn(function()
-                while wait() and AutoMobs do
+                while wait(0.000001) and AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
@@ -332,7 +332,7 @@ Tab2:AddToggle({
                 end)
                 
             spawn(function()
-                while wait() and AutoMobs do
+                while wait(0.000001) and AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
@@ -364,7 +364,7 @@ Tab2:AddToggle({
                                 end
                             end
                         end
-                        wait(0.1)
+                        wait(0.000001)
                         end
                     end)
                 end)
@@ -385,7 +385,7 @@ Tab3:AddToggle({
     CollectMedkits = value
     
     if CollectMedkits then
-        while wait() and CollectMedkits do
+        while wait(000001) and CollectMedkits do
             pcall(function()
                 if CollectMedkits and Player.Character then
                     local humanoid = Player.Character:FindFirstChild("Humanoid")
@@ -598,7 +598,7 @@ Tab3:AddToggle({
                     end)
                 end)
 
-                while wait() and AutoMobs do
+                while wait(0.000001) and AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
@@ -706,7 +706,7 @@ Tab3:AddToggle({
                     end)
                 end)
 
-                while wait() and AutoMobs do
+                while wait(0.000001) and AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
