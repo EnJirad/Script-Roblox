@@ -123,7 +123,7 @@ Tab2:AddToggle({
     Default = false,
     Callback = function(value)
         CollectMedkits = value
-        if CollectMedkits then
+        while CollectMedkits do
             local humanoid = Player.Character:FindFirstChild("Humanoid")
             if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
                 local Medkit = game:GetService("Workspace").Ignore:GetChildren() 
@@ -134,6 +134,7 @@ Tab2:AddToggle({
                 end
             end
         end
+        wait(0.5)
     end
 end
 })
@@ -155,6 +156,8 @@ Tab2:AddToggle({
         end
     end
 })
+
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local TweenMon = function(A,B,C)
     if A and B and C then
