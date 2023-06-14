@@ -184,8 +184,28 @@ Tab2:AddToggle({
         end
     end
 }) 
-    end
-})
+
+local inter = true 
+
+Tab2:AddToggle({
+    Name = "Auto inter",
+    Default = false,
+    Callback = function(value)
+        inter = value
+        if inter then
+
+     
+while inter do wait()
+for i,v in pairs(game:GetService("Workspace").Dungeon.Rooms:GetDescendants()) do
+    if v.ClassName == "Model" and v:FindFirstChild("Chests") and v:FindFirstChild("Chest") then 
+        for i, x in pairs(v:GetChildren()) do
+        if x.Name == "Hitbox" and v:FindFirstChild("TouchInterest") then
+game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = x.Parent.CFrame
+    wait(.1)
+end
+end
+end
+}) 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
