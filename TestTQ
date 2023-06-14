@@ -158,40 +158,34 @@ end
 
 local CollectChest = true
 
-local function CollectChests()
-    while CollectChest do
-        wait(0.0000001)
-        if not CollectChest then
-            break
-        end
-        
-        pcall(function()
-            local workspace = game:GetService("Workspace")
-            local player = game.Players.LocalPlayer
-            local humanoidRootPart = player.Character:FindFirstChild("HumanoidRootPart")
-            local chests = workspace.Dungeon.Rooms:GetDescendants()
-            
-            for i, v in pairs(chests) do
-                if v:IsA("Model") and v:FindFirstChild("Chests") and v:FindFirstChild("Chest"):FindFirstChild("Hitbox") then
-                    firetouchinterest(humanoidRootPart, v:FindFirstChild("Hitbox"), 0)
-                    firetouchinterest(humanoidRootPart, v:FindFirstChild("Hitbox"), 1)
-                end
-            end
-        end)
-    end
-end
-
 Tab2:AddToggle({
     Name = "Auto Chest",
     Default = false,
     Callback = function(value)
         CollectChest = value
         if CollectChest then
-            spawn(CollectChests)
+            spawn(function()
+                while CollectChest do 
+                    wait(0.0000001)
+                    if not CollectChest then
+                        break
+                    end
+                    pcall(function()
+                        for i,v in pairs(game:GetService("Workspace").Dungeon.Rooms:GetDescendants()) do
+                            if v.ClassName == "Model" then
+                                if v:FindFirstChild("Chests",true) and v:FindFirstChild("Chest",true):FindFirstChild("Hitbox",true) then
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),1)
+                            end 
+                        end 
+                    end)
+                end 
+            end)
         end
     end
+}) 
+    end
 })
-
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
