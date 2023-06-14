@@ -157,7 +157,7 @@ end
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 
-local inter = true 
+local inter = true
 local touchedHitboxes = {}
 
 Tab2:AddToggle({
@@ -177,7 +177,7 @@ Tab2:AddToggle({
                             local chest = chests.Chest
                             if chest:FindFirstChild("Hitbox") then
                                 local hitbox = chest.Hitbox
-                                if hitbox:FindFirstChild("TouchInterest") and not touchedHitboxes[hitbox] then
+                                if not touchedHitboxes[hitbox] then
                                     local distance = (hitbox.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
                                     if distance < closestDistance then
                                         closestHitbox = hitbox
