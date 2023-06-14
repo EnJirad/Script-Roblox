@@ -158,6 +158,7 @@ end
 
 
 local inter = true 
+local touchedHitboxes = {}
 
 Tab2:AddToggle({
     Name = "Auto inter",
@@ -167,6 +168,8 @@ Tab2:AddToggle({
         if inter then
             while inter do
                 wait()
+                local closestHitbox = nil
+                local closestDistance = math.huge
                 for _, room in ipairs(game:GetService("Workspace").Dungeon.Rooms:GetChildren()) do
                     if room:IsA("Model") and room:FindFirstChild("Chests") then
                         local chests = room.Chests
@@ -174,16 +177,25 @@ Tab2:AddToggle({
                             local chest = chests.Chest
                             if chest:FindFirstChild("Hitbox") then
                                 local hitbox = chest.Hitbox
-                                if hitbox:FindFirstChild("TouchInterest") then
-                                    -- สัมผัสพัสดูด
-                                    firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart", true), hitbox, 0)
-                                    wait(0.01)
-                                    -- เลิกสัมผัสพัสดูด
-                                    firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart", true), hitbox, 1)
+                                if hitbox:FindFirstChild("TouchInterest") and not touchedHitboxes[hitbox] then
+                                    local distance = (hitbox.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                                    if distance < closestDistance then
+                                        closestHitbox = hitbox
+                                        closestDistance = distance
+                                    end
                                 end
                             end
                         end
                     end
+                end
+                
+                if closestHitbox then
+                    touchedHitboxes[closestHitbox] = true
+                    -- สัมผัสพัสดูด
+                    firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart", true), closestHitbox, 0)
+                    wait(0.01)
+                    -- เลิกสัมผัสพัสดูด
+                    firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart", true), closestHitbox, 1)
                 end
             end
         end
