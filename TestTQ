@@ -167,12 +167,20 @@ Tab2:AddToggle({
         if inter then
             while inter do
                 wait()
-                for i,v in pairs(game:GetService("Workspace").Dungeon.Rooms:GetDescendants()) do
-                    if v.ClassName == "Model" and v:FindFirstChild("Chests") and v:FindFirstChild("Chest") then 
-                        for i, x in pairs(v:GetChildren()) do
-                            if x.Name == "Hitbox" and v:FindFirstChild("TouchInterest") then
-                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = x.Parent.CFrame
-                                wait(0.1)
+                for _, room in ipairs(game:GetService("Workspace").Dungeon.Rooms:GetChildren()) do
+                    if room:IsA("Model") and room:FindFirstChild("Chests") then
+                        local chests = room.Chests
+                        if chests:FindFirstChild("Chest") then
+                            local chest = chests.Chest
+                            if chest:FindFirstChild("Hitbox") then
+                                local hitbox = chest.Hitbox
+                                if hitbox:FindFirstChild("TouchInterest") then
+                                    -- สัมผัสพัสดูด
+                                    firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart", true), hitbox, 0)
+                                    wait(0.01)
+                                    -- เลิกสัมผัสพัสดูด
+                                    firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart", true), hitbox, 1)
+                                end
                             end
                         end
                     end
@@ -181,6 +189,7 @@ Tab2:AddToggle({
         end
     end
 })
+
 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
