@@ -122,7 +122,6 @@ Tab2:AddToggle({
     Default = false,
     Callback = function(value)
         CollectMedkits = value
-        if CollectMedkits then
         while CollectMedkits do
             local humanoid = Player.Character:FindFirstChild("Humanoid")
                 if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
@@ -134,9 +133,9 @@ Tab2:AddToggle({
                         end
                     end
                 end
+            wait(0.1)
             end
         end
-    end
 })
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
