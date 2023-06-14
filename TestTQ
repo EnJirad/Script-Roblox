@@ -93,16 +93,6 @@ Tab1:AddButton({
     end
 })
 
-local PS1 = true
-Tab1:AddButton({
-    Name = "PS",
-    Callback = function(value)
-        if PS1 then
-           setclipboard(tostring(game.Players.LocalPlayer.Character.HumanoidRootPart.Position))
-        end
-    end
-})
-
 ---------------------------------------------------------------------------------------------------------------------------------------
 
 AntiAFK = false
@@ -133,7 +123,7 @@ Tab2:AddToggle({
     CollectMedkits = value
     
     if CollectMedkits then
-        while wait(0.000001) and CollectMedkits do
+        while wait() and CollectMedkits do
             pcall(function()
                 if CollectMedkits and Player.Character then
                     local humanoid = Player.Character:FindFirstChild("Humanoid")
@@ -156,53 +146,29 @@ end
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-
-local inter = true
-local touchedHitboxes = {}
+local CollectChest = true
 
 Tab2:AddToggle({
-    Name = "Auto inter",
+    Name = "Auto Chest",
     Default = false,
     Callback = function(value)
-        inter = value
-        if inter then
-            while inter do
-                wait()
-                local closestHitbox = nil
-                local closestDistance = math.huge
-                for _, room in ipairs(game:GetService("Workspace").Dungeon.Rooms:GetChildren()) do
-                    if room:IsA("Model") and room:FindFirstChild("Chests") then
-                        local chests = room.Chests
-                        if chests:FindFirstChild("Chest") then
-                            local chest = chests.Chest
-                            if chest:FindFirstChild("Hitbox") then
-                                local hitbox = chest.Hitbox
-                                if not touchedHitboxes[hitbox] then
-                                    local distance = (hitbox.Position - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-                                    if distance < closestDistance then
-                                        closestHitbox = hitbox
-                                        closestDistance = distance
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-                
-                if closestHitbox then
-                    touchedHitboxes[closestHitbox] = true
-                    -- สัมผัสพัสดูด
-                    firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart", true), closestHitbox, 0)
-                    wait(0.01)
-                    -- เลิกสัมผัสพัสดูด
-                    firetouchinterest(game.Players.LocalPlayer.Character:FindFirstChild("HumanoidRootPart", true), closestHitbox, 1)
-                end
-            end
+        CollectChest = value
+        if CollectChest then
+            spawn(function()
+    while wait() and Settings.Treasure do 
+        pcall(function()
+            for i,v in pairs(Workspace:GetDescendants()) do
+                if v.Name == "Chest"  then
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),1)
+                end 
+            end 
+        end)
+    end 
+end)
         end
     end
 })
-
-
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -289,7 +255,7 @@ Tab2:AddToggle({
                 end)
                 
             spawn(function()
-                while wait(0.000001) and AutoMobs do
+                while wait() and AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
@@ -344,34 +310,6 @@ end
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-local function GetClosestt1()
-    local TargetDistance = math.huge
-    local Target = nil
-    
-    for _, folder in ipairs(workspace:GetChildren()) do
-        if folder.ClassName == "Folder" then
-            for _, subFolder in ipairs(folder:GetChildren()) do
-                if subFolder.ClassName == "Folder" then
-                    for _, model in ipairs(subFolder:GetChildren()) do
-                        if model.ClassName == "Model" and model:FindFirstChild("EvilHumanoid") then
-                            local humanoid = model:FindFirstChildOfClass("Humanoid")
-                            if humanoid and humanoid.Health ~= 0 then
-                                local mag = (Player.Character.HumanoidRootPart.Position - model.HumanoidRootPart.Position).magnitude
-                                if mag < TargetDistance then
-                                    TargetDistance = mag
-                                    Target = model
-                                end
-                            end
-                        end
-                    end
-                end
-            end
-        end
-    end
-    
-    return Target
-end
-
 Tab2:AddToggle({
     Name = "Auto No TP Farm",
     Default = false,
@@ -384,42 +322,30 @@ Tab2:AddToggle({
                     pcall(function()
                         if Monsa then
                         ScriptFunction(Script)
-                        ScriptFunction2(Script, GetClosestt1().PrimaryPart.Position)
+                        ScriptFunction2(Script, GetClosestt().PrimaryPart.Position)
                         end
                     end)
                 end)
                 
             spawn(function()
-                while wait(0.000001) and AutoMobs do
+                while wait() and AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                         ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
-
--- วนลูปผ่านทุกอ็อบเจ็กต์ที่เป็นลูกของ workspace
-for i, v in pairs(workspace:GetChildren()) do
-    -- ตรวจสอบว่าอ็อบเจ็กต์ปัจจุบันมีลูกชื่อ "FinishRoom" และลูกของ "FinishRoom" มีลูกชื่อ "Hitbox"
-    if v:FindFirstChild("FinishRoom", true) and v.FinishRoom:FindFirstChild("Hitbox", true) then
-        -- ดึงอ็อบเจ็กต์ "HumanoidRootPart" จาก Character ของ Player
-        local humanoidRootPart = Player.Character:WaitForChild("HumanoidRootPart")
-
-        -- ดึงอ็อบเจ็กต์ "Part" ที่เป็นลูกของ "Hitbox" ในอ็อบเจ็กต์ "FinishRoom"
-        local hitboxPart = v.FinishRoom.Hitbox:FindFirstChild("Part", true)
-
-        -- เปลี่ยนสถานะการสัมผัสระหว่าง "humanoidRootPart" และ "hitboxPart" เป็น 1 (สนใจ)
-        if hitboxPart then
-            firetouchinterest(humanoidRootPart, hitboxPart, 1)
-        end
-    end
-end
-
-
+                        
+            for i,v in pairs(Workspace:GetChildren()) do
+                if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
+                end
+            end
                     local closestPlayer = nil
                     local Distance = 100000000
                     spawn(function()
                     while Monsa do
-                    closestPlayer = GetClosestt1()
+                    closestPlayer = GetClosestt()
                         if closestPlayer then
                             local ignoreFolder = game:GetService("Workspace"):FindFirstChild("Ignore")
                             if ignoreFolder then
@@ -434,7 +360,7 @@ end
                                 end
                             end
                         end
-                        wait(0.000001)
+                        wait(0.1)
                         end
                     end)
                 end)
@@ -455,7 +381,7 @@ Tab3:AddToggle({
     CollectMedkits = value
     
     if CollectMedkits then
-        while wait(000001) and CollectMedkits do
+        while wait() and CollectMedkits do
             pcall(function()
                 if CollectMedkits and Player.Character then
                     local humanoid = Player.Character:FindFirstChild("Humanoid")
@@ -488,7 +414,7 @@ Tab3:AddToggle({
         if CollectChest then
             spawn(function()
                 while CollectChest do 
-                    wait(0.0000001)
+                    wait()
                     if not CollectChest then
                         break
                     end
@@ -668,7 +594,7 @@ Tab3:AddToggle({
                     end)
                 end)
 
-                while wait(0.000001) and AutoMobs do
+                while wait() and AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
@@ -776,7 +702,7 @@ Tab3:AddToggle({
                     end)
                 end)
 
-                while wait(0.000001) and AutoMobs do
+                while wait() and AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
