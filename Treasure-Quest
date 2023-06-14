@@ -139,25 +139,6 @@ Tab2:AddToggle({
 end
 })
 
-local AutoChest = false
-
-Tab2:AddToggle({
-    Name = "Auto Chest",
-    Default = false,
-    Callback = function(value)
-        AutoChest = value
-        while AutoChest do
-            for i,v in pairs(Workspace:GetDescendants()) do
-                if v.Name == "Chest"  then
-                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
-                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),1)
-                end 
-            end
-            wait(0.1) 
-        end
-    end
-})
-
 -------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local TweenMon = function(A,B,C)
