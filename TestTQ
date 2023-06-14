@@ -193,19 +193,23 @@ Tab2:AddToggle({
     Callback = function(value)
         inter = value
         if inter then
+            while inter do
+                wait()
+                for i,v in pairs(game:GetService("Workspace").Dungeon.Rooms:GetDescendants()) do
+                    if v.ClassName == "Model" and v:FindFirstChild("Chests") and v:FindFirstChild("Chest") then 
+                        for i, x in pairs(v:GetChildren()) do
+                            if x.Name == "Hitbox" and v:FindFirstChild("TouchInterest") then
+                                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = x.Parent.CFrame
+                                wait(0.1)
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+})
 
-     
-while inter do wait()
-for i,v in pairs(game:GetService("Workspace").Dungeon.Rooms:GetDescendants()) do
-    if v.ClassName == "Model" and v:FindFirstChild("Chests") and v:FindFirstChild("Chest") then 
-        for i, x in pairs(v:GetChildren()) do
-        if x.Name == "Hitbox" and v:FindFirstChild("TouchInterest") then
-game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = x.Parent.CFrame
-    wait(.1)
-end
-end
-end
-}) 
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
