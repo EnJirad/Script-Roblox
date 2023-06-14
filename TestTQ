@@ -342,6 +342,7 @@ Tab2:AddToggle({
                 end
             end
 
+            spawn(function()
             for i,v in pairs(Workspace:GetDescendants()) do
                 if v.Name == "Chest"  then
                     firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
@@ -350,21 +351,6 @@ Tab2:AddToggle({
             end 
         end)
 
-            pcall(function()
-                if CollectMedkits and Player.Character then
-                    local humanoid = Player.Character:FindFirstChild("Humanoid")
-                    if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
-                        for i,v in pairs(Workspace.Ignore:GetChildren()) do
-                            if v.Name == "Medkit" and v:FindFirstChildWhichIsA("TouchTransmitter",true) then
-                                if humanoid.Health < humanoid.MaxHealth then
-                                        firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true), v, 0)
-                                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true), v, 1)
-                                end
-                            end
-                        end
-                    end
-                end
-            end)
                     local closestPlayer = nil
                     local Distance = 100000000
                     spawn(function()
