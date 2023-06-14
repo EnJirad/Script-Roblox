@@ -146,13 +146,14 @@ Tab2:AddToggle({
     Default = false,
     Callback = function(value)
         AutoChest = value
-        if AutoChest then
+        while AutoChest do
             for i,v in pairs(Workspace:GetDescendants()) do
                 if v.Name == "Chest"  then
                     firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
                     firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),1)
                 end 
-            end 
+            end
+            wait(0.1) 
         end
     end
 })
