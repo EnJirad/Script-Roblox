@@ -155,36 +155,6 @@ end
 })
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
-local CollectChest = true
-
-Tab2:AddToggle({
-    Name = "Auto Chest",
-    Default = false,
-    Callback = function(value)
-        CollectChest = value
-        if CollectChest then
-            spawn(function()
-                while CollectChest do 
-                    wait(0.0000001)
-                    if not CollectChest then
-                        break
-                    end
-                    pcall(function()
-                        local Player = game.Players.LocalPlayer
-                        for i,v in pairs(game:GetService("Workspace").Dungeon.Rooms:GetDescendants()) do
-                            if v.ClassName == "Model" then
-                                if v:FindFirstChild("Chests",true) and v:FindFirstChild("Chest",true):FindFirstChild("Hitbox",true) then
-                                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true), v:FindFirstChild("Hitbox"), 0)
-                                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true), v:FindFirstChild("Hitbox"), 1)
-                                end 
-                            end 
-                        end 
-                    end)
-                end 
-            end)
-        end
-    end
-})
 
 
 local inter = true 
