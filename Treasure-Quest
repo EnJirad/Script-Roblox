@@ -226,6 +226,13 @@ Tab2:AddToggle({
                         ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                         ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
 
+                        for i,v in pairs(Workspace:GetChildren()) do
+                            if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
+                            end
+                        end
+
             pcall(function()
                 local player = game.Players.LocalPlayer
                 local destination = game.Workspace.Dungeon.Rooms.FinishRoom.Start.Position
@@ -413,14 +420,6 @@ Tab3:AddToggle({
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                         ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
-                    
-                        for i,v in pairs(Workspace:GetChildren()) do
-                            if v:FindFirstChild("FinishRoom",true)and v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true) then
-                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),0)
-                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("FinishRoom",true):FindFirstChild("Hitbox",true):FindFirstChild("Part",true),1)
-                            end
-                        end
-
                         
                     local closestPlayer = nil
                     local Distance = 100000000
