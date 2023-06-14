@@ -159,8 +159,8 @@ Tab2:AddToggle({
         pcall(function()
             for i,v in pairs(Workspace:GetDescendants()) do
                 if v.Name == "Chest"  then
-                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
-                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),1)
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Chest",true),v:FindFirstChild("Hitbox"),0)
+                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Chest",true),v:FindFirstChild("Hitbox"),1)
                 end 
             end 
         end)
