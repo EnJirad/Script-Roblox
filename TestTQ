@@ -124,19 +124,21 @@ Tab2:AddToggle({
         CollectMedkits = value
         while CollectMedkits do
             local humanoid = Player.Character:FindFirstChild("Humanoid")
-                if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
-                    local Medkit = game:GetService("Workspace").Ignore:GetChildren() 
-                    for i, Medkit in ipairs(Medkit) do
-                        if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
-                            Medkit.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-                            wait(0.1)
-                        end
+            if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
+                local Medkit = game:GetService("Workspace").Ignore:GetChildren() 
+                for i, Medkit in ipairs(Medkit) do
+                    if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
+                        Medkit.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+                        wait(0.1)
                     end
                 end
-            wait(0.1)
             end
-        end
+        wait(0.1)
+    end
+end
 })
+
+
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -319,6 +321,20 @@ Tab2:AddToggle({
             end 
         end)
 
+
+                    spawn(function()
+            local humanoid = Player.Character:FindFirstChild("Humanoid")
+            if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
+                local Medkit = game:GetService("Workspace").Ignore:GetChildren() 
+                for i, Medkit in ipairs(Medkit) do
+                    if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
+                        Medkit.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+                        wait(0.1)
+                    end
+                end
+            end
+        end)
+        
                     local closestPlayer = nil
                     local Distance = 100000000
                     spawn(function()
