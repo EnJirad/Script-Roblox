@@ -155,7 +155,6 @@ end
 })
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
-
 local CollectChest = true
 
 Tab2:AddToggle({
@@ -171,11 +170,13 @@ Tab2:AddToggle({
                         break
                     end
                     pcall(function()
+                        local Player = game.Players.LocalPlayer
                         for i,v in pairs(game:GetService("Workspace").Dungeon.Rooms:GetDescendants()) do
                             if v.ClassName == "Model" then
                                 if v:FindFirstChild("Chests",true) and v:FindFirstChild("Chest",true):FindFirstChild("Hitbox",true) then
-                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
-                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),1)
+                                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true), v:FindFirstChild("Hitbox"), 0)
+                                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true), v:FindFirstChild("Hitbox"), 1)
+                                end 
                             end 
                         end 
                     end)
@@ -183,7 +184,8 @@ Tab2:AddToggle({
             end)
         end
     end
-}) 
+})
+
 
 local inter = true 
 
