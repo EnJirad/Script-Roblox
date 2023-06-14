@@ -234,6 +234,13 @@ Tab2:AddToggle({
                             end
                         end
 
+            for i,v in pairs(Workspace:GetDescendants()) do
+                            if v.Name == "Chest"  then
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
+                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),1)
+                            end 
+                        end
+
             pcall(function()
                 local player = game.Players.LocalPlayer
                 local destination = game.Workspace.Dungeon.Rooms.FinishRoom.Start.Position
