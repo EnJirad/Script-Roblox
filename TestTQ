@@ -113,65 +113,27 @@ Tab1:AddToggle({
         end
 })
 
----------------------------------------------------------------------------------------------------------------------------------------
-local CollectMedkits = false
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-local function CollectMedkit()
-    if CollectMedkits and Player.Character then
-        local humanoid = Player.Character:FindFirstChild("Humanoid")
-        if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
-            for i, v in pairs(Workspace.Ignore:GetChildren()) do
-                if v.Name == "Medkit" and v:FindFirstChildWhichIsA("TouchTransmitter", true) then
-                    if humanoid.Health < humanoid.MaxHealth then
-                        -- ทำการวาปวัตถุมาหาตัวละคร
-                        local teleportDestination = Player.Character.HumanoidRootPart.Position -- ตำแหน่งที่วัตถุจะวาปมาหา
-                        -- ทำการวาป
-                        v:SetPrimaryPartCFrame(CFrame.new(teleportDestination))
-                    end
-                end
-            end
-        end
-    end
-end
-
-local function ToggleCollectMedkit(value)
-    CollectMedkits = value
-    if CollectMedkits then
-        while wait() and CollectMedkits do
-            pcall(CollectMedkit)
-        end
-    end
-end
+local CollectMedkits = true
 
 Tab2:AddToggle({
     Name = "Collect Medkit",
     Default = false,
-    Callback = ToggleCollectMedkit
-})
-
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-local CollectChest = true
-
-Tab2:AddToggle({
-    Name = "Auto Chest",
-    Default = false,
     Callback = function(value)
-        CollectChest = value
-        if CollectChest then
-            spawn(function()
-    while wait() and Settings.Treasure do 
-        pcall(function()
-            for i,v in pairs(Workspace:GetDescendants()) do
-                if v.Name == "Chest"  then
-                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),0)
-                    firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart",true),v:FindFirstChild("Hitbox"),1)
-                end 
-            end 
-        end)
-    end 
-end)
+        CollectMedkits = value
+        while CollectMedkits do
+            local humanoid = Player.Character:FindFirstChild("Humanoid")
+                if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
+                    local Medkit = game:GetService("Workspace").Ignore:GetChildren() 
+                    for i, Medkit in ipairs(Medkit) do
+                        if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
+                            Medkit.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+                            wait(0.1)
+                        end
+                    end
+                end
+            end
         end
     end
 })
