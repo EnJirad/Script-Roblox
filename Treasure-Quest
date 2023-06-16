@@ -191,13 +191,7 @@ Tab1:AddToggle({
                                                                 end
                                                             end
 
-                                                            local wsParts = game:GetService("Workspace"):GetChildren()
-                                                            for _, wsPart in ipairs(wsParts) do
-                                                                if wsPart.Name ~= "Medkit" and (wsPart:IsA("BasePart") or wsPart:IsA("Model") or wsPart:IsA("MeshPart") or wsPart:IsA("Part")) then
-                                                                    wsPart.CFrame = CFrame.new(monsterPos)
-                                                                end
-                                                            end
-
+                                                            
                                                             if not originalPosition then
                                                                 originalPosition = monsterPos -- Store the starting position
                                                             end
@@ -393,12 +387,7 @@ Tab2:AddToggle({
                                                                 end
                                                             end
 
-                                                            local wsParts = game:GetService("Workspace"):GetChildren()
-                                                            for _, wsPart in ipairs(wsParts) do
-                                                                if wsPart.Name ~= "Medkit" and (wsPart:IsA("BasePart") or wsPart:IsA("Model") or wsPart:IsA("MeshPart") or wsPart:IsA("Part")) then
-                                                                    wsPart.CFrame = CFrame.new(monsterPos)
-                                                                end
-                                                            end
+                  
 
                                                             if not originalPosition then
                                                                 originalPosition = monsterPos -- Store the starting position
