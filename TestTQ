@@ -9,21 +9,15 @@ local Window = OrionLib:MakeWindow({Name = "Treasure Quest", HidePremium = false
 ----
 ---
 --
----------------------------------------------------------------------------------------------------------------------
-local Tab1 = Window:MakeTab({
-	Name = "Player",
-	Icon = "rbxassetid://12836323838",
-	PremiumOnly = false
-})
 -------------------------------------------
-local Tab2 = Window:MakeTab({
+local Tab1 = Window:MakeTab({
 	Name = "Auto Farm",
 	Icon = "rbxassetid://12836287616",
 	PremiumOnly = false
 })
 -------------------------------------------
-local Tab3 = Window:MakeTab({
-	Name = "Auto Farm WAVE",
+local Tab2 = Window:MakeTab({
+	Name = "Farm WAVE",
 	Icon = "rbxassetid://12836287616",
 	PremiumOnly = false
 })
@@ -86,8 +80,14 @@ Tab1:AddToggle({
 	end
 })
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+local Section = Tab1:AddSection({
+	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
+})
+
 local CollectMedkits = true
-Tab2:AddToggle({
+Tab1:AddToggle({
 	Name = "Collect Medkit",
 	Default = false,
 	Callback = function(value)
@@ -99,7 +99,7 @@ Tab2:AddToggle({
 				for i, Medkit in ipairs(Medkit) do
 					if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
 						Medkit.CFrame = Player.Character.HumanoidRootPart.CFrame
-						wait(1)
+						wait(0.5)
 					end
 				end
 			end
@@ -115,18 +115,16 @@ local ScriptFunction = Script.BasicAttack
 local ScriptFunction2 = Script.UseAbility
 
 local AutoMobs = false
-local Monsa = false
 
-Tab2:AddToggle({
+Tab1:AddToggle({
     Name = "Auto Farm",
     Default = false,
     Callback = function(value)
         AutoMobs = value
-        Monsa = value
         if AutoMobs then
             local function PerformAttack()
                 pcall(function()
-                    if Monsa then
+                    if AutoMobs then
                         ScriptFunction(Script)
                         ScriptFunction2(Script)
                     end
@@ -135,8 +133,7 @@ Tab2:AddToggle({
             
             game:GetService("RunService").Stepped:Connect(PerformAttack)
             
-            spawn(function()
-                while wait() and AutoMobs do
+            while AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
@@ -235,16 +232,39 @@ Tab2:AddToggle({
                                 wait(0.01)
                             end
                         end)
-
                     end)
-                end
-            end)
+                wait(0.01)
+            end
         end
     end
 })
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
-                                
+
+local CollectMedkits = true
+Tab2:AddToggle({
+	Name = "Collect Medkit",
+	Default = false,
+	Callback = function(value)
+		CollectMedkits = value
+		while CollectMedkits do
+			local humanoid = Player.Character:FindFirstChild("Humanoid")
+			if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
+				local Medkit = Workspace.Ignore:GetChildren() 
+				for i, Medkit in ipairs(Medkit) do
+					if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
+						Medkit.CFrame = Player.Character.HumanoidRootPart.CFrame
+						wait(0.5)
+					end
+				end
+			end
+			wait(0.5)
+		end
+	end
+})
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 local function Wfall()
     for i, v in pairs(Workspace:GetChildren()) do
         if v.ClassName == "Folder" then
@@ -264,124 +284,93 @@ local function Wfall()
     end
 end
 
-local function moveTo1(destination)-------------moveTo1
+
+local function moveTo1(destination)
     local HumanoidRootPart = Player.Character:FindFirstChild("HumanoidRootPart")
+    HumanoidRootPart.Anchored = true
+
     local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
     local TweenService = game:GetService("TweenService")
-    local tweenInfo = TweenInfo.new(5, Enum.EasingStyle.Linear)
+    local tweenInfo = TweenInfo.new(30, Enum.EasingStyle.Linear)
     local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
     tween:Play()
     tween.Completed:wait()
+    HumanoidRootPart.Anchored = false
 end
 
-local function moveTo2(destination)-------------moveTo2
+
+local function moveTo2(destination)-------------moveTo1
     local HumanoidRootPart = Player.Character:FindFirstChild("HumanoidRootPart")
+        HumanoidRootPart.Anchored = true
+
     local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
     local TweenService = game:GetService("TweenService")
-    local tweenInfo = TweenInfo.new(10, Enum.EasingStyle.Linear)
+    local tweenInfo = TweenInfo.new(3, Enum.EasingStyle.Linear)
     local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
     tween:Play()
     tween.Completed:wait()
+    HumanoidRootPart.Anchored = false
 end
 
-local function moveTo3(destination)-------------moveTo3
-    local HumanoidRootPart = Player.Character:FindFirstChild("HumanoidRootPart")
-    local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
-    local TweenService = game:GetService("TweenService")
-    local tweenInfo = TweenInfo.new(10, Enum.EasingStyle.Linear)
-    local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
-    tween:Play()
-    tween.Completed:wait()
+
+local air
+local function createAir()
+
+    local PPAT = Instance.new("Model")
+    PPAT.Name = "PPAT"
+    PPAT.Parent = workspace
+    
+    local air = Instance.new("Part")
+    air.Size = Vector3.new(5000, 0.5, 5000)
+    air.CFrame = CFrame.new(-1503, 2000, -2154)
+    air.Transparency = 0
+    air.Anchored = true
+    air.Name = "Airwalk"
+    air.Parent = PPAT
 end
 
-local function moveTo4(destination)-------------moveTo4
-    local HumanoidRootPart = Player.Character:FindFirstChild("HumanoidRootPart")
-    local distance = (destination.Position - HumanoidRootPart.Position).Magnitude
-    local TweenService = game:GetService("TweenService")
-    local tweenInfo = TweenInfo.new(2, Enum.EasingStyle.Linear)
-    local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = destination})
-    tween:Play()
-    tween.Completed:wait()
-end
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-local CollectMedkits = false
-
-Tab3:AddToggle({
-    Name = "Collect Medkit",
-    Default = false,
-    Callback = function(value)
-        CollectMedkits = value
-        while CollectMedkits do
-            local humanoid = Player.Character:FindFirstChild("Humanoid")
-            if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
-                local Medkit = game:GetService("Workspace").Ignore:GetChildren()
-                for i, Medkit in ipairs(Medkit) do
-                    if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
-                        Medkit.CFrame = Player.Character.HumanoidRootPart.CFrame
-                        wait(0.1)
-                    end
-                end
-            end
-            wait(0.1)
-        end
-    end
-})
-
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-local TPL = false
-
-Tab3:AddToggle({
-    Name = "Auto Farm WAVE",
+Tab2:AddToggle({
+    Name = "Farm WAVE Beta",
     Default = false,
     Callback = function(value)
         AutoMobs = value
-        TPL = value
-        Monsa = value
-        
+
         if AutoMobs then
-            Wfall()
-            local air = Instance.new("Part", workspace)
-            air.Size = Vector3.new(5000, 0.5, 5000)
-            air.CFrame = CFrame.new(-2423, 1260, -2417)
-            air.Transparency = 0
-            air.Anchored = true
-            air.Name = "Airwalk"
-            
-            moveTo1(CFrame.new(-1503.674560546875, 1229.8099365234375, -2154.440673828125))-------------moveTo1
-            moveTo2(CFrame.new(-1912.3958740234375, 1171.537841796875, -2291.1650390625))-------------moveTo2
-            moveTo3(CFrame.new(-2366.554443359375, 1264.98095703125, -2356.48046875))-------------moveTo3
-            
+        Wfall()
+        createAir()
+        moveTo1(CFrame.new(-1503.674560546875, 2100.8099365234375, -2154.440673828125))-------------moveTo1
+        wait(3)
+
+        if AutoMobs then
             spawn(function()
                 while AutoMobs do
-                    moveTo4(CFrame.new(-2366.554443359375, 1263.98095703125, -2356.48046875))-------------moveTo4
+                    moveTo1(CFrame.new(-1583.4991455078125, 2100.5, -2724.511474609375))-------------moveTo4
                     wait(0.2)
-                    moveTo4(CFrame.new(-2281.42431640625, 1263.98095703125, -2375.610107421875))-------------moveTo4
+                    moveTo1(CFrame.new(-1654.963623046875, 2100.5, -2727.024169921875))-------------moveTo4
                     wait(0.2)
                 end
+                
             end)
             
-            if AutoMobs then
-                game:GetService("RunService").Stepped:connect(function()
-                    pcall(function()
-                        if Monsa then
-                            ScriptFunction(Script)
-                            ScriptFunction2(Script)
-                        end
-                    end)
+            local function PerformAttack()
+                pcall(function()
+                    if AutoMobs then
+                        ScriptFunction(Script)
+                        ScriptFunction2(Script)
+                    end
                 end)
+            end
+            
+            game:GetService("RunService").Stepped:Connect(PerformAttack)
 
-                while wait() and AutoMobs do
+            while AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                         ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                         ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
-
-                         spawn(function()
+                        
+                        spawn(function()
                             local alternativeParts = {} -- List to store names of unknown parts
                             local visitedPositions = {} -- List to store visited positions
                             local originalPosition -- Starting position
@@ -446,6 +435,7 @@ Tab3:AddToggle({
                             end
                         end)
                     end)
+                    wait(0.01)
                 end
             end
         end
