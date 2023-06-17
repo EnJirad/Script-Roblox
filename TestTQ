@@ -22,6 +22,7 @@ local Tab2 = Window:MakeTab({
 	PremiumOnly = false
 })
 --------------------------------------------
+
 repeat wait() until game:IsLoaded()
 local ReplicatedStorage = game.ReplicatedStorage
 local Players = game.Players
@@ -108,7 +109,63 @@ Tab1:AddToggle({
 	end
 })
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------
+
+local visitedChests = {}
+local lastVisitedChest = nil
+
+local function findNewChestInWorkspace(parent)
+    for _, child in pairs(parent:GetChildren()) do
+        if child:IsA("Folder") and child.Name == "Chests" then
+            for _, grandchild in pairs(child:GetChildren()) do
+                if grandchild:IsA("Model") and grandchild.Name == "Chest" then
+                    local ChestPart = grandchild:FindFirstChild("Hitbox")
+                    if ChestPart and not visitedChests[grandchild] then
+                        visitedChests[grandchild] = true
+                        lastVisitedChest = grandchild
+                        return ChestPart
+                    end
+                end
+            end
+        end
+
+        local foundPart = findNewChestInWorkspace(child)
+        if foundPart then
+            return foundPart
+        end
+    end
+
+    return nil
+end
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
+local TweenService = game:GetService("TweenService")
+
+local function findFinishPartInWorkspace(workspace)
+    local function searchInChildren(parent)
+        for _, child in pairs(parent:GetChildren()) do
+            if child:IsA("Model") and child.Name == "FinishRoom" then
+                local finishPart = child:FindFirstChild("Hitbox")
+                local HitboxPart = finishPart and finishPart:FindFirstChildWhichIsA("BasePart")
+                if HitboxPart then
+                    return HitboxPart
+                end
+            end
+
+            local foundPart = searchInChildren(child)
+            if foundPart then
+                return foundPart
+            end
+        end
+
+        return nil
+    end
+
+    return searchInChildren(workspace)
+end
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
 local ScriptFunction = Script.BasicAttack
@@ -117,7 +174,7 @@ local ScriptFunction2 = Script.UseAbility
 local AutoMobs = false
 
 Tab1:AddToggle({
-    Name = "Auto Farm",
+    Name = "Auto Farm and TP Chest",
     Default = false,
     Callback = function(value)
         AutoMobs = value
@@ -140,34 +197,146 @@ Tab1:AddToggle({
                         ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                         ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
 
-                        for i,v in pairs(game:GetService("Workspace"):GetChildren()) do
-                            if v:FindFirstChild("FinishRoom", true) and v:FindFirstChild("FinishRoom", true):FindFirstChild("Hitbox", true) then
-                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart", true), v:FindFirstChild("FinishRoom", true):FindFirstChild("Hitbox", true):FindFirstChild("Part", true), 0)
-                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart", true), v:FindFirstChild("FinishRoom", true):FindFirstChild("Hitbox", true):FindFirstChild("Part", true), 1)
-                            end
-                        end
+                            spawn(function()
+                                while AutoMobs do
+                                    local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
+                                    if finishPart then
+                                        local character = game.Players.LocalPlayer.Character
+                                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                                        if humanoidRootPart then
+                                            local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
+                                            if ChestPart then
+                                                humanoidRootPart.CFrame = ChestPart.CFrame
+                                                Wait(2)
+                                                local tweenInfo = TweenInfo.new(
+                                                    (finishPart.Position - humanoidRootPart.Position).Magnitude / 300,
+                                                    Enum.EasingStyle.Linear
+                                                )
+                                                local tween = TweenService:Create(
+                                                    humanoidRootPart,
+                                                    tweenInfo,
+                                                    { CFrame = finishPart.CFrame }
+                                                )
+                                                tween:Play()
+                                            end
+                                        end
+                                    end
+                                    wait(0.1)
+                                end
+                            end)
 
-                        for i,v in pairs(game:GetService("Workspace"):GetDescendants()) do
-                            if v.Name == "Chest" then
-                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart", true), v:FindFirstChild("Hitbox"), 0)
-                                firetouchinterest(Player.Character:FindFirstChild("HumanoidRootPart", true), v:FindFirstChild("Hitbox"), 1)
-                            end 
-                        end
+                            spawn(function()
+                            local alternativeParts = {} -- List to store names of unknown parts
+                            local visitedPositions = {} -- List to store visited positions
+                            local originalPosition -- Starting position
 
-                    spawn(function()
-                        while AutoMobs do
-                            local player = game.Players.LocalPlayer
-                            local destination = game.Workspace.Dungeon.Rooms.FinishRoom.Start.Position
-                            local character = player.Character
-                            local humanoidRootPart = character:WaitForChild("HumanoidRootPart")
-                            local currentPosition = humanoidRootPart.Position
-                            if (currentPosition - destination).Magnitude > 100 then
-                                humanoidRootPart.CFrame = CFrame.new(destination)
+                            while AutoMobs do
+                                for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+                                    if v.ClassName == "Folder" then
+                                        for _, x in ipairs(v:GetChildren()) do
+                                            if x.ClassName == "Folder" then
+                                                for _, c in ipairs(x:GetChildren()) do
+                                                    if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                                        local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                                        local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+
+                                                        if EvilHumanoid.Health > 0 then
+                                                            local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
+                                                            for _, ignorePart in ipairs(ignoreParts) do
+                                                                if ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
+                                                                    ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                end
+                                                            end
+
+                                                            
+                                                            if not originalPosition then
+                                                                originalPosition = monsterPos -- Store the starting position
+                                                            end
+
+                                                            -- Check if the position has been visited before
+                                                            local visited = false
+                                                            for _, visitedPos in ipairs(visitedPositions) do
+                                                                if visitedPos == monsterPos then
+                                                                    visited = true
+                                                                    break
+                                                                end
+                                                            end
+
+                                                            -- If the position has not been visited
+                                                            if not visited then
+                                                                -- Move to the new position
+                                                                visitedPositions[#visitedPositions + 1] = monsterPos
+
+                                                                -- Check if all visited positions have been covered
+                                                                if #visitedPositions >= #alternativeParts then
+                                                                    visitedPositions = {} -- Reset the visited positions list
+                                                                    monsterPos = originalPosition -- Go back to the starting position
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                                wait(0.01)
                             end
-                            wait(1)
-                        end
+                        end)
                     end)
+                wait(0.01)
+            end
+        end
+    end
+})
 
+Tab1:AddToggle({
+    Name = "Auto Farm and Don't TP Chest",
+    Default = false,
+    Callback = function(value)
+        AutoMobs = value
+        if AutoMobs then
+            local function PerformAttack()
+                pcall(function()
+                    if AutoMobs then
+                        ScriptFunction(Script)
+                        ScriptFunction2(Script)
+                    end
+                end)
+            end
+            
+            game:GetService("RunService").Stepped:Connect(PerformAttack)
+            
+            while AutoMobs do
+                    pcall(function()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                        ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
+
+                            spawn(function()
+                                while AutoMobs do
+                                    local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
+                                    if finishPart then
+                                        local character = game.Players.LocalPlayer.Character
+                                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                                        if humanoidRootPart then
+                                            local tweenInfo = TweenInfo.new(
+                                                (finishPart.Position - humanoidRootPart.Position).Magnitude / 300, -- Duration
+                                                Enum.EasingStyle.Linear -- Easing style
+                                            )
+                                            local tween = TweenService:Create(
+                                                humanoidRootPart,
+                                                tweenInfo,
+                                                { CFrame = finishPart.CFrame }
+                                            )
+                                            tween:Play()
+                                        end
+                                    end
+                                    wait(1)
+                                end
+                            end)
+                            
                         spawn(function()
                             local alternativeParts = {} -- List to store names of unknown parts
                             local visitedPositions = {} -- List to store visited positions
@@ -191,13 +360,7 @@ Tab1:AddToggle({
                                                                 end
                                                             end
 
-                                                            local wsParts = game:GetService("Workspace"):GetChildren()
-                                                            for _, wsPart in ipairs(wsParts) do
-                                                                if wsPart.Name ~= "Medkit" and (wsPart:IsA("BasePart") or wsPart:IsA("Model") or wsPart:IsA("MeshPart") or wsPart:IsA("Part")) then
-                                                                    wsPart.CFrame = CFrame.new(monsterPos)
-                                                                end
-                                                            end
-
+                                                            
                                                             if not originalPosition then
                                                                 originalPosition = monsterPos -- Store the starting position
                                                             end
@@ -330,7 +493,97 @@ local function createAir()
 end
 
 Tab2:AddToggle({
-    Name = "Farm WAVE Beta",
+    Name = "Farm WAVE and Don't fly",
+    Default = false,
+    Callback = function(value)
+        AutoMobs = value
+        if AutoMobs then
+            local function PerformAttack()
+                pcall(function()
+                    if AutoMobs then
+                        ScriptFunction(Script)
+                        ScriptFunction2(Script)
+                    end
+                end)
+            end
+            
+            game:GetService("RunService").Stepped:Connect(PerformAttack)
+            
+            while AutoMobs do
+                    pcall(function()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                        ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
+
+                        spawn(function()
+                            local alternativeParts = {} -- List to store names of unknown parts
+                            local visitedPositions = {} -- List to store visited positions
+                            local originalPosition -- Starting position
+
+                            while AutoMobs do
+                                for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+                                    if v.ClassName == "Folder" then
+                                        for _, x in ipairs(v:GetChildren()) do
+                                            if x.ClassName == "Folder" then
+                                                for _, c in ipairs(x:GetChildren()) do
+                                                    if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                                        local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                                        local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+
+                                                        if EvilHumanoid.Health > 0 then
+                                                            local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
+                                                            for _, ignorePart in ipairs(ignoreParts) do
+                                                                if ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
+                                                                    ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                end
+                                                            end
+
+                                                            
+                                                            if not originalPosition then
+                                                                originalPosition = monsterPos -- Store the starting position
+                                                            end
+
+                                                            -- Check if the position has been visited before
+                                                            local visited = false
+                                                            for _, visitedPos in ipairs(visitedPositions) do
+                                                                if visitedPos == monsterPos then
+                                                                    visited = true
+                                                                    break
+                                                                end
+                                                            end
+
+                                                            -- If the position has not been visited
+                                                            if not visited then
+                                                                -- Move to the new position
+                                                                visitedPositions[#visitedPositions + 1] = monsterPos
+
+                                                                -- Check if all visited positions have been covered
+                                                                if #visitedPositions >= #alternativeParts then
+                                                                    visitedPositions = {} -- Reset the visited positions list
+                                                                    monsterPos = originalPosition -- Go back to the starting position
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                                wait(0.01)
+                            end
+                        end)
+                    end)
+                wait(0.01)
+            end
+        end
+    end
+})
+
+
+Tab2:AddToggle({
+    Name = "Farm WAVE and Fly",
     Default = false,
     Callback = function(value)
         AutoMobs = value
@@ -370,7 +623,7 @@ Tab2:AddToggle({
                         ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                         ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
                         
-                        spawn(function()
+                            spawn(function()
                             local alternativeParts = {} -- List to store names of unknown parts
                             local visitedPositions = {} -- List to store visited positions
                             local originalPosition -- Starting position
@@ -393,13 +646,7 @@ Tab2:AddToggle({
                                                                 end
                                                             end
 
-                                                            local wsParts = game:GetService("Workspace"):GetChildren()
-                                                            for _, wsPart in ipairs(wsParts) do
-                                                                if wsPart.Name ~= "Medkit" and (wsPart:IsA("BasePart") or wsPart:IsA("Model") or wsPart:IsA("MeshPart") or wsPart:IsA("Part")) then
-                                                                    wsPart.CFrame = CFrame.new(monsterPos)
-                                                                end
-                                                            end
-
+                                                            
                                                             if not originalPosition then
                                                                 originalPosition = monsterPos -- Store the starting position
                                                             end
