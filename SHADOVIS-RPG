@@ -2,130 +2,45 @@ local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shl
 
 local Window = OrionLib:MakeWindow({Name = "SHADOVIS RPG", HidePremium = false, SaveConfig = false, ConfigFolder = "asdsahgjasdhkgjbdsa"})
 
--------------------------------------------------  Star Players  -------------------------------------------------
---------
-------
------
-----
----
---
----------------------------------------------------------------------------------------------------------------------
-local Tab1 = Window:MakeTab({
-	Name = "Player",
-	Icon = "rbxassetid://12836323838",
-	PremiumOnly = false
-})
-
-local Tab2 = Window:MakeTab({
-	Name = "Auto Farm",
-	Icon = "rbxassetid://12836287616",
-	PremiumOnly = false
-})
--------------------------------------------
-
-local Speed = 90
-
-Tab1:AddButton({
-    Name = "Speed",
-    Callback = function(value)
-        if Speed then
-            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Speed
-        end
-    end
-})
-
-InfJump = false
-Tab1:AddToggle({
-    Name = "InfJump",
-    Default = false,
-    Callback = function(value)
-        InfJump = value
-    end
-})
-
-local function onJumpRequest()
-    if InfJump then
-        game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
-    end
-end
-
-game:GetService("UserInputService").JumpRequest:connect(onJumpRequest)
-
-
-AntiAFK = false
-Tab1:AddToggle({
-    Name = "Anti AFK",
-    Default = false,
-        Callback = function(value)
-        AntiAFK = value
-        if AntiAFK then
-            wait(3)
-            local VirtualUser=game:service'VirtualUser'
-            game:service('Players').LocalPlayer.Idled:connect(function()
-            VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new())
-            end)
-        end
-    end
-})
-
-local Section = Tab1:AddSection({
-	Name = "---------------------------------------------------------------------------------------------------------------------"
-})
-
-
-TPEVEN = true
-Tab1:AddButton({
-    Name = "StartRaid Christmas",
-    Callback = function(value)
-        if TPEVEN then
-            local args = {
-                [1] = "StartRaid",
-                [2] = "Christmas"
-            }
-            game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
-        end
-    end
-})
-
 
 ---------------------------------------------------------------------------------------------------------------------
 
-local  _G.loop = true;
+local function runScript()
+    local _G = _G -- Add this line to avoid potential errors
 
-while _G.loop do wait(0.01)
-    for i, v in pairs(game:GetService("Workspace").Projectiles:GetChildren()) do
-        if v.Name == "Part" then
-            v:Destroy()
+    while _G.loop do wait(0.01)
+        for i, v in pairs(game:GetService("Workspace").Projectiles:GetChildren()) do
+            if v.Name == "Part" then
+                v:Destroy()
+            end 
         end 
-    end 
-end
+    end
 
 
-while _G.loop do wait(0.1)
-    local Tokens = game:GetService("Workspace").Projectiles:GetChildren()
-    for i, Token in ipairs(Tokens) do
-        if Token:IsA("Part") and Token.Name == "Winter's Delight Token" then
-            Token.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+    while _G.loop do wait(0.1)
+        local Tokens = game:GetService("Workspace").Projectiles:GetChildren()
+        for i, Token in ipairs(Tokens) do
+            if Token:IsA("Part") and Token.Name == "Winter's Delight Token" then
+                Token.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+            end
         end
     end
-end
 
 
-while _G.loop do wait(0.1)
-    local args = {
-        [1] = "Input",
-        [2] = "Everwinter Staff",
-        [3] = 0,
-        [4] = "Meteor",
-        [5] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 0, 0)
-    }
-    game:GetService("Players").LocalPlayer.Character.Combat.RemoteEvent:FireServer(unpack(args))
-end
+    while _G.loop do wait(0.1)
+        local args = {
+            [1] = "Input",
+            [2] = "Everwinter Staff",
+            [3] = 0,
+            [4] = "Meteor",
+            [5] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 0, 0)
+        }
+        game:GetService("Players").LocalPlayer.Character.Combat.RemoteEvent:FireServer(unpack(args))
+    end
 
 
-while _G.loop do wait(0.1)
-    local foundMonster = false
+    while _G.loop do wait(0.1)
+        local foundMonster = false
         for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
             if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, -30, 0)
@@ -138,14 +53,16 @@ while _G.loop do wait(0.1)
                 [1] = "StartRaid",
                 [2] = "Christmas"
             }
-                
+            
             game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
         end
         wait(0.1)
         if not TPMon then
-        break
+            break
+        end
     end
 end
 
+runScript() -- Call the function to execute the script immediately
 
 OrionLib:Init()
