@@ -53,8 +53,8 @@ end)()
 
 coroutine.wrap(function()
     while loop do
+        wait(20)
         local hasHumanoidRootPart = false
-
         for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
             if v:FindFirstChild("HumanoidRootPart") then
                 hasHumanoidRootPart = true
