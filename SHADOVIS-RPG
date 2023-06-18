@@ -1,25 +1,27 @@
-local _G.loop = true
+local loop = true
 
-    while _G.loop do wait(0.01)
+    while loop do
         for i, v in pairs(game:GetService("Workspace").Projectiles:GetChildren()) do
             if v.Name == "Part" then
                 v:Destroy()
             end 
-        end 
+        end
+        wait(0.01)
     end
 
 
-    while _G.loop do wait(0.1)
+    while loop do 
         local Tokens = game:GetService("Workspace").Projectiles:GetChildren()
         for i, Token in ipairs(Tokens) do
             if Token:IsA("Part") and Token.Name == "Winter's Delight Token" then
                 Token.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
             end
         end
+        wait(0.1)
     end
 
 
-    while _G.loop do wait(0.1)
+    while loop do
         local args = {
             [1] = "Input",
             [2] = "Everwinter Staff",
@@ -28,10 +30,11 @@ local _G.loop = true
             [5] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 0, 0)
         }
         game:GetService("Players").LocalPlayer.Character.Combat.RemoteEvent:FireServer(unpack(args))
+        wait(0.1)
     end
 
 
-    while _G.loop do wait(0.1)
+    while loop do
         local foundMonster = false
         for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
             if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
@@ -45,13 +48,11 @@ local _G.loop = true
                 [1] = "StartRaid",
                 [2] = "Christmas"
             }
-            
             game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
         end
         wait(0.1)
-        if not TPMon then
-            break
-        end
+        if not loop then
+        break
     end
 end
 
