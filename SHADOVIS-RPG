@@ -1,0 +1,180 @@
+local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
+
+local Window = OrionLib:MakeWindow({Name = "Treasure Quest", HidePremium = false, SaveConfig = false, ConfigFolder = "asdsahgjasdhkgjbdsa"})
+
+-------------------------------------------------  Star Players  -------------------------------------------------
+--------
+------
+-----
+----
+---
+--
+---------------------------------------------------------------------------------------------------------------------
+local Tab1 = Window:MakeTab({
+	Name = "Player",
+	Icon = "rbxassetid://12836323838",
+	PremiumOnly = false
+})
+
+local Tab2 = Window:MakeTab({
+	Name = "Auto Farm",
+	Icon = "rbxassetid://12836287616",
+	PremiumOnly = false
+})
+-------------------------------------------
+
+local Speed = 90
+
+Tab1:AddButton({
+    Name = "Speed",
+    Callback = function(value)
+        if Speed then
+            game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Speed
+        end
+    end
+})
+
+TPEVEN = true
+Tab1:AddButton({
+    Name = "StartRaid Christmas",
+    Callback = function(value)
+        if TPEVEN then
+            local args = {
+                [1] = "StartRaid",
+                [2] = "Christmas"
+            }
+                
+            game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
+        end
+    end
+})
+
+
+InfJump = false
+Tab1:AddToggle({
+    Name = "InfJump",
+    Default = false,
+    Callback = function(value)
+        InfJump = value
+    end
+})
+
+local function onJumpRequest()
+    if InfJump then
+        game:GetService("Players").LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+    end
+end
+
+game:GetService("UserInputService").JumpRequest:connect(onJumpRequest)
+
+
+AntiAFK = false
+Tab1:AddToggle({
+    Name = "Anti AFK",
+    Default = false,
+        Callback = function(value)
+        AntiAFK = value
+        if AntiAFK then
+            wait(3)
+            local VirtualUser=game:service'VirtualUser'
+            game:service('Players').LocalPlayer.Idled:connect(function()
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new())
+            end)
+        end
+    end
+})
+
+---------------------------------------------------------------------------------------------------------------------
+
+local Remove = false
+Tab2:AddToggle({
+    Name = "Remove Effects Skill",
+    Default = false,
+    Callback = function(value)
+        Remove = value
+        while Remove do
+            for i, v in pairs(game:GetService("Workspace").Projectiles:GetChildren()) do
+                if v.Name == "Part" then
+                    v:Destroy()
+                end 
+            end 
+            wait(0.01)     
+        end
+    end
+})
+
+
+local TokenTP = false
+Tab2:AddToggle({
+    Name = "Collect Winter's Delight Token",
+    Default = false,
+    Callback = function(value)
+        TokenTP = value
+            while TokenTP do
+                local Tokens = game:GetService("Workspace").Projectiles:GetChildren()
+                for i, Token in ipairs(Tokens) do
+                    if Token:IsA("Part") and Token.Name == "Winter's Delight Token" then
+                        Token.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
+                    end
+                end
+            wait(0.1)
+        end
+    end
+})
+
+Tab2:AddToggle({
+    Name = "Auto Skill",
+    Default = false,
+    Callback = function(value)
+        AttactMon = value
+        if value then
+            while AttactMon do 
+                local args = {
+                    [1] = "Input",
+                    [2] = "Everwinter Staff",
+                    [3] = 0,
+                    [4] = "Meteor",
+                    [5] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 0, 0)
+                }
+                game:GetService("Players").LocalPlayer.Character.Combat.RemoteEvent:FireServer(unpack(args))
+                wait(0.1)
+            end
+        end
+    end
+})
+
+local TPMon = false
+Tab2:AddToggle({
+    Name = "TP Monster",
+    Default = false,
+    Callback = function(value)
+        TPMon = value
+        while TPMon do
+            local foundMonster = false
+            for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
+                if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, -30, 0)
+                    foundMonster = true
+                    break
+                end
+            end
+            
+            if not foundMonster then
+                local args = {
+                    [1] = "StartRaid",
+                    [2] = "Christmas"
+                }
+                
+                game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
+            end
+            wait(0.1)
+            if not TPMon then
+                break
+            end
+        end
+    end
+})
+
+
+OrionLib:Init()
