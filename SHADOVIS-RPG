@@ -91,10 +91,10 @@ Tab1:AddButton({
 
 ---------------------------------------------------------------------------------------------------------------------
 
-local Remove = false
+local Remove = true
 Tab2:AddToggle({
     Name = "Remove Effects Skill",
-    Default = false,
+    Default = true,
     Callback = function(value)
         Remove = value
         while Remove do
@@ -109,10 +109,10 @@ Tab2:AddToggle({
 })
 
 
-local TokenTP = false
+local TokenTP = true
 Tab2:AddToggle({
     Name = "Collect Winter's Delight Token",
-    Default = false,
+    Default = true,
     Callback = function(value)
         TokenTP = value
             while TokenTP do
@@ -129,7 +129,7 @@ Tab2:AddToggle({
 
 Tab2:AddToggle({
     Name = "Auto Skill",
-    Default = false,
+    Default = true,
     Callback = function(value)
         AttactMon = value
         if value then
@@ -148,10 +148,10 @@ Tab2:AddToggle({
     end
 })
 
-local TPMon = false
+local TPMon = true
 Tab2:AddToggle({
     Name = "TP Monster",
-    Default = false,
+    Default = true,
     Callback = function(value)
         TPMon = value
         while TPMon do
