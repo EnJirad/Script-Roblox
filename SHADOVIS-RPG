@@ -34,22 +34,6 @@ Tab1:AddButton({
     end
 })
 
-TPEVEN = true
-Tab1:AddButton({
-    Name = "StartRaid Christmas",
-    Callback = function(value)
-        if TPEVEN then
-            local args = {
-                [1] = "StartRaid",
-                [2] = "Christmas"
-            }
-                
-            game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
-        end
-    end
-})
-
-
 InfJump = false
 Tab1:AddToggle({
     Name = "InfJump",
@@ -84,6 +68,26 @@ Tab1:AddToggle({
         end
     end
 })
+
+local Section = Tab1:AddSection({
+	Name = "---------------------------------------------------------------------------------------------------------------------"
+})
+
+
+TPEVEN = true
+Tab1:AddButton({
+    Name = "StartRaid Christmas",
+    Callback = function(value)
+        if TPEVEN then
+            local args = {
+                [1] = "StartRaid",
+                [2] = "Christmas"
+            }
+            game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
+        end
+    end
+})
+
 
 ---------------------------------------------------------------------------------------------------------------------
 
