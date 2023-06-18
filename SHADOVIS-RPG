@@ -1,5 +1,4 @@
-local function runScript()
-    local _G = _G -- Add this line to avoid potential errors
+local _G.loop = true
 
     while _G.loop do wait(0.01)
         for i, v in pairs(game:GetService("Workspace").Projectiles:GetChildren()) do
@@ -56,4 +55,3 @@ local function runScript()
     end
 end
 
-runScript() -- Call the function to execute the script immediately
