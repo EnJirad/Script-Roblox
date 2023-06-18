@@ -94,7 +94,6 @@ Tab1:AddButton({
 local Remove = true
 Tab2:AddToggle({
     Name = "Remove Effects Skill",
-    Default = true,
     Callback = function(value)
         Remove = value
         while Remove do
@@ -108,28 +107,26 @@ Tab2:AddToggle({
     end
 })
 
-
 local TokenTP = true
 Tab2:AddToggle({
     Name = "Collect Winter's Delight Token",
-    Default = true,
     Callback = function(value)
         TokenTP = value
-            while TokenTP do
-                local Tokens = game:GetService("Workspace").Projectiles:GetChildren()
-                for i, Token in ipairs(Tokens) do
-                    if Token:IsA("Part") and Token.Name == "Winter's Delight Token" then
-                        Token.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-                    end
+        while TokenTP do
+            local Tokens = game:GetService("Workspace").Projectiles:GetChildren()
+            for i, Token in ipairs(Tokens) do
+                if Token:IsA("Part") and Token.Name == "Winter's Delight Token" then
+                    Token.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
                 end
+            end
             wait(0.1)
         end
     end
 })
 
+local AttactMon = true
 Tab2:AddToggle({
     Name = "Auto Skill",
-    Default = true,
     Callback = function(value)
         AttactMon = value
         if value then
@@ -149,12 +146,17 @@ Tab2:AddToggle({
 })
 
 local TPMon = true
+local TPEnabled = Instance.new("BoolValue")
+TPEnabled.Name = "TPEnabled"
+TPEnabled.Value = TPMon
+TPEnabled.Parent = game.Players.LocalPlayer
+
 Tab2:AddToggle({
     Name = "TP Monster",
-    Default = true,
     Callback = function(value)
         TPMon = value
-        while TPMon do
+        TPEnabled.Value = TPMon
+        while TPEnabled.Value do
             local foundMonster = false
             for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
                 if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
@@ -173,12 +175,14 @@ Tab2:AddToggle({
                 game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
             end
             wait(0.1)
-            if not TPMon then
-                break
-            end
         end
     end
 })
+
+Tab2:FindToggle("Remove Effects Skill").Value = true
+Tab2:FindToggle("Collect Winter's Delight Token").Value = true
+Tab2:FindToggle("Auto Skill").Value = true
+Tab2:FindToggle("TP Monster").Value = true
 
 
 OrionLib:Init()
