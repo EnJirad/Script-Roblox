@@ -33,30 +33,41 @@ coroutine.wrap(function()
             [5] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 0, 0)
         }
         game:GetService("Players").LocalPlayer.Character.Combat.RemoteEvent:FireServer(unpack(args))
-        wait(0.1)
+        wait(0.5)
     end
 end)()
 
 coroutine.wrap(function()
     while loop do
-        local foundMonster = false
         for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
             if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
                 game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, -30, 0)
-                foundMonster = true
+            end
+        end
+        wait(0.3)
+        if not loop then
+            break
+        end
+    end
+end)()
+
+coroutine.wrap(function()
+    while loop do
+        local hasHumanoidRootPart = false
+
+        for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
+            if v:FindFirstChild("HumanoidRootPart") then
+                hasHumanoidRootPart = true
                 break
             end
         end
-        if not foundMonster then
+        if not hasHumanoidRootPart then
             local args = {
                 [1] = "StartRaid",
                 [2] = "Christmas"
             }
             game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
         end
-        wait(0.1)
-        if not loop then
-            break
-        end
+        wait(10)
     end
 end)()
