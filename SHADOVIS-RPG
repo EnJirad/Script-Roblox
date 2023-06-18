@@ -91,98 +91,61 @@ Tab1:AddButton({
 
 ---------------------------------------------------------------------------------------------------------------------
 
-local Remove = true
-Tab2:AddToggle({
-    Name = "Remove Effects Skill",
-    Callback = function(value)
-        Remove = value
-        while Remove do
-            for i, v in pairs(game:GetService("Workspace").Projectiles:GetChildren()) do
-                if v.Name == "Part" then
-                    v:Destroy()
-                end 
-            end 
-            wait(0.01)     
+local  _G.loop = true;
+
+while _G.loop do wait(0.01)
+    for i, v in pairs(game:GetService("Workspace").Projectiles:GetChildren()) do
+        if v.Name == "Part" then
+            v:Destroy()
+        end 
+    end 
+end
+
+
+while _G.loop do wait(0.1)
+    local Tokens = game:GetService("Workspace").Projectiles:GetChildren()
+    for i, Token in ipairs(Tokens) do
+        if Token:IsA("Part") and Token.Name == "Winter's Delight Token" then
+            Token.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
         end
     end
-})
+end
 
-local TokenTP = true
-Tab2:AddToggle({
-    Name = "Collect Winter's Delight Token",
-    Callback = function(value)
-        TokenTP = value
-        while TokenTP do
-            local Tokens = game:GetService("Workspace").Projectiles:GetChildren()
-            for i, Token in ipairs(Tokens) do
-                if Token:IsA("Part") and Token.Name == "Winter's Delight Token" then
-                    Token.CFrame = game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame
-                end
-            end
-            wait(0.1)
-        end
-    end
-})
 
-local AttactMon = true
-Tab2:AddToggle({
-    Name = "Auto Skill",
-    Callback = function(value)
-        AttactMon = value
-        if value then
-            while AttactMon do 
-                local args = {
-                    [1] = "Input",
-                    [2] = "Everwinter Staff",
-                    [3] = 0,
-                    [4] = "Meteor",
-                    [5] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 0, 0)
-                }
-                game:GetService("Players").LocalPlayer.Character.Combat.RemoteEvent:FireServer(unpack(args))
-                wait(0.1)
+while _G.loop do wait(0.1)
+    local args = {
+        [1] = "Input",
+        [2] = "Everwinter Staff",
+        [3] = 0,
+        [4] = "Meteor",
+        [5] = game.Players.LocalPlayer.Character.HumanoidRootPart.Position + Vector3.new(0, 0, 0)
+    }
+    game:GetService("Players").LocalPlayer.Character.Combat.RemoteEvent:FireServer(unpack(args))
+end
+
+
+while _G.loop do wait(0.1)
+    local foundMonster = false
+        for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
+            if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
+                game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, -30, 0)
+                foundMonster = true
+                break
             end
         end
-    end
-})
-
-local TPMon = true
-local TPEnabled = Instance.new("BoolValue")
-TPEnabled.Name = "TPEnabled"
-TPEnabled.Value = TPMon
-TPEnabled.Parent = game.Players.LocalPlayer
-
-Tab2:AddToggle({
-    Name = "TP Monster",
-    Callback = function(value)
-        TPMon = value
-        TPEnabled.Value = TPMon
-        while TPEnabled.Value do
-            local foundMonster = false
-            for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
-                if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
-                    game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, -30, 0)
-                    foundMonster = true
-                    break
-                end
-            end
-            
-            if not foundMonster then
-                local args = {
-                    [1] = "StartRaid",
-                    [2] = "Christmas"
-                }
+        if not foundMonster then
+            local args = {
+                [1] = "StartRaid",
+                [2] = "Christmas"
+            }
                 
-                game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
-            end
-            wait(0.1)
+            game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
         end
+        wait(0.1)
+        if not TPMon then
+        break
     end
-})
-
-Tab2:FindToggle("Remove Effects Skill").Value = true
-Tab2:FindToggle("Collect Winter's Delight Token").Value = true
-Tab2:FindToggle("Auto Skill").Value = true
-Tab2:FindToggle("TP Monster").Value = true
+end
 
 
 OrionLib:Init()
