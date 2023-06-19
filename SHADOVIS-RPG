@@ -76,7 +76,7 @@ local Section = Tab1:AddSection({
 
 TPEVEN = true
 Tab1:AddButton({
-    Name = "StartRaid Christmas",
+    Name = "Christmas",
     Callback = function(value)
         if TPEVEN then
             local args = {
@@ -155,22 +155,10 @@ Tab2:AddToggle({
     Callback = function(value)
         TPMon = value
         while TPMon do
-            local foundMonster = false
             for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
                 if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, -30, 0)
-                    foundMonster = true
-                    break
                 end
-            end
-            
-            if not foundMonster then
-                local args = {
-                    [1] = "StartRaid",
-                    [2] = "Christmas"
-                }
-                
-                game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
             end
             wait(0.1)
             if not TPMon then
