@@ -111,6 +111,31 @@ Tab1:AddToggle({
 
 ------------------------------------------------------------------------------------------------------------
 
+local function findStartPartInWorkspace(workspace)
+    local function searchInChildren(parent)
+        for _, child in pairs(parent:GetChildren()) do
+            if child:IsA("Model") and child.Name == "Start" then
+                local finishPart = child:FindFirstChild("Spawn")
+                local HitboxPart = finishPart and finishPart:FindFirstChildWhichIsA("BasePart")
+                if HitboxPart then
+                    return HitboxPart
+                end
+            end
+
+            local foundPart = searchInChildren(child)
+            if foundPart then
+                return foundPart
+            end
+        end
+
+        return nil
+    end
+
+    return searchInChildren(workspace)
+end
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 local visitedChests = {}
 local lastVisitedChest = nil
 
@@ -165,7 +190,7 @@ local function findFinishPartInWorkspace(workspace)
     return searchInChildren(workspace)
 end
 
------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
 
 local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
 local ScriptFunction = Script.BasicAttack
@@ -187,8 +212,17 @@ Tab1:AddToggle({
                     end
                 end)
             end
-            
             game:GetService("RunService").Stepped:Connect(PerformAttack)
+
+            local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
+                if StartPart then
+                    local character = game.Players.LocalPlayer.Character
+                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart then
+                        humanoidRootPart.CFrame = StartPart.CFrame
+                    end
+                end
+            wait(0.1)
             
             while AutoMobs do
                     pcall(function()
@@ -215,7 +249,6 @@ Tab1:AddToggle({
                                     wait(1)
                                 end
                             end)
-
 
                             spawn(function()
                             local alternativeParts = {} -- List to store names of unknown parts
@@ -299,6 +332,16 @@ Tab1:AddToggle({
             
             game:GetService("RunService").Stepped:Connect(PerformAttack)
             
+            local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
+                if StartPart then
+                    local character = game.Players.LocalPlayer.Character
+                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart then
+                        humanoidRootPart.CFrame = StartPart.CFrame
+                    end
+                end
+            wait(0.1)
+
             while AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
