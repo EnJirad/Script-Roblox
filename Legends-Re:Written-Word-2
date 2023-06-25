@@ -995,6 +995,7 @@ local function moveTo(destination)
     tween.Completed:wait()
 end
 
+-------------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local BowAttack = true
 local Mon = true
@@ -1619,6 +1620,57 @@ Tab4:AddToggle({
         end
     end
 })
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+
+---Lightning God Level:400
+local MobName = "Pirate Hunter"
+
+Tab4:AddToggle({
+    Name = "Pirate Hunter Level:555",  
+    Default = false,
+    Callback = function(value) 
+        Mon = value
+        BowAttack = value
+        if Mon then
+            
+            local air = Instance.new("Part", workspace)
+            air.Size = Vector3.new(5, 0.5, 5)
+            air.CFrame = CFrame.new(-6214.0126953125, 1898.8837890625, 4040.933349609375)
+            air.Transparency = 0
+            air.Anchored = true
+            air.Name = "Airwalk"
+            
+            moveTo(CFrame.new(-6213.615234375, 1902.1033935546875, 4040.85302734375))
+            wait(1)
+            moveTo(CFrame.new(-6213.615234375, 1902.1033935546875, 4040.85302734375))
+
+            while BowAttack do
+                for i, v in ipairs(Workspace.Mobs:GetChildren()) do
+                    if string.match(v.Name, MobName) and v:FindFirstChild("HumanoidRootPart") and v.HumanoidRootPart.Position.Z - char.HumanoidRootPart.Position.Z <= 5000 then
+
+                        spawn(function()
+                            while BowAttack and v.Humanoid and v.Humanoid.Health > 0 do
+                                char.Bow.SwordScript.Shoot:FireServer(v.HumanoidRootPart.CFrame.Position, 21)
+                                wait(0.3)
+                            end
+                        end)
+                        
+                        repeat wait() until v.Humanoid.Health <= 0
+                        moveTo(v.HumanoidRootPart.CFrame)
+                        wait(4)
+                        moveTo(CFrame.new(-6527.1220703125, 1640.77734375, 4023.134033203125))
+                        wait(4)
+                        moveTo(CFrame.new(-6213.615234375, 1902.1033935546875, 4040.85302734375))
+                        wait(2)
+                    end
+                end
+                wait(0.5)
+            end
+        end
+    end
+})
+
 
 ----------------------------------------------------------------------------------------------------------------------------------------------
 --
