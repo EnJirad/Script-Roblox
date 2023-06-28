@@ -140,8 +140,6 @@ local function findStartPartInWorkspace(workspace)
     return searchInChildren(workspace)
 end
 
--------------------------------------------------------------------------------------------------------------------------------------
-
 local function StartDungeon()
     for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
         if v.ClassName == "Folder" then
