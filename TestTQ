@@ -585,7 +585,7 @@ local Section = Tab3:AddSection({
 	Name = "Coral Kingdom"
 })
 
-local BuyitemCK = true
+local BuyitemCK = false
 
 local shopData = {
     ["Aquatic Chests"] = {
@@ -676,7 +676,7 @@ local Section = Tab3:AddSection({
 	Name = "Daring Dojo"
 })
 
-local BuyitemDD = true
+local BuyitemDD = false
 
 local shopData = {
     ["Daring Chest"] = {
@@ -762,7 +762,7 @@ local Section = Tab3:AddSection({
 	Name = "Fiery Fortress"
 })
 
-local BuyitemFF = true
+local BuyitemFF = false
 
 local shopData = {
     ["Daring Chest"] = {
