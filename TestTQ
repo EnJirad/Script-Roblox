@@ -140,6 +140,8 @@ local function findStartPartInWorkspace(workspace)
     return searchInChildren(workspace)
 end
 
+------------------------------------------------------------------------------------------------------------------------------
+
 local function StartDungeon()
     for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
         if v.ClassName == "Folder" then
@@ -251,7 +253,7 @@ Tab1:AddToggle({
                                     if ChestPart then
                                         humanoidRootPart.CFrame = ChestPart.CFrame
                                     end
-                                    wait(3)
+                                    wait(5)
                                     if ChestPart then
                                         humanoidRootPart.CFrame = finishPart.CFrame
                                     end
@@ -358,6 +360,7 @@ Tab1:AddToggle({
                                 local character = game.Players.LocalPlayer.Character
                                 local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
                                 if humanoidRootPart then
+                                    wait(5)
                                     humanoidRootPart.CFrame = finishPart.CFrame
                                 end
                             end
@@ -579,80 +582,45 @@ Tab2:AddToggle({
     end
 })
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-local function PurchaseItem(shopData, selectedShop, selectedAmount, remainingRounds)
-    if remainingRounds > 0 then
-        local shop = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops[selectedShop]
-        while remainingRounds > 0 and not shop do
-            shop = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops[selectedShop]
-            wait(0.1)
-        end
-
-        if shop then
-            local args = shopData[selectedShop]
-            args[3] = selectedAmount
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(unpack(args))
-            wait(0.1)
-            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-            remainingRounds = remainingRounds - 1
-        else
-            return false
-        end
-    end
-end
-
 ---------------------------------------------------------------------------------------------------------------------------------------
 
-local Section = Tab3:AddSection({
-	Name = "Coral Kingdom"
-})
-
 local BuyitemCK = false
+local selectedAmountCK = 1
 
 local shopDataCK = {
     ["Aquatic Chest"] = {
         [1] = "AquaticArsenal",
         [2] = "0",
-        [3] = 1
+        [3] = selectedAmountCK
     },
     ["Bubble Effect"] = {
         [1] = "AquaticArsenal",
         [2] = "1",
-        [3] = 1
+        [3] = selectedAmountCK
     },
     ["Speed Potion"] = {
         [1] = "AquaticArsenal",
         [2] = "2",
-        [3] = 1
+        [3] = selectedAmountCK
     },
     ["Ability Potion"] = {
         [1] = "AquaticArsenal",
         [2] = "3",
-        [3] = 1
+        [3] = selectedAmountCK
     }
 }
 
 local selectedShopCK = "Aquatic Chest"
-local selectedAmountCK = 1
-local remainingRoundsCK = 1
 
-local function PurchaseItem()
-    if BuyitemCK and remainingRoundsCK > 0 then
+local function PurchaseItemCK()
+    if BuyitemCK then
         local AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.AquaticArsenal
-        while remainingRoundsCK > 0 and not AquaticArsenal do
-            AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.AquaticArsenal
-            wait(0.1)
-        end
-
         if AquaticArsenal then
-            local args = shopData[selectedShopCK]
+            local args = shopDataCK[selectedShopCK]
             args[3] = selectedAmountCK
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(unpack(args))
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
             wait(0.1)
             game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-            remainingRoundsCK = remainingRoundsCK - 1
-        else
             BuyitemCK = false
         end
     end
@@ -676,15 +644,6 @@ Tab3:AddDropdown({
     end
 })
 
-Tab3:AddDropdown({
-    Name = "Buy Round",
-    Default = "1",
-    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
-    Callback = function(value)
-        remainingRoundsCK = tonumber(value) or 1
-    end
-})
-
 Tab3:AddToggle({
     Name = "Buy Item",
     Default = false,
@@ -692,7 +651,7 @@ Tab3:AddToggle({
         BuyitemCK = value
         if BuyitemCK then
             while BuyitemCK do
-                PurchaseItem()
+                PurchaseItemCK()
                 wait(0.1)
             end
         end
@@ -727,24 +686,16 @@ local shopDataDD = {
 
 local selectedShopDD = "Daring Chest"
 local selectedAmountDD = 1
-local remainingRoundsDD = 1
 
-local function PurchaseItem()
-    if BuyitemDD and remainingRoundsDD > 0 then
+local function PurchaseItemDD()
+    if BuyitemDD then
         local SilentStash = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.SilentStash
-        while remainingRoundsDD > 0 and not SilentStash do
-            SilentStash = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.SilentStash
-            wait(0.1)
-        end
-
         if SilentStash then
-            local args = shopData[selectedShopDD]
+            local args = shopDataDD[selectedShopDD]
             args[3] = selectedAmountDD
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(unpack(args))
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
             wait(0.1)
             game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-            remainingRoundsDD = remainingRoundsDD - 1
-        else
             BuyitemDD = false
         end
     end
@@ -768,15 +719,6 @@ Tab3:AddDropdown({
     end
 })
 
-Tab3:AddDropdown({
-    Name = "Buy Round",
-    Default = "1",
-    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
-    Callback = function(value)
-        remainingRoundsDD = tonumber(value) or 1
-    end
-})
-
 Tab3:AddToggle({
     Name = "Buy Item",
     Default = false,
@@ -784,12 +726,13 @@ Tab3:AddToggle({
         BuyitemDD = value
         if BuyitemDD then
             while BuyitemDD do
-                PurchaseItem()
+                PurchaseItemDD()
                 wait(0.1)
             end
         end
     end
 })
+
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
 local Section3 = Tab3:AddSection({
@@ -828,24 +771,16 @@ local shopDataFF = {
 
 local selectedShopFF = "Molten Chest"
 local selectedAmountFF = 1
-local remainingRoundsFF = 1
 
 local function PurchaseItemFF()
-    if BuyitemFF and remainingRoundsFF > 0 then
+    if BuyitemFF then
         local MoltenMarket = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.MoltenMarket
-        while remainingRoundsFF > 0 and not MoltenMarket do
-            MoltenMarket = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.MoltenMarket
-            wait(0.1)
-        end
-
         if MoltenMarket then
-            local args = shopData[selectedShopFF]
+            local args = shopDataFF[selectedShopFF]
             args[3] = selectedAmountFF
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(unpack(args))
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
             wait(0.1)
             game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-            remainingRoundsFF = remainingRoundsFF - 1
-        else
             BuyitemFF = false
         end
     end
@@ -869,15 +804,6 @@ Tab3:AddDropdown({
     end
 })
 
-Tab3:AddDropdown({
-    Name = "Buy Round",
-    Default = "1",
-    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
-    Callback = function(value)
-        remainingRoundsFF = tonumber(value) or 1
-    end
-})
-
 Tab3:AddToggle({
     Name = "Buy Item",
     Default = false,
@@ -891,6 +817,7 @@ Tab3:AddToggle({
         end
     end
 })
+
 ------------------------------------------------------------------------------------------------------------------------
 
 OrionLib:Init()
