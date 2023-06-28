@@ -666,7 +666,12 @@ Tab3:AddToggle({
     Default = false,
     Callback = function(value)
         BuyitemCK = value
-        PurchaseItem()
+        if BuyitemCK then
+            while BuyitemCK do
+                PurchaseItem()
+                wait(1)
+            end
+        end
     end
 })
 
@@ -752,7 +757,12 @@ Tab3:AddToggle({
     Default = false,
     Callback = function(value)
         BuyitemDD = value
-        PurchaseItem()
+        if BuyitemDD then
+            while BuyitemDD do
+                PurchaseItem()
+                wait(1)
+            end
+        end
     end
 })
 
@@ -848,8 +858,15 @@ Tab3:AddToggle({
     Default = false,
     Callback = function(value)
         BuyitemFF = value
-        PurchaseItem()
+        if BuyitemFF then
+            while BuyitemFF do
+                PurchaseItem()
+                wait(1)
+            end
+        end
     end
 })
+
+------------------------------------------------------------------------------------------------------------------------
 
 OrionLib:Init()
