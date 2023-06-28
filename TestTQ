@@ -117,6 +117,31 @@ Tab1:AddToggle({
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
+local function findStartPartInWorkspace(workspace)
+    local function searchInChildren(parent)
+        for _, child in pairs(parent:GetChildren()) do
+            if child:IsA("Model") and child.Name == "Start" then
+                local StartPart = child:FindFirstChild("Spawn")
+                local SpawnPart = finishPart and finishPart:FindFirstChildWhichIsA("Part")
+                if SpawnPart then
+                    return SpawnPart
+                end
+            end
+
+            local foundPart = searchInChildren(child)
+            if foundPart then
+                return foundPart
+            end
+        end
+
+        return nil
+    end
+
+    return searchInChildren(workspace)
+end
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
+
 local visitedChests = {}
 local lastVisitedChest = nil
 
@@ -145,8 +170,6 @@ local function findNewChestInWorkspace(parent)
 end
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
-
-local TweenService = game:GetService("TweenService")
 
 local function findFinishPartInWorkspace(workspace)
     local function searchInChildren(parent)
@@ -197,7 +220,22 @@ Tab1:AddToggle({
 
             while AutoMobs do
                 pcall(function()
-                            spawn(function()
+                        spawn(function()
+                                while AutoMobs do
+                                    local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
+                                    if StartPart then
+                                        local character = game.Players.LocalPlayer.Character
+                                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                                        if humanoidRootPart then
+                                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                                        end
+                                    end
+                                    wait(5)
+                                end
+                            end)  
+
+                        spawn(function()
                                 while AutoMobs do
                                     local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
                                     if finishPart then
@@ -212,10 +250,7 @@ Tab1:AddToggle({
                                             end
                                         end
                                     end
-                                    wait(5)
-                                    ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                                    ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                                    wait(1)
+                                    wait(0.1)
                                 end
                             end)
 
@@ -311,6 +346,21 @@ Tab1:AddToggle({
                     pcall(function()
                             spawn(function()
                                 while AutoMobs do
+                                    local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
+                                    if StartPart then
+                                        local character = game.Players.LocalPlayer.Character
+                                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                                        if humanoidRootPart then
+                                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                                        end
+                                    end
+                                    wait(5)
+                                end
+                            end)  
+
+                            spawn(function()
+                                while AutoMobs do
                                     local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
                                     if finishPart then
                                         local character = game.Players.LocalPlayer.Character
@@ -319,9 +369,7 @@ Tab1:AddToggle({
                                             humanoidRootPart.CFrame = finishPart.CFrame
                                         end
                                     end
-                                    wait(5)
-                                    ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                                    ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+
                                     wait(1)
                                 end
                             end)  
@@ -443,6 +491,21 @@ Tab2:AddToggle({
             while AutoMobs do
                     pcall(function()
                         spawn(function()
+                            while AutoMobs do
+                                local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
+                                    if StartPart then
+                                        local character = game.Players.LocalPlayer.Character
+                                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                                        if humanoidRootPart then
+                                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                                        end
+                                    end
+                                    wait(5)
+                                end
+                            end)
+                            
+                        spawn(function()
                             local alternativeParts = {}
                             local visitedPositions = {}
                             local originalPosition
@@ -505,14 +568,6 @@ Tab2:AddToggle({
                                     end
                                 end
                                 wait(0.01)
-                            end
-                        end)
-                        wait()
-                        spawn(function()
-                            while AutoMobs do
-                                ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                                ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                                wait(3)
                             end
                         end)
                     end)
