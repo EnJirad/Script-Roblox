@@ -584,6 +584,10 @@ Tab2:AddToggle({
 
 ---------------------------------------------------------------------------------------------------------------------------------------
 
+local Section = Tab3:AddSection({
+	Name = "Coral Kingdom"
+})
+
 local BuyitemCK = false
 local selectedAmountCK = 1
 
@@ -735,7 +739,7 @@ Tab3:AddToggle({
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
-local Section3 = Tab3:AddSection({
+local Section = Tab3:AddSection({
     Name = "Fiery Fortress"
 })
 
