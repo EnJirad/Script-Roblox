@@ -669,7 +669,10 @@ Tab3:AddToggle({
         if BuyitemCK then
             while BuyitemCK do
                 PurchaseItem()
-                wait(1)
+                                print("ok")
+                else
+                print("No")
+                wait(0.1)
             end
         end
     end
@@ -760,7 +763,10 @@ Tab3:AddToggle({
         if BuyitemDD then
             while BuyitemDD do
                 PurchaseItem()
-                wait(1)
+                                print("ok")
+                else
+                print("No")
+                wait(0.1)
             end
         end
     end
@@ -861,7 +867,10 @@ Tab3:AddToggle({
         if BuyitemFF then
             while BuyitemFF do
                 PurchaseItem()
-                wait(1)
+                print("ok")
+                else
+                print("No")
+                wait(0.1)
             end
         end
     end
