@@ -21,6 +21,12 @@ local Tab2 = Window:MakeTab({
 	Icon = "rbxassetid://12836287616",
 	PremiumOnly = false
 })
+-------------------------------------------
+local Tab3 = Window:MakeTab({
+	Name = "Auto Buy Item",
+	Icon = "rbxassetid://12836287616",
+	PremiumOnly = false
+})
 --------------------------------------------
 
 repeat wait() until game:IsLoaded()
@@ -111,6 +117,31 @@ Tab1:AddToggle({
 
 ------------------------------------------------------------------------------------------------------------
 
+local function findStartPartInWorkspace(workspace)
+    local function searchInChildren(parent)
+        for _, child in pairs(parent:GetChildren()) do
+            if child:IsA("Model") and child.Name == "Start" then
+                local finishPart = child:FindFirstChild("Spawn")
+                local HitboxPart = finishPart and finishPart:FindFirstChildWhichIsA("BasePart")
+                if HitboxPart then
+                    return HitboxPart
+                end
+            end
+
+            local foundPart = searchInChildren(child)
+            if foundPart then
+                return foundPart
+            end
+        end
+
+        return nil
+    end
+
+    return searchInChildren(workspace)
+end
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
+
 local visitedChests = {}
 local lastVisitedChest = nil
 
@@ -165,7 +196,7 @@ local function findFinishPartInWorkspace(workspace)
     return searchInChildren(workspace)
 end
 
------------------------------------------------------------------------------------------------------------------------------------------------------
+---------------------------------------------------------------------------------------------------------------------------------
 
 local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
 local ScriptFunction = Script.BasicAttack
@@ -187,8 +218,17 @@ Tab1:AddToggle({
                     end
                 end)
             end
-            
             game:GetService("RunService").Stepped:Connect(PerformAttack)
+
+            local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
+                if StartPart then
+                    local character = game.Players.LocalPlayer.Character
+                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart then
+                        humanoidRootPart.CFrame = StartPart.CFrame
+                    end
+                end
+            wait(0.1)
             
             while AutoMobs do
                     pcall(function()
@@ -216,7 +256,6 @@ Tab1:AddToggle({
                                 end
                             end)
 
-
                             spawn(function()
                             local alternativeParts = {} -- List to store names of unknown parts
                             local visitedPositions = {} -- List to store visited positions
@@ -234,13 +273,25 @@ Tab1:AddToggle({
 
                                                         if EvilHumanoid.Health > 0 then
                                                             local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
+
+                                                            local Skill = {"Tsunami","Freeze","Sandstorm","IceSpike","MeteorBlast","WaveBlast",
+                                                                            "InfernoWave","Spike"}
                                                             for _, ignorePart in ipairs(ignoreParts) do
-                                                                if ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
-                                                                    ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) and (ignorePart:IsA("BasePart") 
+                                                                or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") 
+                                                                or ignorePart:IsA("Part")) then
+
+                                                                    if table.find(Skill, ignorePart.Name) then
+                                                                        ignorePart.Size = Vector3.new(100, 100, 100)
+                                                                    end
+                                                                    if table.find(Skill, ignorePart.Name) then
+                                                                        ignorePart.Transparency = 1
+                                                                        ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                    end
                                                                 end
                                                             end
 
-                                                            
+
                                                             if not originalPosition then
                                                                 originalPosition = monsterPos -- Store the starting position
                                                             end
@@ -299,6 +350,16 @@ Tab1:AddToggle({
             
             game:GetService("RunService").Stepped:Connect(PerformAttack)
             
+            local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
+                if StartPart then
+                    local character = game.Players.LocalPlayer.Character
+                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                    if humanoidRootPart then
+                        humanoidRootPart.CFrame = StartPart.CFrame
+                    end
+                end
+            wait(0.1)
+
             while AutoMobs do
                     pcall(function()
                         ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
@@ -337,9 +398,21 @@ Tab1:AddToggle({
 
                                                         if EvilHumanoid.Health > 0 then
                                                             local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
+
+                                                            local Skill = {"Tsunami","Freeze","Sandstorm","IceSpike","MeteorBlast","WaveBlast",
+                                                                            "InfernoWave","Spike"}
                                                             for _, ignorePart in ipairs(ignoreParts) do
-                                                                if ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
-                                                                    ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) and (ignorePart:IsA("BasePart") 
+                                                                or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") 
+                                                                or ignorePart:IsA("Part")) then
+
+                                                                    if table.find(Skill, ignorePart.Name) then
+                                                                        ignorePart.Size = Vector3.new(100, 100, 100)
+                                                                    end
+                                                                    if table.find(Skill, ignorePart.Name) then
+                                                                        ignorePart.Transparency = 1 
+                                                                        ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                    end
                                                                 end
                                                             end
 
@@ -452,9 +525,21 @@ Tab2:AddToggle({
 
                                                         if EvilHumanoid.Health > 0 then
                                                             local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
+
+                                                            local Skill = {"Tsunami","Freeze","Sandstorm","IceSpike","MeteorBlast","WaveBlast",
+                                                                            "InfernoWave","Spike"}
                                                             for _, ignorePart in ipairs(ignoreParts) do
-                                                                if ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
-                                                                    ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) and (ignorePart:IsA("BasePart") 
+                                                                or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") 
+                                                                or ignorePart:IsA("Part")) then
+
+                                                                    if table.find(Skill, ignorePart.Name) then
+                                                                        ignorePart.Size = Vector3.new(100, 100, 100)
+                                                                    end
+                                                                    if table.find(Skill, ignorePart.Name) then
+                                                                        ignorePart.Transparency = 1
+                                                                        ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                    end
                                                                 end
                                                             end
 
@@ -501,5 +586,88 @@ Tab2:AddToggle({
 })
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+local Buyitem = false
+
+local shopData = {
+    ["Aquatic Chests"] = {
+        [1] = "AquaticArsenal",
+        [2] = "0",
+        [3] = 1
+    },
+    ["Bubble Effect"] = {
+        [1] = "AquaticArsenal",
+        [2] = "1",
+        [3] = 1
+    },
+    ["Speed Position"] = {
+        [1] = "AquaticArsenal",
+        [2] = "2",
+        [3] = 1
+    },
+    ["Ability Position"] = {
+        [1] = "AquaticArsenal",
+        [2] = "3",
+        [3] = 1
+    }
+}
+
+local selectedShop = "Aquatic Chests"
+local selectedAmount = 1
+local remainingRounds = 1
+
+local function PurchaseItem()
+    if Buyitem and remainingRounds > 0 then
+        local AquaticArsenal = nil
+        while remainingRounds > 0 and not AquaticArsenal do
+            AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.AquaticArsenal
+            if not AquaticArsenal then
+                wait(0.1)
+            end
+        end
+        if AquaticArsenal then
+            local args = shopData[selectedShop]
+            args[3] = selectedAmount
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(unpack(args))
+            remainingRounds = remainingRounds - 1
+        end
+    end
+end
+
+Tab3:AddDropdown({
+    Name = "Aquatic Shop",
+    Default = selectedShop,
+    Options = {"Aquatic Chests", "Bubble Effect", "Ability Position", "Speed Position"},
+    Callback = function(value)
+        selectedShop = value
+    end
+})
+
+Tab3:AddDropdown({
+    Name = "Amount",
+    Default = tostring(selectedAmount),
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
+    Callback = function(value)
+        selectedAmount = tonumber(value) or 1
+    end
+})
+
+Tab3:AddDropdown({
+    Name = "Buy Round",
+    Default = "1",
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
+    Callback = function(value)
+        remainingRounds = tonumber(value) or 1
+    end
+})
+
+Tab3:AddToggle({
+    Name = "Buy Item",
+    Default = false,
+    Callback = function(value)
+        Buyitem = value
+        PurchaseItem()
+    end
+})
 
 OrionLib:Init()
