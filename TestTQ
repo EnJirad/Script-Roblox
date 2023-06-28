@@ -140,6 +140,26 @@ local function findStartPartInWorkspace(workspace)
     return searchInChildren(workspace)
 end
 
+local function StartDungeon()
+    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if v.ClassName == "Folder" then
+            for _, x in ipairs(v:GetChildren()) do
+                if x.ClassName == "Folder" then
+                    for _, c in ipairs(x:GetChildren()) do
+                        if c:IsA("Model") and c:FindFirstChild("Spawn") then
+                            local SpawnPart = c:FindFirstChild("Spawn")
+                            if SpawnPart then
+                                game.ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                game.ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+end
+
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
 local visitedChests = {}
@@ -233,24 +253,10 @@ Tab1:AddToggle({
                                         wait(1)
                                         humanoidRootPart.CFrame = finishPart.CFrame
                                         wait(5)
-                                        
                                         spawn(function()
-                                            for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
-                                                if v.ClassName == "Folder" then
-                                                    for _, x in ipairs(v:GetChildren()) do
-                                                        if x.ClassName == "Folder" then
-                                                            for _, c in ipairs(x:GetChildren()) do
-                                                                if c:IsA("Model") and c:FindFirstChild("Spawn") then
-                                                                    local SpawnPart = c:FindFirstChild("Spawn")
-                                                                    if SpawnPart then
-                                                                        game.ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                                                                        game.ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                                                                    end
-                                                                end
-                                                            end
-                                                        end
-                                                    end
-                                                end
+                                            while AutoMobs do
+                                                StartDungeon()
+                                                wait(1)
                                             end
                                         end)
                                     end
