@@ -220,28 +220,6 @@ Tab1:AddToggle({
 
             while AutoMobs do
                 pcall(function()
-                    spawn(function()
-                        while AutoMobs do
-                            for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
-                                if v.ClassName == "Folder" then
-                                    for _, x in ipairs(v:GetChildren()) do
-                                        if x.ClassName == "Folder" then
-                                            for _, c in ipairs(x:GetChildren()) do
-                                                if c:IsA("Model") and c:FindFirstChild("Spawn") then
-                                                local SpawnPart = c:FindFirstChild("Spawn")
-                                                    if SpawnPart then
-                                                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                                                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                                                    end
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                            wait(5)
-                        end
-                    end)
                         spawn(function()
                                 while AutoMobs do
                                     local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
@@ -253,7 +231,30 @@ Tab1:AddToggle({
                                             if ChestPart then
                                                 humanoidRootPart.CFrame = ChestPart.CFrame
                                                 wait(1)
-                                                humanoidRootPart.CFrame = finishPart.CFrame                                              
+                                                humanoidRootPart.CFrame = finishPart.CFrame
+                                                wait(5)
+                                                spawn(function()
+                                                    while AutoMobs do
+                                                        for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+                                                            if v.ClassName == "Folder" then
+                                                                for _, x in ipairs(v:GetChildren()) do
+                                                                    if x.ClassName == "Folder" then
+                                                                        for _, c in ipairs(x:GetChildren()) do
+                                                                            if c:IsA("Model") and c:FindFirstChild("Spawn") then
+                                                                            local SpawnPart = c:FindFirstChild("Spawn")
+                                                                                if SpawnPart then
+                                                                                    ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                                                                    ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                                                                                end
+                                                                            end
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
+                                                        wait(1)
+                                                    end
+                                                end)                                
                                             end
                                         end
                                     end
@@ -351,7 +352,42 @@ Tab1:AddToggle({
 
             while AutoMobs do
                     pcall(function()
-                        spawn(function()
+                            spawn(function()
+                                while AutoMobs do
+                                    local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
+                                    if finishPart then
+                                        local character = game.Players.LocalPlayer.Character
+                                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                                        if humanoidRootPart then
+                                            humanoidRootPart.CFrame = finishPart.CFrame
+                                            wait(5)
+                                            spawn(function()
+                                                while AutoMobs do
+                                                    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+                                                        if v.ClassName == "Folder" then
+                                                            for _, x in ipairs(v:GetChildren()) do
+                                                                if x.ClassName == "Folder" then
+                                                                    for _, c in ipairs(x:GetChildren()) do
+                                                                        if c:IsA("Model") and c:FindFirstChild("Spawn") then
+                                                                        local SpawnPart = c:FindFirstChild("Spawn")
+                                                                            if SpawnPart then
+                                                                                ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                                                                ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                                                                            end
+                                                                        end
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                wait(1)
+                                                end
+                                            end)    
+                                        end
+                                    end
+                                    wait(1)
+                                end
+                            spawn(function()
                             while AutoMobs do
                                 for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
                                     if v.ClassName == "Folder" then
@@ -373,19 +409,6 @@ Tab1:AddToggle({
                                 wait(5)
                             end
                         end)
-                            spawn(function()
-                                while AutoMobs do
-                                    local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
-                                    if finishPart then
-                                        local character = game.Players.LocalPlayer.Character
-                                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                                        if humanoidRootPart then
-                                            humanoidRootPart.CFrame = finishPart.CFrame
-                                        end
-                                    end
-
-                                    wait(1)
-                                end
                             end)  
 
                         spawn(function()
@@ -486,7 +509,7 @@ Tab2:AddToggle({
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Tab1:AddToggle({
+Tab2:AddToggle({
     Name = "Farm WAVE",
     Default = false,
     Callback = function(value)
