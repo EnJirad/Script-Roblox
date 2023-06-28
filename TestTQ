@@ -252,11 +252,11 @@ Tab1:AddToggle({
                                         humanoidRootPart.CFrame = ChestPart.CFrame
                                         wait(1)
                                         humanoidRootPart.CFrame = finishPart.CFrame
-                                        wait(5)
-                                        StartDungeon()
                                     end
                                 end
                             end
+                            wait(5)
+                            StartDungeon()
                             wait(0.1)
                         end
                     end)
