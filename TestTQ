@@ -618,8 +618,8 @@ local function PurchaseItem()
     if BuyitemCK and remainingRounds > 0 then
         local AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.AquaticArsenal
         while remainingRounds > 0 and not AquaticArsenal do
-            wait(0.1)
             AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.AquaticArsenal
+            wait(0.1)
         end
 
         if AquaticArsenal then
@@ -708,13 +708,12 @@ local remainingRounds = 1
 
 local function PurchaseItem()
     if BuyitemDD and remainingRounds > 0 then
-        local SilentStash = nil
+        local SilentStash = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.SilentStash
         while remainingRounds > 0 and not SilentStash do
             SilentStash = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.SilentStash
-            if not SilentStash then
-                wait(0.1)
-            end
+            wait(0.1)
         end
+
         if SilentStash then
             local args = shopData[selectedShop]
             args[3] = selectedAmount
@@ -811,13 +810,12 @@ local remainingRounds = 1
 
 local function PurchaseItem()
     if BuyitemFF and remainingRounds > 0 then
-        local MoltenMarket = nil
+        local MoltenMarket = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.MoltenMarket
         while remainingRounds > 0 and not MoltenMarket do
             MoltenMarket = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.MoltenMarket
-            if not MoltenMarket then
-                wait(0.1)
-            end
+            wait(0.1)
         end
+
         if MoltenMarket then
             local args = shopData[selectedShop]
             args[3] = selectedAmount
