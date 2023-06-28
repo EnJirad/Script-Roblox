@@ -484,7 +484,7 @@ Tab2:AddToggle({
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Tab2:AddToggle({
+Tab1:AddToggle({
     Name = "Farm WAVE",
     Default = false,
     Callback = function(value)
@@ -629,6 +629,8 @@ local function PurchaseItem()
             local args = shopData[selectedShop]
             args[3] = selectedAmount
             game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(unpack(args))
+            wait(0.1)
+            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
             remainingRounds = remainingRounds - 1
         end
     end
