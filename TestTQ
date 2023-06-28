@@ -209,7 +209,9 @@ Tab1:AddToggle({
                                                 humanoidRootPart.CFrame = ChestPart.CFrame
                                                 wait(1)
                                                 humanoidRootPart.CFrame = finishPart.CFrame
-                                                wait(1)
+                                            end
+                                                wait(5)
+                                            if ChestPart then
                                                 ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                                                 ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()                                                
                                             end
@@ -305,7 +307,6 @@ Tab1:AddToggle({
                     end
                 end)
             end
-            
             game:GetService("RunService").Stepped:Connect(PerformAttack)
 
             while AutoMobs do
@@ -318,7 +319,9 @@ Tab1:AddToggle({
                                         local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
                                         if humanoidRootPart then
                                             humanoidRootPart.CFrame = finishPart.CFrame
-                                            wait(1)
+                                        end
+                                        wait(5)
+                                        if humanoidRootPart then
                                             ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                                             ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                                         end
