@@ -588,7 +588,7 @@ local Section = Tab3:AddSection({
 local BuyitemCK = false
 
 local shopData = {
-    ["Aquatic Chests"] = {
+    ["Aquatic Chest"] = {
         [1] = "AquaticArsenal",
         [2] = "0",
         [3] = 1
@@ -616,13 +616,12 @@ local remainingRounds = 1
 
 local function PurchaseItem()
     if BuyitemCK and remainingRounds > 0 then
-        local AquaticArsenal = nil
+        local AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.AquaticArsenal
         while remainingRounds > 0 and not AquaticArsenal do
+            wait(0.1)
             AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.AquaticArsenal
-            if not AquaticArsenal then
-                wait(0.1)
-            end
         end
+
         if AquaticArsenal then
             local args = shopData[selectedShop]
             args[3] = selectedAmount
@@ -630,6 +629,8 @@ local function PurchaseItem()
             wait(0.1)
             game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
             remainingRounds = remainingRounds - 1
+        else
+            BuyitemCK = false
         end
     end
 end
@@ -669,9 +670,6 @@ Tab3:AddToggle({
         if BuyitemCK then
             while BuyitemCK do
                 PurchaseItem()
-                                print("ok")
-                else
-                print("No")
                 wait(0.1)
             end
         end
@@ -724,6 +722,8 @@ local function PurchaseItem()
             wait(0.1)
             game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
             remainingRounds = remainingRounds - 1
+        else
+            BuyitemDD = false
         end
     end
 end
@@ -763,9 +763,6 @@ Tab3:AddToggle({
         if BuyitemDD then
             while BuyitemDD do
                 PurchaseItem()
-                                print("ok")
-                else
-                print("No")
                 wait(0.1)
             end
         end
@@ -828,6 +825,8 @@ local function PurchaseItem()
             wait(0.1)
             game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
             remainingRounds = remainingRounds - 1
+        else
+            BuyitemFF = false
         end
     end
 end
@@ -867,9 +866,6 @@ Tab3:AddToggle({
         if BuyitemFF then
             while BuyitemFF do
                 PurchaseItem()
-                print("ok")
-                else
-                print("No")
                 wait(0.1)
             end
         end
