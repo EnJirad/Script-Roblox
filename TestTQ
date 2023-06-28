@@ -253,12 +253,7 @@ Tab1:AddToggle({
                                         wait(1)
                                         humanoidRootPart.CFrame = finishPart.CFrame
                                         wait(5)
-                                        spawn(function()
-                                            while AutoMobs do
-                                                StartDungeon()
-                                                wait(1)
-                                            end
-                                        end)
+                                        StartDungeon()
                                     end
                                 end
                             end
