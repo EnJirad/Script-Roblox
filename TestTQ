@@ -250,11 +250,11 @@ Tab1:AddToggle({
                                     local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
                                     if ChestPart then
                                         humanoidRootPart.CFrame = ChestPart.CFrame
-                                        wait(1)
-                                        humanoidRootPart.CFrame = finishPart.CFrame
                                     end
                                 end
                             end
+                            wait(1)
+                            humanoidRootPart.CFrame = finishPart.CFrame
                             wait(5)
                             StartDungeon()
                             wait(0.1)
