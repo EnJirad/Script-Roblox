@@ -115,31 +115,6 @@ Tab1:AddToggle({
 	end
 })
 
-------------------------------------------------------------------------------------------------------------
-
-local function findStartPartInWorkspace(workspace)
-    local function searchInChildren(parent)
-        for _, child in pairs(parent:GetChildren()) do
-            if child:IsA("Model") and child.Name == "Start" then
-                local finishPart = child:FindFirstChild("Spawn")
-                local HitboxPart = finishPart and finishPart:FindFirstChildWhichIsA("BasePart")
-                if HitboxPart then
-                    return HitboxPart
-                end
-            end
-
-            local foundPart = searchInChildren(child)
-            if foundPart then
-                return foundPart
-            end
-        end
-
-        return nil
-    end
-
-    return searchInChildren(workspace)
-end
-
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
 local visitedChests = {}
@@ -220,23 +195,8 @@ Tab1:AddToggle({
             end
             game:GetService("RunService").Stepped:Connect(PerformAttack)
 
-            local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
-                if StartPart then
-                    local character = game.Players.LocalPlayer.Character
-                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                    if humanoidRootPart then
-                        humanoidRootPart.CFrame = StartPart.CFrame
-                    end
-                end
-            wait(0.1)
-            
             while AutoMobs do
-                    pcall(function()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                        ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
-
+                pcall(function()
                             spawn(function()
                                 while AutoMobs do
                                     local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
@@ -247,19 +207,22 @@ Tab1:AddToggle({
                                             local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
                                             if ChestPart then
                                                 humanoidRootPart.CFrame = ChestPart.CFrame
-                                                wait(2)
+                                                wait(1)
                                                 humanoidRootPart.CFrame = finishPart.CFrame
+                                                wait(5)
+                                                ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                                ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()                                                
                                             end
                                         end
                                     end
-                                    wait(1)
+                                    wait(2)
                                 end
                             end)
 
                             spawn(function()
-                            local alternativeParts = {} -- List to store names of unknown parts
-                            local visitedPositions = {} -- List to store visited positions
-                            local originalPosition -- Starting position
+                            local alternativeParts = {}
+                            local visitedPositions = {}
+                            local originalPosition
 
                             while AutoMobs do
                                 for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
@@ -293,10 +256,9 @@ Tab1:AddToggle({
 
 
                                                             if not originalPosition then
-                                                                originalPosition = monsterPos -- Store the starting position
+                                                                originalPosition = monsterPos
                                                             end
 
-                                                            -- Check if the position has been visited before
                                                             local visited = false
                                                             for _, visitedPos in ipairs(visitedPositions) do
                                                                 if visitedPos == monsterPos then
@@ -305,15 +267,11 @@ Tab1:AddToggle({
                                                                 end
                                                             end
 
-                                                            -- If the position has not been visited
                                                             if not visited then
-                                                                -- Move to the new position
                                                                 visitedPositions[#visitedPositions + 1] = monsterPos
-
-                                                                -- Check if all visited positions have been covered
                                                                 if #visitedPositions >= #alternativeParts then
-                                                                    visitedPositions = {} -- Reset the visited positions list
-                                                                    monsterPos = originalPosition -- Go back to the starting position
+                                                                    visitedPositions = {}
+                                                                    monsterPos = originalPosition
                                                                 end
                                                             end
                                                         end
@@ -323,11 +281,11 @@ Tab1:AddToggle({
                                         end
                                     end
                                 end
-                                wait(0.01)
+                                wait(0.1)
                             end
                         end)
                     end)
-                wait(0.01)
+                wait(0.1)
             end
         end
     end
@@ -349,24 +307,9 @@ Tab1:AddToggle({
             end
             
             game:GetService("RunService").Stepped:Connect(PerformAttack)
-            
-            local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
-                if StartPart then
-                    local character = game.Players.LocalPlayer.Character
-                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                    if humanoidRootPart then
-                        humanoidRootPart.CFrame = StartPart.CFrame
-                    end
-                end
-            wait(0.1)
 
             while AutoMobs do
                     pcall(function()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                        ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
-
                             spawn(function()
                                 while AutoMobs do
                                     local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
@@ -375,6 +318,9 @@ Tab1:AddToggle({
                                         local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
                                         if humanoidRootPart then
                                             humanoidRootPart.CFrame = finishPart.CFrame
+                                            wait(5)
+                                            ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                            ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                                         end
                                     end
                                     wait(2)
@@ -382,9 +328,9 @@ Tab1:AddToggle({
                             end)  
 
                         spawn(function()
-                            local alternativeParts = {} -- List to store names of unknown parts
-                            local visitedPositions = {} -- List to store visited positions
-                            local originalPosition -- Starting position
+                            local alternativeParts = {}
+                            local visitedPositions = {}
+                            local originalPosition
 
                             while AutoMobs do
                                 for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
@@ -418,10 +364,9 @@ Tab1:AddToggle({
 
                                                             
                                                             if not originalPosition then
-                                                                originalPosition = monsterPos -- Store the starting position
+                                                                originalPosition = monsterPos
                                                             end
 
-                                                            -- Check if the position has been visited before
                                                             local visited = false
                                                             for _, visitedPos in ipairs(visitedPositions) do
                                                                 if visitedPos == monsterPos then
@@ -430,15 +375,11 @@ Tab1:AddToggle({
                                                                 end
                                                             end
 
-                                                            -- If the position has not been visited
                                                             if not visited then
-                                                                -- Move to the new position
                                                                 visitedPositions[#visitedPositions + 1] = monsterPos
-
-                                                                -- Check if all visited positions have been covered
                                                                 if #visitedPositions >= #alternativeParts then
-                                                                    visitedPositions = {} -- Reset the visited positions list
-                                                                    monsterPos = originalPosition -- Go back to the starting position
+                                                                    visitedPositions = {}
+                                                                    monsterPos = originalPosition
                                                                 end
                                                             end
                                                         end
@@ -448,11 +389,11 @@ Tab1:AddToggle({
                                         end
                                     end
                                 end
-                                wait(0.01)
+                                wait(0.1)
                             end
                         end)
                     end)
-                wait(0.01)
+                wait(0.1)
             end
         end
     end
@@ -498,20 +439,14 @@ Tab2:AddToggle({
                     end
                 end)
             end
-            
             game:GetService("RunService").Stepped:Connect(PerformAttack)
             
             while AutoMobs do
                     pcall(function()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                        ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
-
                         spawn(function()
-                            local alternativeParts = {} -- List to store names of unknown parts
-                            local visitedPositions = {} -- List to store visited positions
-                            local originalPosition -- Starting position
+                            local alternativeParts = {}
+                            local visitedPositions = {}
+                            local originalPosition
 
                             while AutoMobs do
                                 for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
@@ -545,10 +480,9 @@ Tab2:AddToggle({
 
                                                             
                                                             if not originalPosition then
-                                                                originalPosition = monsterPos -- Store the starting position
+                                                                originalPosition = monsterPos
                                                             end
 
-                                                            -- Check if the position has been visited before
                                                             local visited = false
                                                             for _, visitedPos in ipairs(visitedPositions) do
                                                                 if visitedPos == monsterPos then
@@ -557,15 +491,11 @@ Tab2:AddToggle({
                                                                 end
                                                             end
 
-                                                            -- If the position has not been visited
                                                             if not visited then
-                                                                -- Move to the new position
                                                                 visitedPositions[#visitedPositions + 1] = monsterPos
-
-                                                                -- Check if all visited positions have been covered
                                                                 if #visitedPositions >= #alternativeParts then
-                                                                    visitedPositions = {} -- Reset the visited positions list
-                                                                    monsterPos = originalPosition -- Go back to the starting position
+                                                                    visitedPositions = {}
+                                                                    monsterPos = originalPosition
                                                                 end
                                                             end
                                                         end
@@ -576,6 +506,14 @@ Tab2:AddToggle({
                                     end
                                 end
                                 wait(0.01)
+                            end
+                        end)
+                        wait()
+                        spawn(function()
+                            while AutoMobs do
+                                ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+                                wait(3)
                             end
                         end)
                     end)
