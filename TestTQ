@@ -665,27 +665,27 @@ local Section = Tab3:AddSection({
 })
 
 local BuyitemDD = false
+local selectedAmountDD = 1
 
 local shopDataDD = {
     ["Daring Chest"] = {
         [1] = "SilentStash",
         [2] = "0",
-        [3] = 1
+        [3] = selectedAmountDD
     },
     ["Stealth Effect"] = {
         [1] = "SilentStash",
         [2] = "1",
-        [3] = 1
+        [3] = selectedAmountDD
     },
     ["Jump Potion"] = {
         [1] = "SilentStash",
         [2] = "2",
-        [3] = 1
+        [3] = selectedAmountDD
     },
 }
 
 local selectedShopDD = "Daring Chest"
-local selectedAmountDD = 1
 
 local function PurchaseItemDD()
     if BuyitemDD then
@@ -740,37 +740,37 @@ local Section3 = Tab3:AddSection({
 })
 
 local BuyitemFF = false
+local selectedAmountFF = 1
 
 local shopDataFF = {
     ["Molten Chest"] = {
         [1] = "MoltenMarket",
         [2] = "0",
-        [3] = 1
+        [3] = selectedAmountFF
     },
     ["Embers Effect"] = {
         [1] = "MoltenMarket",
         [2] = "1",
-        [3] = 1
+        [3] = selectedAmountFF
     },
     ["Warrior Potion"] = {
         [1] = "MoltenMarket",
         [2] = "2",
-        [3] = 1
+        [3] = selectedAmountFF
     },
     ["Wizard Potion"] = {
         [1] = "MoltenMarket",
         [2] = "3",
-        [3] = 1
+        [3] = selectedAmountFF
     },
     ["Archer Potion"] = {
         [1] = "MoltenMarket",
         [2] = "4",
-        [3] = 1
+        [3] = selectedAmountFF
     },
 }
 
 local selectedShopFF = "Molten Chest"
-local selectedAmountFF = 1
 
 local function PurchaseItemFF()
     if BuyitemFF then
