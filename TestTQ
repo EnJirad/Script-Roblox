@@ -209,13 +209,13 @@ Tab1:AddToggle({
                                                 humanoidRootPart.CFrame = ChestPart.CFrame
                                                 wait(1)
                                                 humanoidRootPart.CFrame = finishPart.CFrame
-                                                wait(5)
+                                                wait(1)
                                                 ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                                                 ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()                                                
                                             end
                                         end
                                     end
-                                    wait(2)
+                                    wait(1)
                                 end
                             end)
 
@@ -318,12 +318,12 @@ Tab1:AddToggle({
                                         local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
                                         if humanoidRootPart then
                                             humanoidRootPart.CFrame = finishPart.CFrame
-                                            wait(5)
+                                            wait(1)
                                             ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
                                             ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                                         end
                                     end
-                                    wait(2)
+                                    wait(1)
                                 end
                             end)  
 
