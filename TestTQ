@@ -484,7 +484,7 @@ Tab2:AddToggle({
 
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-Tab2:AddToggle({
+Tab1:AddToggle({
     Name = "Farm WAVE",
     Default = false,
     Callback = function(value)
@@ -587,7 +587,11 @@ Tab2:AddToggle({
 
 ---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
-local Buyitem = false
+local Section = Tab3:AddSection({
+	Name = "Coral Kingdom"
+})
+
+local BuyitemCK = false
 
 local shopData = {
     ["Aquatic Chests"] = {
@@ -600,24 +604,24 @@ local shopData = {
         [2] = "1",
         [3] = 1
     },
-    ["Speed Position"] = {
+    ["Speed Potion"] = {
         [1] = "AquaticArsenal",
         [2] = "2",
         [3] = 1
     },
-    ["Ability Position"] = {
+    ["Ability Potion"] = {
         [1] = "AquaticArsenal",
         [2] = "3",
         [3] = 1
     }
 }
 
-local selectedShop = "Aquatic Chests"
+local selectedShop = "Aquatic Chest"
 local selectedAmount = 1
 local remainingRounds = 1
 
 local function PurchaseItem()
-    if Buyitem and remainingRounds > 0 then
+    if BuyitemCK and remainingRounds > 0 then
         local AquaticArsenal = nil
         while remainingRounds > 0 and not AquaticArsenal do
             AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.AquaticArsenal
@@ -639,7 +643,7 @@ end
 Tab3:AddDropdown({
     Name = "Aquatic Shop",
     Default = selectedShop,
-    Options = {"Aquatic Chests", "Bubble Effect", "Ability Position", "Speed Position"},
+    Options = {"Aquatic Chest", "Bubble Effect", "Ability Potion", "Speed Potion"},
     Callback = function(value)
         selectedShop = value
     end
@@ -667,7 +671,93 @@ Tab3:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
-        Buyitem = value
+        BuyitemCK = value
+        PurchaseItem()
+    end
+})
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+local Section = Tab3:AddSection({
+	Name = "Daring Dojo"
+})
+
+local BuyitemDD = false
+
+local shopData = {
+    ["Daring Chest"] = {
+        [1] = "SilentStash",
+        [2] = "0",
+        [3] = 1
+    },
+    ["Stealth Effect"] = {
+        [1] = "SilentStash",
+        [2] = "1",
+        [3] = 1
+    },
+    ["Jump Potion"] = {
+        [1] = "SilentStash",
+        [2] = "2",
+        [3] = 1
+    },
+}
+
+local selectedShop = "Daring Chest"
+local selectedAmount = 1
+local remainingRounds = 1
+
+local function PurchaseItem()
+    if BuyitemDD and remainingRounds > 0 then
+        local AquaticArsenal = nil
+        while remainingRounds > 0 and not AquaticArsenal do
+            AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.SilentStash
+            if not AquaticArsenal then
+                wait(0.1)
+            end
+        end
+        if AquaticArsenal then
+            local args = shopData[selectedShop]
+            args[3] = selectedAmount
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(unpack(args))
+            wait(0.1)
+            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+            remainingRounds = remainingRounds - 1
+        end
+    end
+end
+
+Tab3:AddDropdown({
+    Name = "SilentStash Shop",
+    Default = selectedShop,
+    Options = {"Daring Chest", "Stealth Effect", "Jump Potion"},
+    Callback = function(value)
+        selectedShop = value
+    end
+})
+
+Tab3:AddDropdown({
+    Name = "Amount",
+    Default = tostring(selectedAmount),
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
+    Callback = function(value)
+        selectedAmount = tonumber(value) or 1
+    end
+})
+
+Tab3:AddDropdown({
+    Name = "Buy Round",
+    Default = "1",
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
+    Callback = function(value)
+        remainingRounds = tonumber(value) or 1
+    end
+})
+
+Tab3:AddToggle({
+    Name = "Buy Item",
+    Default = false,
+    Callback = function(value)
+        BuyitemDD = value
         PurchaseItem()
     end
 })
