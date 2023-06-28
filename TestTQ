@@ -208,15 +208,13 @@ Tab1:AddToggle({
                                             if ChestPart then
                                                 humanoidRootPart.CFrame = ChestPart.CFrame
                                                 wait(1)
-                                                humanoidRootPart.CFrame = finishPart.CFrame
-                                            end
-                                                wait(5)
-                                            if ChestPart then
-                                                ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                                                ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()                                                
+                                                humanoidRootPart.CFrame = finishPart.CFrame                                              
                                             end
                                         end
                                     end
+                                    wait(5)
+                                    ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                    ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                                     wait(1)
                                 end
                             end)
@@ -320,12 +318,10 @@ Tab1:AddToggle({
                                         if humanoidRootPart then
                                             humanoidRootPart.CFrame = finishPart.CFrame
                                         end
-                                        wait(5)
-                                        if humanoidRootPart then
-                                            ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                                            ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                                        end
                                     end
+                                    wait(5)
+                                    ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+                                    ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
                                     wait(1)
                                 end
                             end)  
