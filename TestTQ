@@ -614,11 +614,12 @@ Tab3:AddToggle({
 
 
 local Section = Tab4:AddSection({
-    Name = "Coral Kingdom"
+	Name = "Coral Kingdom"
 })
 
 local BuyitemCK = false
 local selectedAmountCK = 1
+local selectedShopCK = "Aquatic Chest"
 
 local shopDataCK = {
     ["Aquatic Chest"] = {
@@ -643,38 +644,6 @@ local shopDataCK = {
     }
 }
 
-local selectedShopCK = "Aquatic Chest"
-
-local function PurchaseItem()
-    local AquaticArsenal = nil
-    repeat
-        for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
-            if v.Name == shopDataCK[selectedShopCK][1] then
-                AquaticArsenal = v
-                break
-            end
-        end
-        wait()
-    until AquaticArsenal ~= nil
-
-    local args = shopDataCK[selectedShopCK]
-    args[3] = selectedAmountCK
-    game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-    wait(0.1)
-    game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-    print("kkk")
-end
-
-local function ToggleBuyItem(value)
-    BuyitemCK = value
-    if BuyitemCK then
-        while BuyitemCK do
-            PurchaseItem()
-            wait(0.1)
-        end
-    end
-end
-
 Tab4:AddDropdown({
     Name = "Aquatic Shop",
     Default = selectedShopCK,
@@ -696,9 +665,32 @@ Tab4:AddDropdown({
 Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
-    Callback = ToggleBuyItem
-})
+    Callback = function(value)
+        BuyitemCK = value
+        if BuyitemCK then
+            while BuyitemCK do
+                    local AquaticArsenal = nil
+                    repeat
+                        for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
+                            if v.Name == shopDataCK[selectedShopCK][1] then
+                                AquaticArsenal = v
+                            break
+                        end
+                    end
+                until AquaticArsenal ~= nil
 
+                local args = shopDataCK[selectedShopCK]
+                args[3] = selectedAmountCK
+                game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+                wait(0.1)
+                game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+                BuyitemCK = false
+                wait(0.1)
+                print("kkk")
+            end
+        end
+    end
+})
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
