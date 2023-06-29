@@ -291,9 +291,14 @@ Tab1:AddToggle({
                             local character = game.Players.LocalPlayer.Character
                             local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
                             if humanoidRootPart then
+                                local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
+                                if ChestPart then
+                                    humanoidRootPart.CFrame = ChestPart.CFrame
+                                    wait(3)
                                     humanoidRootPart.CFrame = finishPart.CFrame
+                                    end
                                 end
-                                end
+                            end
                         wait(5)
                         StartDungeon()
                         wait(0.1)
