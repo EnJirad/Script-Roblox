@@ -98,7 +98,6 @@ local Section = Tab1:AddSection({
 	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
 })
 
-
 --------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local CollectMedkits = true
@@ -122,31 +121,6 @@ Tab2:AddToggle({
 		end
 	end
 })
-
------------------------------------------------------------------------------------------------------------------------------------------------------
-
-local function findStartPartInWorkspace(workspace)
-    local function searchInChildren(parent)
-        for _, child in pairs(parent:GetChildren()) do
-            if child:IsA("Model") and child.Name == "Start" then
-                local StartPart = child:FindFirstChild("Spawn")
-                local SpawnPart = finishPart and finishPart:FindFirstChildWhichIsA("Part")
-                if SpawnPart then
-                    return SpawnPart
-                end
-            end
-
-            local foundPart = searchInChildren(child)
-            if foundPart then
-                return foundPart
-            end
-        end
-
-        return nil
-    end
-
-    return searchInChildren(workspace)
-end
 
 ------------------------------------------------------------------------------------------------------------------------------
 
@@ -244,7 +218,6 @@ Tab2:AddToggle({
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
-
             while AutoMobs do
             spawn(function()
                 while AutoMobs do
@@ -291,7 +264,7 @@ Tab2:AddToggle({
                     end
                 end
             end)
-
+            
                 local function PerformAttack()
                     pcall(function()
                         if AutoMobs then
@@ -317,12 +290,11 @@ Tab2:AddToggle({
                                     end
                                 end
                             end
-                        wait(5)
+                        wait(1)
                         StartDungeon()
                         wait(0.1)
                     end
                 end)
-
                 wait(0.01)
             end
         end
@@ -410,7 +382,6 @@ Tab2:AddToggle({
                         wait(0.1)
                     end
                 end)
-
                 wait(0.01)
             end
         end
@@ -656,34 +627,39 @@ Tab4:AddDropdown({
 Tab4:AddDropdown({
     Name = "Amount",
     Default = tostring(selectedAmountCK),
-    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25"},
     Callback = function(value)
         selectedAmountCK = tonumber(value) or 1
     end
 })
+
+local itemBoughtCK = false
 
 Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemCK = value
-        if BuyitemCK then
-            while BuyitemCK do
-                for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
-                    if v.Name == "AquaticArsenal" then
-                        local args = shopDataCK[selectedShopCK]
-                        args[3] = selectedAmountCK
-                        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-                        wait(0.1)
-                        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-                        BuyitemCK = false
-                        wait(0.1)
-                    end
+        while BuyitemCK and not itemBoughtCK do
+            for _, v in ipairs(game:GetService("Workspace").Dungeon:GetChildren()) do
+                if v.Name == "Rooms" then
+                    local args = shopDataFF[selectedShopFF]
+                    args[3] = selectedAmountFF
+                    game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+                    wait(0.1)
+                    game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+                    itemBoughtCK = true
+                    BuyitemCK = false
+                    wait(0.1)
                 end
             end
         end
+        if itemBoughtCK then
+            BuyitemCK = false
+        end
     end
 })
+
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -693,6 +669,7 @@ local Section = Tab4:AddSection({
 
 local BuyitemDD = false
 local selectedAmountDD = 1
+local selectedShopDD = "Daring Chest"
 
 local shopDataDD = {
     ["Daring Chest"] = {
@@ -712,30 +689,6 @@ local shopDataDD = {
     },
 }
 
-local selectedShopDD = "Daring Chest"
-
-local function PurchaseItemDD()
-    if BuyitemDD then
-        local SilentStash = nil
-        repeat
-            for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
-                if v.Name == shopDataCK[selectedShopCK][1] then
-                    SilentStash = v
-                    break
-                end
-            end
-            wait(0.1)
-        until SilentStash ~= nil
-
-        local args = shopDataCK[selectedShopDD]
-        args[3] = selectedAmountDD
-        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-        wait(0.1)
-        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-        BuyitemDD = false
-    end
-end
-
 Tab4:AddDropdown({
     Name = "Silent Shop",
     Default = selectedShopDD,
@@ -748,29 +701,39 @@ Tab4:AddDropdown({
 Tab4:AddDropdown({
     Name = "Amount",
     Default = tostring(selectedAmountDD),
-    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25"},
     Callback = function(value)
         selectedAmountDD = tonumber(value) or 1
     end
 })
 
-local function PurchaseItemsContinuouslyDD()
-    while BuyitemDD do
-        PurchaseItemDD()
-        wait(0.1)
-    end
-end
+local itemBoughtDD = false
 
 Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemDD = value
-        if BuyitemDD then
-            PurchaseItemsContinuouslyDD()
+        while BuyitemDD and not itemBoughtDD do
+            for _, v in ipairs(game:GetService("Workspace").Dungeon:GetChildren()) do
+                if v.Name == "Rooms" then
+                    local args = shopDataFF[selectedShopFF]
+                    args[3] = selectedAmountFF
+                    game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+                    wait(0.1)
+                    game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+                    itemBoughtDD = true
+                    BuyitemDD = false
+                    wait(0.1)
+                end
+            end
+        end
+        if itemBoughtDD then
+            BuyitemDD = false
         end
     end
 })
+
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -780,6 +743,7 @@ local Section = Tab4:AddSection({
 
 local BuyitemFF = false
 local selectedAmountFF = 1
+local selectedShopFF = "Molten Chest"
 
 local shopDataFF = {
     ["Molten Chest"] = {
@@ -809,31 +773,6 @@ local shopDataFF = {
     },
 }
 
-local selectedShopFF = "Molten Chest"
-
-local function PurchaseItemFF()
-    if BuyitemFF then
-        local MoltenMarket = nil
-        repeat
-            for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
-                if v.Name == shopDataCK[selectedShopCK][1] then
-                    MoltenMarket = v
-                    break   
-                end
-            end
-            wait(0.1)
-        until MoltenMarket ~= nil
-
-        local args = shopDataCK[selectedShopFF]
-        args[3] = selectedAmountFF
-        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-        wait(0.1)
-        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-        BuyitemFF = false
-    end
-end
-
-
 Tab4:AddDropdown({
     Name = "Molten Market",
     Default = selectedShopFF,
@@ -846,26 +785,35 @@ Tab4:AddDropdown({
 Tab4:AddDropdown({
     Name = "Amount",
     Default = tostring(selectedAmountFF),
-    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10"},
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25"},
     Callback = function(value)
         selectedAmountFF = tonumber(value) or 1
     end
 })
 
-local function PurchaseItemsContinuouslyFF()
-    while BuyitemFF do
-        PurchaseItemFF()
-        wait(0.1)
-    end
-end
+local itemBoughtFF = false
 
 Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemFF = value
-        if BuyitemFF then
-            PurchaseItemsContinuouslyFF()
+        while BuyitemFF and not itemBoughtFF do
+            for _, v in ipairs(game:GetService("Workspace").Dungeon:GetChildren()) do
+                if v.Name == "Rooms" then
+                    local args = shopDataFF[selectedShopFF]
+                    args[3] = selectedAmountFF
+                    game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+                    wait(0.1)
+                    game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+                    itemBoughtFF = true
+                    BuyitemFF = false
+                    wait(0.1)
+                end
+            end
+        end
+        if itemBoughtFF then
+            BuyitemFF = false
         end
     end
 })
