@@ -282,17 +282,30 @@ Tab1:AddToggle({
 
                                                     if EvilHumanoid.Health > 0 then
                                                         local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-
-                                                        local Skill = {"Tsunami","Freeze","Sandstorm","IceSpike","MeteorBlast","WaveBlast","InfernoWave","Spike"}
+                                                        
+                                                        local Skill = {"Tsunami","Freeze","Sandstorm","IceSpike","MeteorBlast","WaveBlast",
+                                                                        "InfernoWave","Spike", "Explosion", "Shockwave"}
+                                                                        
                                                         for _, ignorePart in ipairs(ignoreParts) do
-                                                            if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) and (ignorePart:IsA("BasePart") 
-                                                                or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
-                                                                if table.find(Skill, ignorePart.Name) then
-                                                                    ignorePart.Size = Vector3.new(100, 100, 100)
+                                                            if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name)
+                                                                and (ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
+                                                                local SKK = table.find(Skill, ignorePart.Name)
+                                                                local AllPart = ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part"))
+                                                                
+                                                                if SKK then
+                                                                    ignorePart.Size = Vector3.new(200, 100, 200)
                                                                 end
-                                                                if table.find(Skill, ignorePart.Name) then
-                                                                    ignorePart.Transparency = 1
+                                                                if SKK then
                                                                     ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                end
+                                                                if SKK then
+                                                                    ignorePart.Position = Position.new(monsterPos)
+                                                                end
+                                                                if AllPart then
+                                                                    ignorePart.CFrame = CFrame.new(monsterPos)
+                                                                end
+                                                                if AllPart then
+                                                                    ignorePart.Position = Position.new(monsterPos)
                                                                 end
                                                             end
                                                         end
@@ -411,17 +424,30 @@ Tab1:AddToggle({
 
                                                 if EvilHumanoid.Health > 0 then
                                                     local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-
-                                                    local Skill = {"Tsunami","Freeze","Sandstorm","IceSpike","MeteorBlast","WaveBlast","InfernoWave","Spike"}
+                                                    
+                                                    local Skill = {"Tsunami","Freeze","Sandstorm","IceSpike","MeteorBlast","WaveBlast",
+                                                                    "InfernoWave","Spike", "Explosion", "Shockwave"}
+                                                                    
                                                     for _, ignorePart in ipairs(ignoreParts) do
-                                                        if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) and (ignorePart:IsA("BasePart") 
-                                                            or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
-                                                            if table.find(Skill, ignorePart.Name) then
-                                                                ignorePart.Size = Vector3.new(100, 100, 100)
+                                                        if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name)
+                                                            and (ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
+                                                            local SKK = table.find(Skill, ignorePart.Name)
+                                                            local AllPart = ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part"))
+                                                            
+                                                            if SKK then
+                                                                ignorePart.Size = Vector3.new(200, 100, 200)
                                                             end
-                                                            if table.find(Skill, ignorePart.Name) then
-                                                                ignorePart.Transparency = 1 
+                                                            if SKK then
                                                                 ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            end
+                                                            if SKK then
+                                                                ignorePart.Position = Position.new(monsterPos)
+                                                            end
+                                                            if AllPart then
+                                                                ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            end
+                                                            if AllPart then
+                                                                ignorePart.Position = Position.new(monsterPos)
                                                             end
                                                         end
                                                     end
@@ -531,18 +557,28 @@ Tab2:AddToggle({
                                                     local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
                                                     
                                                     local Skill = {"Tsunami","Freeze","Sandstorm","IceSpike","MeteorBlast","WaveBlast",
-                                                        "InfernoWave","Spike"}
+                                                                    "InfernoWave","Spike", "Explosion", "Shockwave"}
+                                                                    
                                                     for _, ignorePart in ipairs(ignoreParts) do
-                                                        if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) and (ignorePart:IsA("BasePart") 
-                                                            or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") 
-                                                            or ignorePart:IsA("Part")) then
+                                                        if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name)
+                                                            and (ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
+                                                            local SKK = table.find(Skill, ignorePart.Name)
+                                                            local AllPart = ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part"))
                                                             
-                                                            if table.find(Skill, ignorePart.Name) then
-                                                                ignorePart.Size = Vector3.new(100, 100, 100)
+                                                            if SKK then
+                                                                ignorePart.Size = Vector3.new(200, 100, 200)
                                                             end
-                                                            if table.find(Skill, ignorePart.Name) then
-                                                                ignorePart.Transparency = 1
+                                                            if SKK then
                                                                 ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            end
+                                                            if SKK then
+                                                                ignorePart.Position = Position.new(monsterPos)
+                                                            end
+                                                            if AllPart then
+                                                                ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            end
+                                                            if AllPart then
+                                                                ignorePart.Position = Position.new(monsterPos)
                                                             end
                                                         end
                                                     end
