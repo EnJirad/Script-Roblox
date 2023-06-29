@@ -614,7 +614,7 @@ Tab3:AddToggle({
 
 
 local Section = Tab4:AddSection({
-	Name = "Coral Kingdom"
+    Name = "Coral Kingdom"
 })
 
 local BuyitemCK = false
@@ -645,25 +645,33 @@ local shopDataCK = {
 
 local selectedShopCK = "Aquatic Chest"
 
-local function PurchaseItemCK()
-    if BuyitemCK then
-        local AquaticArsenal = nil
-        repeat
-            for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
-                if v.Name == shopDataCK[selectedShopCK][1] then
-                    AquaticArsenal = v
-                    break
-                end
+local function PurchaseItem()
+    local AquaticArsenal = nil
+    repeat
+        for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
+            if v.Name == shopDataCK[selectedShopCK][1] then
+                AquaticArsenal = v
+                break
             end
-            wait(0.1)
-        until AquaticArsenal ~= nil
+        end
+        wait()
+    until AquaticArsenal ~= nil
 
-        local args = shopDataCK[selectedShopCK]
-        args[3] = selectedAmountCK
-        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-        wait(0.1)
-        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-        BuyitemCK = false
+    local args = shopDataCK[selectedShopCK]
+    args[3] = selectedAmountCK
+    game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+    wait(0.1)
+    game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+    print("kkk")
+end
+
+local function ToggleBuyItem(value)
+    BuyitemCK = value
+    if BuyitemCK then
+        while BuyitemCK do
+            PurchaseItem()
+            wait(0.1)
+        end
     end
 end
 
@@ -685,23 +693,12 @@ Tab4:AddDropdown({
     end
 })
 
-local function PurchaseItemsContinuouslyCK()
-    while BuyitemCK do
-        PurchaseItemCK()
-        wait(0.1)
-    end
-end
-
 Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
-    Callback = function(value)
-        BuyitemCK = value
-        if BuyitemCK then
-            PurchaseItemsContinuouslyCK()
-        end
-    end
+    Callback = ToggleBuyItem
 })
+
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
