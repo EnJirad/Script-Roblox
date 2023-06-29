@@ -618,15 +618,23 @@ local selectedShopCK = "Aquatic Chest"
 
 local function PurchaseItemCK()
     if BuyitemCK then
-        local AquaticArsenal = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.AquaticArsenal
-        if AquaticArsenal then
-            local args = shopDataCK[selectedShopCK]
-            args[3] = selectedAmountCK
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        local AquaticArsenal = nil
+        repeat
+            for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
+                if v.Name == shopDataCK[selectedShopCK][1] then
+                    AquaticArsenal = v
+                    break
+                end
+            end
             wait(0.1)
-            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-            BuyitemCK = false
-        end
+        until AquaticArsenal ~= nil
+
+        local args = shopDataCK[selectedShopCK]
+        args[3] = selectedAmountCK
+        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        wait(0.1)
+        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+        BuyitemCK = false
     end
 end
 
@@ -693,15 +701,23 @@ local selectedShopDD = "Daring Chest"
 
 local function PurchaseItemDD()
     if BuyitemDD then
-        local SilentStash = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.SilentStash
-        if SilentStash then
-            local args = shopDataDD[selectedShopDD]
-            args[3] = selectedAmountDD
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        local SilentStash = nil
+        repeat
+            for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
+                if v.Name == shopDataCK[selectedShopCK][1] then
+                    SilentStash = v
+                    break
+                end
+            end
             wait(0.1)
-            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-            BuyitemDD = false
-        end
+        until SilentStash ~= nil
+
+        local args = shopDataCK[selectedShopDD]
+        args[3] = selectedAmountDD
+        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        wait(0.1)
+        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+        BuyitemDD = false
     end
 end
 
@@ -778,17 +794,26 @@ local selectedShopFF = "Molten Chest"
 
 local function PurchaseItemFF()
     if BuyitemFF then
-        local MoltenMarket = game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops.MoltenMarket
-        if MoltenMarket then
-            local args = shopDataFF[selectedShopFF]
-            args[3] = selectedAmountFF
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        local MoltenMarket = nil
+        repeat
+            for _, v in ipairs(game:GetService("Workspace").Dungeon.Rooms.BossRoom.SecretShops:GetChildren()) do
+                if v.Name == shopDataCK[selectedShopCK][1] then
+                    MoltenMarket = v
+                    break   
+                end
+            end
             wait(0.1)
-            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-            BuyitemFF = false
-        end
+        until MoltenMarket ~= nil
+
+        local args = shopDataCK[selectedShopFF]
+        args[3] = selectedAmountFF
+        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        wait(0.1)
+        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+        BuyitemFF = false
     end
 end
+
 
 Tab3:AddDropdown({
     Name = "Molten Market",
