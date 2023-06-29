@@ -11,13 +11,13 @@ local Window = OrionLib:MakeWindow({Name = "Treasure Quest", HidePremium = false
 --
 -------------------------------------------
 local Tab1 = Window:MakeTab({
-	Name = "Auto Farm",
+	Name = "Magic Weapon",
 	Icon = "rbxassetid://12836287616",
 	PremiumOnly = false
 })
 -------------------------------------------
 local Tab2 = Window:MakeTab({
-	Name = "Farm WAVE",
+	Name = "Warrior Weapon",
 	Icon = "rbxassetid://12836287616",
 	PremiumOnly = false
 })
@@ -256,7 +256,7 @@ Tab1:AddToggle({
                                                         local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
 
                                                         if SKK then
-                                                            ignorePart.Size = Vector3.new(200, 50, 200)
+                                                            ignorePart.Size = Vector3.new(100, 10, 100)
                                                         end
 
                                                         if (SKK or AllPart) and EvilHumanoid.Health > 0 then
@@ -569,16 +569,20 @@ Tab3:AddDropdown({
     end
 })
 
+local function PurchaseItemsContinuouslyCK()
+    while BuyitemCK do
+        PurchaseItemCK()
+        wait(0.1)
+    end
+end
+
 Tab3:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemCK = value
         if BuyitemCK then
-            while BuyitemCK do
-                PurchaseItemCK()
-                wait(0.1)
-            end
+            PurchaseItemsContinuouslyCK()
         end
     end
 })
@@ -652,16 +656,20 @@ Tab3:AddDropdown({
     end
 })
 
+local function PurchaseItemsContinuouslyDD()
+    while BuyitemDD do
+        PurchaseItemDD()
+        wait(0.1)
+    end
+end
+
 Tab3:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemDD = value
         if BuyitemDD then
-            while BuyitemDD do
-                PurchaseItemDD()
-                wait(0.1)
-            end
+            PurchaseItemsContinuouslyDD()
         end
     end
 })
@@ -746,16 +754,20 @@ Tab3:AddDropdown({
     end
 })
 
+local function PurchaseItemsContinuouslyFF()
+    while BuyitemFF do
+        PurchaseItemFF()
+        wait(0.1)
+    end
+end
+
 Tab3:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemFF = value
         if BuyitemFF then
-            while BuyitemFF do
-                PurchaseItemFF()
-                wait(0.1)
-            end
+            PurchaseItemsContinuouslyFF()
         end
     end
 })
