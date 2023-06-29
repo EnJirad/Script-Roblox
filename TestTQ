@@ -231,17 +231,6 @@ Tab1:AddToggle({
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
-
-            local function PerformAttack()
-                pcall(function()
-                    if AutoMobs then
-                        ScriptFunction(Script)
-                        ScriptFunction2(Script)
-                    end
-                end)
-            end
-            game:GetService("RunService").Stepped:Connect(PerformAttack)
-            
             while AutoMobs do
                 spawn(function()
                     while AutoMobs do wait(0.01)
@@ -283,6 +272,16 @@ Tab1:AddToggle({
                         end
                     end
                 end)
+                
+                local function PerformAttack()
+                    pcall(function()
+                        if AutoMobs then
+                            ScriptFunction(Script)
+                            ScriptFunction2(Script)
+                        end
+                    end)
+                end
+                game:GetService("RunService").Stepped:Connect(PerformAttack)
 
                 spawn(function()
                     while AutoMobs do
@@ -318,17 +317,6 @@ Tab1:AddToggle({
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
-
-            local function PerformAttack()
-                pcall(function()
-                    if AutoMobs then
-                        ScriptFunction(Script)
-                        ScriptFunction2(Script)
-                    end
-                end)
-            end
-            game:GetService("RunService").Stepped:Connect(PerformAttack)
-
             while AutoMobs do
                 spawn(function()
                     while AutoMobs do wait(0.01)
@@ -370,6 +358,16 @@ Tab1:AddToggle({
                         end
                     end
                 end)
+
+                local function PerformAttack()
+                    pcall(function()
+                        if AutoMobs then
+                            ScriptFunction(Script)
+                            ScriptFunction2(Script)
+                        end
+                    end)
+                end
+                game:GetService("RunService").Stepped:Connect(PerformAttack)
 
                 spawn(function()
                     while AutoMobs do
@@ -425,17 +423,6 @@ Tab2:AddToggle({
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
-
-            local function PerformAttack()
-                pcall(function()
-                    if AutoMobs then
-                        ScriptFunction(Script)
-                        ScriptFunction2(Script)
-                    end
-                end)
-            end
-            game:GetService("RunService").Stepped:Connect(PerformAttack)
-
             while AutoMobs do
                 spawn(function()
                     while AutoMobs do wait(0.01)
@@ -477,6 +464,16 @@ Tab2:AddToggle({
                         end
                     end
                 end)
+
+                local function PerformAttack()
+                    pcall(function()
+                        if AutoMobs then
+                            ScriptFunction(Script)
+                            ScriptFunction2(Script)
+                        end
+                    end)
+                end
+                game:GetService("RunService").Stepped:Connect(PerformAttack)
 
                 spawn(function()
                     while AutoMobs do
