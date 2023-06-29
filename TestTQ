@@ -231,36 +231,37 @@ Tab1:AddToggle({
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
+
             while AutoMobs do
-                spawn(function()
-                    while AutoMobs do wait(0.01)
-                        for _, v in ipairs(Workspace:GetChildren()) do
-                            if v.ClassName == "Folder" then
-                                for _, x in ipairs(v:GetChildren()) do
-                                    if x.ClassName == "Folder" then
-                                        for _, c in ipairs(x:GetChildren()) do
-                                            if c:IsA("Model") and c:FindFirstChild("HumanoidRootPart") then
-                                                local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
-                                                local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+            spawn(function()
+                while AutoMobs do
+                    wait(0.01)
+                    for _, v in ipairs(Workspace:GetChildren()) do
+                        if v.ClassName == "Folder" then
+                            for _, x in ipairs(v:GetChildren()) do
+                                if x.ClassName == "Folder" then
+                                    for _, c in ipairs(x:GetChildren()) do
+                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
 
-                                                if EvilHumanoid.Health > 0 then
-                                                    local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
+                                            if EvilHumanoid then
+                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
 
-                                                    local Skill = {"Tsunami", "Freeze", "Sandstorm", "IceSpike", "MeteorBlast", "WaveBlast", "InfernoWave", "Spike", "Explosion", "Shockwave"}
+                                                local Skill = {"Tsunami", "Freeze", "Sandstorm", "IceSpike", "MeteorBlast", "WaveBlast", "InfernoWave", "Spike", "Explosion", "Shockwave"}
 
-                                                    for _, ignorePart in ipairs(ignoreParts) do
-                                                        if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
-                                                            local SKK = table.find(Skill, ignorePart.Name)
-                                                            local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
+                                                for _, ignorePart in ipairs(ignoreParts) do
+                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
+                                                        local SKK = table.find(Skill, ignorePart.Name)
+                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
 
-                                                            if SKK then
-                                                                ignorePart.Size = Vector3.new(100, 10, 100)
-                                                            end
+                                                        if SKK then
+                                                            ignorePart.Size = Vector3.new(200, 50, 200)
+                                                        end
 
-                                                            if SKK or AllPart then
-                                                                ignorePart.CFrame = CFrame.new(monsterPos)
-                                                                ignorePart.Position = monsterPos
-                                                            end
+                                                        if (SKK or AllPart) and EvilHumanoid.Health > 0 then
+                                                            ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            ignorePart.Position = monsterPos
                                                         end
                                                     end
                                                 end
@@ -271,8 +272,9 @@ Tab1:AddToggle({
                             end
                         end
                     end
-                end)
-                
+                end
+            end)
+
                 local function PerformAttack()
                     pcall(function()
                         if AutoMobs then
@@ -317,36 +319,37 @@ Tab1:AddToggle({
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
-            while AutoMobs do
-                spawn(function()
-                    while AutoMobs do wait(0.01)
-                        for _, v in ipairs(Workspace:GetChildren()) do
-                            if v.ClassName == "Folder" then
-                                for _, x in ipairs(v:GetChildren()) do
-                                    if x.ClassName == "Folder" then
-                                        for _, c in ipairs(x:GetChildren()) do
-                                            if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
-                                                local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
-                                                local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
 
-                                                if EvilHumanoid.Health > 0 then
-                                                    local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-                                                    
-                                                    local Skill = {"Tsunami", "Freeze", "Sandstorm", "IceSpike", "MeteorBlast", "WaveBlast", "InfernoWave", "Spike", "Explosion", "Shockwave"}
-                                                    
-                                                    for _, ignorePart in ipairs(ignoreParts) do
-                                                        if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
-                                                            local SKK = table.find(Skill, ignorePart.Name)
-                                                            local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
-                                                            
-                                                            if SKK then
-                                                                ignorePart.Size = Vector3.new(200, 100, 200)
-                                                            end
-                                                            
-                                                            if SKK or AllPart then
-                                                                ignorePart.CFrame = CFrame.new(monsterPos)
-                                                                ignorePart.Position = Position.new(monsterPos)
-                                                            end
+            while AutoMobs do
+            spawn(function()
+                while AutoMobs do
+                    wait(0.01)
+                    for _, v in ipairs(Workspace:GetChildren()) do
+                        if v.ClassName == "Folder" then
+                            for _, x in ipairs(v:GetChildren()) do
+                                if x.ClassName == "Folder" then
+                                    for _, c in ipairs(x:GetChildren()) do
+                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+
+                                            if EvilHumanoid then
+                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
+
+                                                local Skill = {"Tsunami", "Freeze", "Sandstorm", "IceSpike", "MeteorBlast", "WaveBlast", "InfernoWave", "Spike", "Explosion", "Shockwave"}
+
+                                                for _, ignorePart in ipairs(ignoreParts) do
+                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
+                                                        local SKK = table.find(Skill, ignorePart.Name)
+                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
+
+                                                        if SKK then
+                                                            ignorePart.Size = Vector3.new(200, 50, 200)
+                                                        end
+
+                                                        if (SKK or AllPart) and EvilHumanoid.Health > 0 then
+                                                            ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            ignorePart.Position = monsterPos
                                                         end
                                                     end
                                                 end
@@ -357,7 +360,8 @@ Tab1:AddToggle({
                             end
                         end
                     end
-                end)
+                end
+            end)
 
                 local function PerformAttack()
                     pcall(function()
@@ -378,8 +382,8 @@ Tab1:AddToggle({
                             if humanoidRootPart then
                                     humanoidRootPart.CFrame = finishPart.CFrame
                                 end
-                                end
-                        wait(5)
+                            end
+                        wait(1)
                         StartDungeon()
                         wait(0.1)
                     end
@@ -423,36 +427,37 @@ Tab2:AddToggle({
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
+            
             while AutoMobs do
-                spawn(function()
-                    while AutoMobs do wait(0.01)
-                        for _, v in ipairs(Workspace:GetChildren()) do
-                            if v.ClassName == "Folder" then
-                                for _, x in ipairs(v:GetChildren()) do
-                                    if x.ClassName == "Folder" then
-                                        for _, c in ipairs(x:GetChildren()) do
-                                            if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
-                                                local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
-                                                local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
-                                                
-                                                if EvilHumanoid.Health > 0 then
-                                                    local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-                                                    
-                                                    local Skill = {"Tsunami", "Freeze", "Sandstorm", "IceSpike", "MeteorBlast", "WaveBlast", "InfernoWave", "Spike", "Explosion", "Shockwave"}
-                                                    
-                                                    for _, ignorePart in ipairs(ignoreParts) do
-                                                        if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
-                                                            local SKK = table.find(Skill, ignorePart.Name)
-                                                            local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
-                                                            
-                                                            if SKK then
-                                                                ignorePart.Size = Vector3.new(200, 100, 200)
-                                                            end
-                                                            
-                                                            if SKK or AllPart then
-                                                                ignorePart.CFrame = CFrame.new(monsterPos)
-                                                                ignorePart.Position = Position.new(monsterPos)
-                                                            end
+            spawn(function()
+                while AutoMobs do
+                    wait(0.01)
+                    for _, v in ipairs(Workspace:GetChildren()) do
+                        if v.ClassName == "Folder" then
+                            for _, x in ipairs(v:GetChildren()) do
+                                if x.ClassName == "Folder" then
+                                    for _, c in ipairs(x:GetChildren()) do
+                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+
+                                            if EvilHumanoid then
+                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
+
+                                                local Skill = {"Tsunami", "Freeze", "Sandstorm", "IceSpike", "MeteorBlast", "WaveBlast", "InfernoWave", "Spike", "Explosion", "Shockwave"}
+
+                                                for _, ignorePart in ipairs(ignoreParts) do
+                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
+                                                        local SKK = table.find(Skill, ignorePart.Name)
+                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
+
+                                                        if SKK then
+                                                            ignorePart.Size = Vector3.new(200, 50, 200)
+                                                        end
+
+                                                        if (SKK or AllPart) and EvilHumanoid.Health > 0 then
+                                                            ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            ignorePart.Position = monsterPos
                                                         end
                                                     end
                                                 end
@@ -463,7 +468,8 @@ Tab2:AddToggle({
                             end
                         end
                     end
-                end)
+                end
+            end)
 
                 local function PerformAttack()
                     pcall(function()
