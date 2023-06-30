@@ -12,25 +12,25 @@ local Window = OrionLib:MakeWindow({Name = "Treasure Quest", HidePremium = false
 -------------------------------------------
 local Tab1 = Window:MakeTab({
 	Name = "Player",
-	Icon = "rbxassetid://12836287616",
+	Icon = "rbxassetid://12836323838",
 	PremiumOnly = false
 })
 -------------------------------------------
 local Tab2 = Window:MakeTab({
 	Name = "Magic Weapon",
-	Icon = "rbxassetid://12836287616",
+	Icon = "rbxassetid://12836267517",
 	PremiumOnly = false
 })
 -------------------------------------------
 local Tab3 = Window:MakeTab({
 	Name = "Warrior and Bow",
-	Icon = "rbxassetid://12836287616",
+	Icon = "rbxassetid://13907030534",
 	PremiumOnly = false
 })
 --------------------------------------------
 local Tab4 = Window:MakeTab({
-	Name = "Auto Buy Item",
-	Icon = "rbxassetid://12836287616",
+	Name = "Mystery Shop",
+	Icon = "rbxassetid://13907035307",
 	PremiumOnly = false
 })
 --------------------------------------------
@@ -633,72 +633,20 @@ Tab4:AddDropdown({
     end
 })
 
-local buyToggleCK = Tab4:AddToggle({
+Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemCK = value
         if BuyitemCK then
-            while BuyitemCK do
-                AutoBuyItemCK()
-                wait(0.1)
-            end
+            local args = shopDataCK[selectedShopCK]
+            args[3] = selectedAmountCK
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+            wait(0.1)
+            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
         end
     end
 })
-
-local function AutoBuyItemCK()
-    local waitBuyCK = false
-    local foundShopCK = false
-
-    -- ตรวจสอบร้านค้าที่ต้องการ
-    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
-        if v.ClassName == "Folder" then
-            for _, x in ipairs(v:GetChildren()) do
-                if x.ClassName == "Folder" then
-                    for _, c in ipairs(x:GetChildren()) do
-                        if c:IsA("Model") then
-                            for _, g in ipairs(x:GetChildren()) do
-                                if g.Name == "SecretShops" and g:FindFirstChild("AquaticArsenal") then
-                                    waitBuyCK = true
-                                    foundShopCK = true
-                                    break
-                                end
-                            end
-                        end
-
-                        if waitBuyCK then
-                            break
-                        end
-                    end
-                end
-
-                if waitBuyCK then
-                    break
-                end
-            end
-        end
-
-        if waitBuyCK then
-            break
-        end
-    end
-
-    -- หากไม่พบร้านค้าที่ต้องการให้หาใหม่จนกว่าจะพบ
-    if not foundShopCK then
-        return
-    end
-    
-    -- ซื้อของและปิด Toggle หลังจากซื้อสำเร็จ
-    if not waitBuyCK then
-        local args = shopDataCK[selectedShopCK]
-        args[3] = selectedAmountCK
-        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-        wait(0.1)
-        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-        buyToggleCK:Set(false) -- ปิด Toggle ที่ชื่อ "Buy Item"
-    end
-end
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -746,72 +694,20 @@ Tab4:AddDropdown({
     end
 })
 
-local buyToggleDD = Tab4:AddToggle({
+Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemDD = value
         if BuyitemDD then
-            while BuyitemDD do
-                AutoBuyItemDD()
-                wait(0.1)
-            end
+            local args = shopDataDD[selectedShopDD]
+            args[3] = selectedAmountDD
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+            wait(0.1)
+            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
         end
     end
 })
-
-local function AutoBuyItemDD()
-    local waitBuyDD = false
-    local foundShopDD = false
-
-    -- ตรวจสอบร้านค้าที่ต้องการ
-    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
-        if v.ClassName == "Folder" then
-            for _, x in ipairs(v:GetChildren()) do
-                if x.ClassName == "Folder" then
-                    for _, c in ipairs(x:GetChildren()) do
-                        if c:IsA("Model") then
-                            for _, g in ipairs(x:GetChildren()) do
-                                if g.Name == "SecretShops" and g:FindFirstChild("SilentStash") then
-                                    waitBuyDD = true
-                                    foundShopDD = true
-                                    break
-                                end
-                            end
-                        end
-
-                        if waitBuyDD then
-                            break
-                        end
-                    end
-                end
-
-                if waitBuyDD then
-                    break
-                end
-            end
-        end
-
-        if waitBuyDD then
-            break
-        end
-    end
-
-    -- หากไม่พบร้านค้าที่ต้องการให้หาใหม่จนกว่าจะพบ
-    if not foundShopDD then
-        return
-    end
-    
-    -- ซื้อของและปิด Toggle หลังจากซื้อสำเร็จ
-    if not waitBuyDD then
-        local args = shopDataCK[selectedShopCK]
-        args[3] = selectedAmountCK
-        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-        wait(0.1)
-        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-        buyToggleDD:Set(false) -- ปิด Toggle ที่ชื่อ "Buy Item"
-    end
-end
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -869,73 +765,20 @@ Tab4:AddDropdown({
     end
 })
 
-local buyToggleFF = Tab4:AddToggle({
+Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemFF = value
         if BuyitemFF then
-            while BuyitemFF do
-                AutoBuyItemFF()
-                wait(0.1)
-            end
+            local args = shopDataFF[selectedShopFF]
+            args[3] = selectedAmountFF
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+            wait(0.1)
+            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
         end
     end
 })
-
-local function AutoBuyItemFF()
-    local waitBuyFF = false
-    local foundShopFF = false
-
-    -- ตรวจสอบร้านค้าที่ต้องการ
-    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
-        if v.ClassName == "Folder" then
-            for _, x in ipairs(v:GetChildren()) do
-                if x.ClassName == "Folder" then
-                    for _, c in ipairs(x:GetChildren()) do
-                        if c:IsA("Model") then
-                            for _, g in ipairs(x:GetChildren()) do
-                                if g.Name == "SecretShops" and g:FindFirstChild("SilentStash") then
-                                    waitBuyFF = true
-                                    foundShopFF = true
-                                    break
-                                end
-                            end
-                        end
-
-                        if waitBuyFF then
-                            break
-                        end
-                    end
-                end
-
-                if waitBuyFF then
-                    break
-                end
-            end
-        end
-
-        if waitBuyFF then
-            break
-        end
-    end
-
-    -- หากไม่พบร้านค้าที่ต้องการให้หาใหม่จนกว่าจะพบ
-    if not foundShopFF then
-        return
-    end
-    
-    -- ซื้อของและปิด Toggle หลังจากซื้อสำเร็จ
-    if not waitBuyFF then
-        local args = shopDataCK[selectedShopCK]
-        args[3] = selectedAmountCK
-        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-        wait(0.1)
-        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-        buyToggleFF:Set(false) -- ปิด Toggle ที่ชื่อ "Buy Item"
-    end
-end
-
 
 ------------------------------------------------------------------------------------------------------------------------
 
