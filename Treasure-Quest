@@ -11,30 +11,33 @@ local Window = OrionLib:MakeWindow({Name = "Treasure Quest", HidePremium = false
 --
 -------------------------------------------
 local Tab1 = Window:MakeTab({
-	Name = "Auto Farm",
-	Icon = "rbxassetid://12836287616",
+	Name = "Player",
+	Icon = "rbxassetid://12836323838",
 	PremiumOnly = false
 })
 -------------------------------------------
 local Tab2 = Window:MakeTab({
-	Name = "Farm WAVE",
-	Icon = "rbxassetid://12836287616",
+	Name = "Magic Weapon",
+	Icon = "rbxassetid://12836267517",
+	PremiumOnly = false
+})
+-------------------------------------------
+local Tab3 = Window:MakeTab({
+	Name = "Warrior and Bow",
+	Icon = "rbxassetid://13907030534",
+	PremiumOnly = false
+})
+--------------------------------------------
+local Tab4 = Window:MakeTab({
+	Name = "Mystery Shop",
+	Icon = "rbxassetid://13907035307",
 	PremiumOnly = false
 })
 --------------------------------------------
 
-repeat wait() until game:IsLoaded()
-local ReplicatedStorage = game.ReplicatedStorage
 local Players = game.Players
-local TweenService = game.TweenService
-local Workspace = game.Workspace
-local HttpService = game.HttpService
 local Player = Players.LocalPlayer
-
-local TweenInfoClose = TweenInfo.new(0.5, Enum.EasingStyle.Linear)
 local Character = Player.Character
-
-local HumanoidRootPart = Character.HumanoidRootPart
 
 local Speed = 60
 
@@ -81,14 +84,15 @@ Tab1:AddToggle({
 	end
 })
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 local Section = Tab1:AddSection({
 	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
 })
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
 local CollectMedkits = true
-Tab1:AddToggle({
+Tab2:AddToggle({
 	Name = "Collect Medkit",
 	Default = false,
 	Callback = function(value)
@@ -109,32 +113,45 @@ Tab1:AddToggle({
 	end
 })
 
-------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------
 
-local function findStartPartInWorkspace(workspace)
-    local function searchInChildren(parent)
-        for _, child in pairs(parent:GetChildren()) do
-            if child:IsA("Model") and child.Name == "Start" then
-                local finishPart = child:FindFirstChild("Spawn")
-                local HitboxPart = finishPart and finishPart:FindFirstChildWhichIsA("BasePart")
-                if HitboxPart then
-                    return HitboxPart
+local Section = Tab2:AddSection({
+	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
+})
+
+local function StartDungeon()
+    local hasHumanoidRootPart = false
+    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if v.ClassName == "Folder" then
+            for _, x in ipairs(v:GetChildren()) do
+                if x.ClassName == "Folder" then
+                    for _, c in ipairs(x:GetChildren()) do
+                        if c:IsA("Model") and c:FindFirstChild("HumanoidRootPart") then
+                            hasHumanoidRootPart = true
+                            break
+                        end
+                    end
+                end
+                if hasHumanoidRootPart then
+                    break
                 end
             end
-
-            local foundPart = searchInChildren(child)
-            if foundPart then
-                return foundPart
-            end
         end
-
-        return nil
+        if hasHumanoidRootPart then
+            break
+        end
     end
-
-    return searchInChildren(workspace)
+    
+    if not hasHumanoidRootPart then
+        wait(1.5)
+        game.ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+        game.ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
+    end
 end
 
------------------------------------------------------------------------------------------------------------------------------------------------------
+
+
+-------------------------------------------------------------------------------------------------------------------------------------------------
 
 local visitedChests = {}
 local lastVisitedChest = nil
@@ -165,8 +182,6 @@ end
 
 -----------------------------------------------------------------------------------------------------------------------------------------------------
 
-local TweenService = game:GetService("TweenService")
-
 local function findFinishPartInWorkspace(workspace)
     local function searchInChildren(parent)
         for _, child in pairs(parent:GetChildren()) do
@@ -196,108 +211,51 @@ local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
 local ScriptFunction = Script.BasicAttack
 local ScriptFunction2 = Script.UseAbility
 
+local Workspace = game:GetService("Workspace")
 local AutoMobs = false
 
-Tab1:AddToggle({
-    Name = "Auto Farm and TP Chest",
+Tab2:AddToggle({
+    Name = "Magic Weapon",
     Default = false,
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
-            local function PerformAttack()
-                pcall(function()
-                    if AutoMobs then
-                        ScriptFunction(Script)
-                        ScriptFunction2(Script)
-                    end
-                end)
-            end
-            game:GetService("RunService").Stepped:Connect(PerformAttack)
-
-            local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
-                if StartPart then
-                    local character = game.Players.LocalPlayer.Character
-                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                    if humanoidRootPart then
-                        humanoidRootPart.CFrame = StartPart.CFrame
-                    end
-                end
-            wait(0.1)
             
             while AutoMobs do
-                    pcall(function()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                        ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
+            StartDungeon()
+            spawn(function()
+                while AutoMobs do
+                    wait(0.01)
+                    for _, v in ipairs(Workspace:GetChildren()) do
+                        if v.ClassName == "Folder" then
+                            for _, x in ipairs(v:GetChildren()) do
+                                if x.ClassName == "Folder" then
+                                    for _, c in ipairs(x:GetChildren()) do
+                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
 
-                            spawn(function()
-                                while AutoMobs do
-                                    local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
-                                    if finishPart then
-                                        local character = game.Players.LocalPlayer.Character
-                                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                                        if humanoidRootPart then
-                                            local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
-                                            if ChestPart then
-                                                humanoidRootPart.CFrame = ChestPart.CFrame
-                                                wait(2)
-                                                humanoidRootPart.CFrame = finishPart.CFrame
-                                            end
-                                        end
-                                    end
-                                    wait(1)
-                                end
-                            end)
+                                            if EvilHumanoid then
+                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
 
-                            spawn(function()
-                            local alternativeParts = {} -- List to store names of unknown parts
-                            local visitedPositions = {} -- List to store visited positions
-                            local originalPosition -- Starting position
+                                                    local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
+                                                                    "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
+                                                                    "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
+                                                                    "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
+                                                                    "MeteorShower", "MeteorBlast", "Stomp"}
 
-                            while AutoMobs do
-                                for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
-                                    if v.ClassName == "Folder" then
-                                        for _, x in ipairs(v:GetChildren()) do
-                                            if x.ClassName == "Folder" then
-                                                for _, c in ipairs(x:GetChildren()) do
-                                                    if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
-                                                        local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
-                                                        local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+                                                for _, ignorePart in ipairs(ignoreParts) do
+                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
+                                                        local SKK = table.find(Skill, ignorePart.Name)
+                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
 
-                                                        if EvilHumanoid.Health > 0 then
-                                                            local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-                                                            for _, ignorePart in ipairs(ignoreParts) do
-                                                                if ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
-                                                                    ignorePart.CFrame = CFrame.new(monsterPos)
-                                                                end
-                                                            end
+                                                        if SKK then
+                                                            ignorePart.Size = Vector3.new(100, 10, 100)
+                                                        end
 
-                                                            
-                                                            if not originalPosition then
-                                                                originalPosition = monsterPos -- Store the starting position
-                                                            end
-
-                                                            -- Check if the position has been visited before
-                                                            local visited = false
-                                                            for _, visitedPos in ipairs(visitedPositions) do
-                                                                if visitedPos == monsterPos then
-                                                                    visited = true
-                                                                    break
-                                                                end
-                                                            end
-
-                                                            -- If the position has not been visited
-                                                            if not visited then
-                                                                -- Move to the new position
-                                                                visitedPositions[#visitedPositions + 1] = monsterPos
-
-                                                                -- Check if all visited positions have been covered
-                                                                if #visitedPositions >= #alternativeParts then
-                                                                    visitedPositions = {} -- Reset the visited positions list
-                                                                    monsterPos = originalPosition -- Go back to the starting position
-                                                                end
-                                                            end
+                                                        if (SKK or AllPart) and EvilHumanoid.Health > 0 then
+                                                            ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            ignorePart.Position = monsterPos
                                                         end
                                                     end
                                                 end
@@ -305,112 +263,90 @@ Tab1:AddToggle({
                                         end
                                     end
                                 end
-                                wait(0.01)
                             end
-                        end)
+                        end
+                    end
+                end
+            end)
+
+                local function PerformAttack()
+                    pcall(function()
+                        if AutoMobs then
+                            ScriptFunction(Script)
+                            ScriptFunction2(Script)
+                        end
                     end)
+                end
+                game:GetService("RunService").Stepped:Connect(PerformAttack)
+
+                spawn(function()
+                    while AutoMobs do
+                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
+                        if finishPart then
+                            local character = game.Players.LocalPlayer.Character
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoidRootPart then
+                                local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
+                                if ChestPart then
+                                    humanoidRootPart.CFrame = ChestPart.CFrame
+                                    wait(3)
+                                    humanoidRootPart.CFrame = finishPart.CFrame
+                                    end
+                                end
+                            end
+                        wait(0.1)
+                    end
+                end)
                 wait(0.01)
             end
         end
     end
 })
 
-Tab1:AddToggle({
-    Name = "Auto Farm and Don't TP Chest",
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+Tab2:AddToggle({
+    Name = "Speed Magic Weapon",
     Default = false,
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
-            local function PerformAttack()
-                pcall(function()
-                    if AutoMobs then
-                        ScriptFunction(Script)
-                        ScriptFunction2(Script)
-                    end
-                end)
-            end
-            
-            game:GetService("RunService").Stepped:Connect(PerformAttack)
-            
-            local StartPart = findStartPartInWorkspace(game:GetService("Workspace"))
-                if StartPart then
-                    local character = game.Players.LocalPlayer.Character
-                    local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                    if humanoidRootPart then
-                        humanoidRootPart.CFrame = StartPart.CFrame
-                    end
-                end
-            wait(0.1)
 
             while AutoMobs do
-                    pcall(function()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                        ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
+            StartDungeon()
+            spawn(function()
+                while AutoMobs do
+                    wait(0.01)
+                    for _, v in ipairs(Workspace:GetChildren()) do
+                        if v.ClassName == "Folder" then
+                            for _, x in ipairs(v:GetChildren()) do
+                                if x.ClassName == "Folder" then
+                                    for _, c in ipairs(x:GetChildren()) do
+                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
 
-                            spawn(function()
-                                while AutoMobs do
-                                    local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
-                                    if finishPart then
-                                        local character = game.Players.LocalPlayer.Character
-                                        local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                                        if humanoidRootPart then
-                                            humanoidRootPart.CFrame = finishPart.CFrame
-                                        end
-                                    end
-                                    wait(2)
-                                end
-                            end)  
+                                            if EvilHumanoid then
+                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
 
-                        spawn(function()
-                            local alternativeParts = {} -- List to store names of unknown parts
-                            local visitedPositions = {} -- List to store visited positions
-                            local originalPosition -- Starting position
+                                                    local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
+                                                                    "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
+                                                                    "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
+                                                                    "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
+                                                                    "MeteorShower", "MeteorBlast", "Stomp"}
 
-                            while AutoMobs do
-                                for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
-                                    if v.ClassName == "Folder" then
-                                        for _, x in ipairs(v:GetChildren()) do
-                                            if x.ClassName == "Folder" then
-                                                for _, c in ipairs(x:GetChildren()) do
-                                                    if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
-                                                        local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
-                                                        local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+                                                for _, ignorePart in ipairs(ignoreParts) do
+                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
+                                                        local SKK = table.find(Skill, ignorePart.Name)
+                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
 
-                                                        if EvilHumanoid.Health > 0 then
-                                                            local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-                                                            for _, ignorePart in ipairs(ignoreParts) do
-                                                                if ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
-                                                                    ignorePart.CFrame = CFrame.new(monsterPos)
-                                                                end
-                                                            end
+                                                        if SKK then
+                                                            ignorePart.Size = Vector3.new(200, 50, 200)
+                                                        end
 
-                                                            
-                                                            if not originalPosition then
-                                                                originalPosition = monsterPos -- Store the starting position
-                                                            end
-
-                                                            -- Check if the position has been visited before
-                                                            local visited = false
-                                                            for _, visitedPos in ipairs(visitedPositions) do
-                                                                if visitedPos == monsterPos then
-                                                                    visited = true
-                                                                    break
-                                                                end
-                                                            end
-
-                                                            -- If the position has not been visited
-                                                            if not visited then
-                                                                -- Move to the new position
-                                                                visitedPositions[#visitedPositions + 1] = monsterPos
-
-                                                                -- Check if all visited positions have been covered
-                                                                if #visitedPositions >= #alternativeParts then
-                                                                    visitedPositions = {} -- Reset the visited positions list
-                                                                    monsterPos = originalPosition -- Go back to the starting position
-                                                                end
-                                                            end
+                                                        if (SKK or AllPart) and EvilHumanoid.Health > 0 then
+                                                            ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            ignorePart.Position = monsterPos
                                                         end
                                                     end
                                                 end
@@ -418,20 +354,45 @@ Tab1:AddToggle({
                                         end
                                     end
                                 end
-                                wait(0.01)
                             end
-                        end)
+                        end
+                    end
+                end
+            end)
+
+                local function PerformAttack()
+                    pcall(function()
+                        if AutoMobs then
+                            ScriptFunction(Script)
+                            ScriptFunction2(Script)
+                        end
                     end)
+                end
+                game:GetService("RunService").Stepped:Connect(PerformAttack)
+
+                spawn(function()
+                    while AutoMobs do
+                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
+                        if finishPart then
+                            local character = game.Players.LocalPlayer.Character
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoidRootPart then
+                                    humanoidRootPart.CFrame = finishPart.CFrame
+                                end
+                            end
+                        wait(0.1)
+                    end
+                end)
                 wait(0.01)
             end
         end
     end
 })
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------
+------------------------------------------------------------------------------------------------------------------------------------------------
 
 local CollectMedkits = true
-Tab2:AddToggle({
+Tab3:AddToggle({
 	Name = "Collect Medkit",
 	Default = false,
 	Callback = function(value)
@@ -443,106 +404,382 @@ Tab2:AddToggle({
 				for i, Medkit in ipairs(Medkit) do
 					if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
 						Medkit.CFrame = Player.Character.HumanoidRootPart.CFrame
-						wait(0.5)
+						wait(0.1)
 					end
 				end
 			end
-			wait(0.5)
+			wait(0.1)
 		end
 	end
 })
 
---------------------------------------------------------------------------------------------------------------------------------------------------------------
+----------------------------------------------------------------------------------------------------------------------------------------
 
-Tab2:AddToggle({
-    Name = "Farm WAVE",
+local Section = Tab3:AddSection({
+	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
+})
+
+local function FindClosestMonster()
+    local closestMonsterDist = math.huge
+    local closestMonsterPos = nil
+
+    for _, v in ipairs(workspace:GetChildren()) do
+        if v.ClassName == "Folder" then
+            for _, x in ipairs(v:GetChildren()) do
+                if x.ClassName == "Folder" then
+                    for _, c in ipairs(x:GetChildren()) do
+                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+
+                            if EvilHumanoid and EvilHumanoid.Health > 0 then
+                                local distToMonster = (monsterPos - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                                if distToMonster < closestMonsterDist then
+                                    closestMonsterDist = distToMonster
+                                    closestMonsterPos = monsterPos
+                                end
+                            end
+                        end
+                    end
+                end
+            end
+        end
+    end
+
+    return closestMonsterPos
+end
+
+local function MoveToClosestMonster()
+    local closestMonsterPos = FindClosestMonster()
+    if closestMonsterPos then
+        closestMonsterPos = closestMonsterPos + Vector3.new(-5, 0, 0)
+
+        local distance = (closestMonsterPos - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+        local movementSpeed = 80
+
+        local TweenService = game:GetService("TweenService")
+        local HumanoidRootPart = game.Players.LocalPlayer.Character.HumanoidRootPart
+
+        local duration = distance / movementSpeed
+
+        local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+        local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(closestMonsterPos)})
+        tween:Play()
+    end
+end
+
+--------------------------------------------------------------------------------------------------------------------------------------
+
+Tab3:AddToggle({
+    Name = "Warrior Weapon",
     Default = false,
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
-            local function PerformAttack()
-                pcall(function()
-                    if AutoMobs then
-                        ScriptFunction(Script)
-                        ScriptFunction2(Script)
+
+            while AutoMobs do
+                StartDungeon()
+                MoveToClosestMonster()
+                local function PerformAttack()
+                    pcall(function()
+                        if AutoMobs then
+                            ScriptFunction(Script)
+                            ScriptFunction2(Script)
+                        end
+                    end)
+                end
+                game:GetService("RunService").Stepped:Connect(PerformAttack)
+
+                spawn(function()
+                    while AutoMobs do
+                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
+                        if finishPart then
+                            local character = game.Players.LocalPlayer.Character
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoidRootPart then
+                                local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
+                                if ChestPart then
+                                    humanoidRootPart.CFrame = ChestPart.CFrame
+                                    wait(3)
+                                    humanoidRootPart.CFrame = finishPart.CFrame
+                                end
+                            end
+                        end
+                        wait(0.1)
                     end
                 end)
-            end
-            
-            game:GetService("RunService").Stepped:Connect(PerformAttack)
-            
-            while AutoMobs do
-                    pcall(function()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                        ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                        ReplicatedStorage.Shared.Remotes.Data.ClaimPrizes:FireServer()
-
-                        spawn(function()
-                            local alternativeParts = {} -- List to store names of unknown parts
-                            local visitedPositions = {} -- List to store visited positions
-                            local originalPosition -- Starting position
-
-                            while AutoMobs do
-                                for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
-                                    if v.ClassName == "Folder" then
-                                        for _, x in ipairs(v:GetChildren()) do
-                                            if x.ClassName == "Folder" then
-                                                for _, c in ipairs(x:GetChildren()) do
-                                                    if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
-                                                        local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
-                                                        local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
-
-                                                        if EvilHumanoid.Health > 0 then
-                                                            local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-                                                            for _, ignorePart in ipairs(ignoreParts) do
-                                                                if ignorePart.Name ~= "Medkit" and (ignorePart:IsA("BasePart") or ignorePart:IsA("Model") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
-                                                                    ignorePart.CFrame = CFrame.new(monsterPos)
-                                                                end
-                                                            end
-
-                                                            
-                                                            if not originalPosition then
-                                                                originalPosition = monsterPos -- Store the starting position
-                                                            end
-
-                                                            -- Check if the position has been visited before
-                                                            local visited = false
-                                                            for _, visitedPos in ipairs(visitedPositions) do
-                                                                if visitedPos == monsterPos then
-                                                                    visited = true
-                                                                    break
-                                                                end
-                                                            end
-
-                                                            -- If the position has not been visited
-                                                            if not visited then
-                                                                -- Move to the new position
-                                                                visitedPositions[#visitedPositions + 1] = monsterPos
-
-                                                                -- Check if all visited positions have been covered
-                                                                if #visitedPositions >= #alternativeParts then
-                                                                    visitedPositions = {} -- Reset the visited positions list
-                                                                    monsterPos = originalPosition -- Go back to the starting position
-                                                                end
-                                                            end
-                                                        end
-                                                    end
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
-                                wait(0.01)
-                            end
-                        end)
-                    end)
                 wait(0.01)
             end
         end
     end
 })
 
----------------------------------------------------------------------------------------------------------------------------------------------------------------
+-------------------------------------------------------------------------------------------------------------------------------------
+
+local function MoveToClosestMonster1()
+    local closestMonsterPos = FindClosestMonster()
+    if closestMonsterPos then
+        closestMonsterPos = closestMonsterPos + Vector3.new(-8, 0, 0)
+
+        local distance = (closestMonsterPos - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+        local movementSpeed = 80
+
+        local TweenService = game:GetService("TweenService")
+        local HumanoidRootPart = game.Players.LocalPlayer.Character.HumanoidRootPart
+
+        local duration = distance / movementSpeed
+
+        local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+        local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(closestMonsterPos)})
+        tween:Play()
+    end
+end
+
+-------------------------------------------------------------------------------------------------------------------------------------
+
+Tab3:AddToggle({
+    Name = "Bow Weapon",
+    Default = false,
+    Callback = function(value)
+        AutoMobs = value
+        if AutoMobs then
+
+            while AutoMobs do
+                StartDungeon()
+                MoveToClosestMonster1()
+                local function PerformAttack()
+                    pcall(function()
+                        if AutoMobs then
+                            ScriptFunction(Script)
+                            ScriptFunction2(Script)
+                        end
+                    end)
+                end
+                game:GetService("RunService").Stepped:Connect(PerformAttack)
+
+                spawn(function()
+                    while AutoMobs do
+                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
+                        if finishPart then
+                            local character = game.Players.LocalPlayer.Character
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoidRootPart then
+                                local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
+                                if ChestPart then
+                                    humanoidRootPart.CFrame = ChestPart.CFrame
+                                    wait(3)
+                                    humanoidRootPart.CFrame = finishPart.CFrame
+                                end
+                            end
+                        end
+                        wait(0.1)
+                    end
+                end)
+                wait(0.01)
+            end
+        end
+    end
+})
+
+---------------------------------------------------------------------------------------------------------------------------------------
+
+
+local Section = Tab4:AddSection({
+	Name = "Coral Kingdom"
+})
+
+local BuyitemCK = false
+local selectedAmountCK = 1
+local selectedShopCK = "Aquatic Chest"
+
+local shopDataCK = {
+    ["Aquatic Chest"] = {
+        [1] = "AquaticArsenal",
+        [2] = "0",
+        [3] = selectedAmountCK
+    },
+    ["Bubble Effect"] = {
+        [1] = "AquaticArsenal",
+        [2] = "1",
+        [3] = selectedAmountCK
+    },
+    ["Speed Potion"] = {
+        [1] = "AquaticArsenal",
+        [2] = "2",
+        [3] = selectedAmountCK
+    },
+    ["Ability Potion"] = {
+        [1] = "AquaticArsenal",
+        [2] = "3",
+        [3] = selectedAmountCK
+    }
+}
+
+Tab4:AddDropdown({
+    Name = "Aquatic Shop",
+    Default = selectedShopCK,
+    Options = {"Aquatic Chest", "Bubble Effect", "Speed Potion", "Ability Potion"},
+    Callback = function(value)
+        selectedShopCK = value
+    end
+})
+
+Tab4:AddDropdown({
+    Name = "Amount",
+    Default = tostring(selectedAmountCK),
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25"},
+    Callback = function(value)
+        selectedAmountCK = tonumber(value) or 1
+    end
+})
+
+Tab4:AddToggle({
+    Name = "Buy Item",
+    Default = false,
+    Callback = function(value)
+        BuyitemCK = value
+        if BuyitemCK then
+            local args = shopDataCK[selectedShopCK]
+            args[3] = selectedAmountCK
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+            wait(0.1)
+            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+        end
+    end
+})
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+local Section = Tab4:AddSection({
+    Name = "Daring Dojo"
+})
+
+local BuyitemDD = false
+local selectedAmountDD = 1
+local selectedShopDD = "Daring Chest"
+
+local shopDataDD = {
+    ["Daring Chest"] = {
+        [1] = "SilentStash",
+        [2] = "0",
+        [3] = selectedAmountDD
+    },
+    ["Stealth Effect"] = {
+        [1] = "SilentStash",
+        [2] = "1",
+        [3] = selectedAmountDD
+    },
+    ["Jump Potion"] = {
+        [1] = "SilentStash",
+        [2] = "2",
+        [3] = selectedAmountDD
+    },
+}
+
+Tab4:AddDropdown({
+    Name = "Silent Shop",
+    Default = selectedShopDD,
+    Options = {"Daring Chest", "Stealth Effect", "Jump Potion"},
+    Callback = function(value)
+        selectedShopDD = value
+    end
+})
+
+Tab4:AddDropdown({
+    Name = "Amount",
+    Default = tostring(selectedAmountDD),
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25"},
+    Callback = function(value)
+        selectedAmountDD = tonumber(value) or 1
+    end
+})
+
+Tab4:AddToggle({
+    Name = "Buy Item",
+    Default = false,
+    Callback = function(value)
+        BuyitemDD = value
+        if BuyitemDD then
+            local args = shopDataDD[selectedShopDD]
+            args[3] = selectedAmountDD
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+            wait(0.1)
+            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+        end
+    end
+})
+
+------------------------------------------------------------------------------------------------------------------------------------------------
+
+local Section = Tab4:AddSection({
+    Name = "Fiery Fortress"
+})
+
+local BuyitemFF = false
+local selectedAmountFF = 1
+local selectedShopFF = "Molten Chest"
+
+local shopDataFF = {
+    ["Molten Chest"] = {
+        [1] = "MoltenMarket",
+        [2] = "0",
+        [3] = selectedAmountFF
+    },
+    ["Embers Effect"] = {
+        [1] = "MoltenMarket",
+        [2] = "1",
+        [3] = selectedAmountFF
+    },
+    ["Warrior Potion"] = {
+        [1] = "MoltenMarket",
+        [2] = "2",
+        [3] = selectedAmountFF
+    },
+    ["Wizard Potion"] = {
+        [1] = "MoltenMarket",
+        [2] = "3",
+        [3] = selectedAmountFF
+    },
+    ["Archer Potion"] = {
+        [1] = "MoltenMarket",
+        [2] = "4",
+        [3] = selectedAmountFF
+    },
+}
+
+Tab4:AddDropdown({
+    Name = "Molten Market",
+    Default = selectedShopFF,
+    Options = {"Molten Chest", "Embers Effect", "Warrior Potion", "Wizard Potion", "Archer Potion"},
+    Callback = function(value)
+        selectedShopFF = value
+    end
+})
+
+Tab4:AddDropdown({
+    Name = "Amount",
+    Default = tostring(selectedAmountFF),
+    Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25"},
+    Callback = function(value)
+        selectedAmountFF = tonumber(value) or 1
+    end
+})
+
+Tab4:AddToggle({
+    Name = "Buy Item",
+    Default = false,
+    Callback = function(value)
+        BuyitemFF = value
+        if BuyitemFF then
+            local args = shopDataFF[selectedShopFF]
+            args[3] = selectedAmountFF
+            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+            wait(0.1)
+            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+        end
+    end
+})
+
+------------------------------------------------------------------------------------------------------------------------
 
 OrionLib:Init()
