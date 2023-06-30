@@ -35,18 +35,9 @@ local Tab4 = Window:MakeTab({
 })
 --------------------------------------------
 
-repeat wait() until game:IsLoaded()
-local ReplicatedStorage = game.ReplicatedStorage
 local Players = game.Players
-local TweenService = game.TweenService
-local Workspace = game.Workspace
-local HttpService = game.HttpService
 local Player = Players.LocalPlayer
-
-local TweenInfoClose = TweenInfo.new(0.5, Enum.EasingStyle.Linear)
 local Character = Player.Character
-
-local HumanoidRootPart = Character.HumanoidRootPart
 
 local Speed = 60
 
@@ -128,26 +119,37 @@ local Section = Tab2:AddSection({
 	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
 })
 
-
 local function StartDungeon()
+    local hasHumanoidRootPart = false
     for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
         if v.ClassName == "Folder" then
             for _, x in ipairs(v:GetChildren()) do
                 if x.ClassName == "Folder" then
                     for _, c in ipairs(x:GetChildren()) do
-                        if c:IsA("Model") and c:FindFirstChild("Spawn") then
-                            local SpawnPart = c:FindFirstChild("Spawn")
-                            if SpawnPart then
-                                game.ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
-                                game.ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
-                            end
+                        if c:IsA("Model") and c:FindFirstChild("HumanoidRootPart") then
+                            hasHumanoidRootPart = true
+                            break
                         end
                     end
                 end
+                if hasHumanoidRootPart then
+                    break
+                end
             end
         end
+        if hasHumanoidRootPart then
+            break
+        end
+    end
+    
+    if not hasHumanoidRootPart then
+        wait(1.5)
+        game.ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
+        game.ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
     end
 end
+
+
 
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -218,7 +220,9 @@ Tab2:AddToggle({
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
+            
             while AutoMobs do
+            StartDungeon()
             spawn(function()
                 while AutoMobs do
                     wait(0.01)
@@ -264,7 +268,7 @@ Tab2:AddToggle({
                     end
                 end
             end)
-            
+
                 local function PerformAttack()
                     pcall(function()
                         if AutoMobs then
@@ -290,8 +294,6 @@ Tab2:AddToggle({
                                     end
                                 end
                             end
-                        wait(1)
-                        StartDungeon()
                         wait(0.1)
                     end
                 end)
@@ -311,6 +313,7 @@ Tab2:AddToggle({
         if AutoMobs then
 
             while AutoMobs do
+            StartDungeon()
             spawn(function()
                 while AutoMobs do
                     wait(0.01)
@@ -377,8 +380,6 @@ Tab2:AddToggle({
                                     humanoidRootPart.CFrame = finishPart.CFrame
                                 end
                             end
-                        wait(1)
-                        StartDungeon()
                         wait(0.1)
                     end
                 end)
@@ -477,6 +478,7 @@ Tab3:AddToggle({
         if AutoMobs then
 
             while AutoMobs do
+                StartDungeon()
                 MoveToClosestMonster()
                 local function PerformAttack()
                     pcall(function()
@@ -503,8 +505,6 @@ Tab3:AddToggle({
                                 end
                             end
                         end
-                        wait(2)
-                        StartDungeon()
                         wait(0.1)
                     end
                 end)
@@ -543,7 +543,9 @@ Tab3:AddToggle({
     Callback = function(value)
         AutoMobs = value
         if AutoMobs then
+
             while AutoMobs do
+                StartDungeon()
                 MoveToClosestMonster1()
                 local function PerformAttack()
                     pcall(function()
@@ -570,8 +572,6 @@ Tab3:AddToggle({
                                 end
                             end
                         end
-                        wait(2)
-                        StartDungeon()
                         wait(0.1)
                     end
                 end)
@@ -633,33 +633,72 @@ Tab4:AddDropdown({
     end
 })
 
-local itemBoughtCK = false
-
-Tab4:AddToggle({
+local buyToggleCK = Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemCK = value
-        while BuyitemCK and not itemBoughtCK do
-            for _, v in ipairs(game:GetService("Workspace").Dungeon:GetChildren()) do
-                if v.Name == "Rooms" then
-                    local args = shopDataFF[selectedShopFF]
-                    args[3] = selectedAmountFF
-                    game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-                    wait(0.1)
-                    game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-                    itemBoughtCK = true
-                    BuyitemCK = false
-                    wait(0.1)
-                end
+        if BuyitemCK then
+            while BuyitemCK do
+                AutoBuyItemCK()
+                wait(0.1)
             end
-        end
-        if itemBoughtCK then
-            BuyitemCK = false
         end
     end
 })
 
+local function AutoBuyItemCK()
+    local waitBuyCK = false
+    local foundShopCK = false
+
+    -- ตรวจสอบร้านค้าที่ต้องการ
+    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if v.ClassName == "Folder" then
+            for _, x in ipairs(v:GetChildren()) do
+                if x.ClassName == "Folder" then
+                    for _, c in ipairs(x:GetChildren()) do
+                        if c:IsA("Model") then
+                            for _, g in ipairs(x:GetChildren()) do
+                                if g.Name == "SecretShops" and g:FindFirstChild("AquaticArsenal") then
+                                    waitBuyCK = true
+                                    foundShopCK = true
+                                    break
+                                end
+                            end
+                        end
+
+                        if waitBuyCK then
+                            break
+                        end
+                    end
+                end
+
+                if waitBuyCK then
+                    break
+                end
+            end
+        end
+
+        if waitBuyCK then
+            break
+        end
+    end
+
+    -- หากไม่พบร้านค้าที่ต้องการให้หาใหม่จนกว่าจะพบ
+    if not foundShopCK then
+        return
+    end
+    
+    -- ซื้อของและปิด Toggle หลังจากซื้อสำเร็จ
+    if not waitBuyCK then
+        local args = shopDataCK[selectedShopCK]
+        args[3] = selectedAmountCK
+        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        wait(0.1)
+        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+        buyToggleCK:Set(false) -- ปิด Toggle ที่ชื่อ "Buy Item"
+    end
+end
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -707,33 +746,72 @@ Tab4:AddDropdown({
     end
 })
 
-local itemBoughtDD = false
-
-Tab4:AddToggle({
+local buyToggleDD = Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemDD = value
-        while BuyitemDD and not itemBoughtDD do
-            for _, v in ipairs(game:GetService("Workspace").Dungeon:GetChildren()) do
-                if v.Name == "Rooms" then
-                    local args = shopDataFF[selectedShopFF]
-                    args[3] = selectedAmountFF
-                    game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-                    wait(0.1)
-                    game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-                    itemBoughtDD = true
-                    BuyitemDD = false
-                    wait(0.1)
-                end
+        if BuyitemDD then
+            while BuyitemDD do
+                AutoBuyItemDD()
+                wait(0.1)
             end
-        end
-        if itemBoughtDD then
-            BuyitemDD = false
         end
     end
 })
 
+local function AutoBuyItemDD()
+    local waitBuyDD = false
+    local foundShopDD = false
+
+    -- ตรวจสอบร้านค้าที่ต้องการ
+    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if v.ClassName == "Folder" then
+            for _, x in ipairs(v:GetChildren()) do
+                if x.ClassName == "Folder" then
+                    for _, c in ipairs(x:GetChildren()) do
+                        if c:IsA("Model") then
+                            for _, g in ipairs(x:GetChildren()) do
+                                if g.Name == "SecretShops" and g:FindFirstChild("SilentStash") then
+                                    waitBuyDD = true
+                                    foundShopDD = true
+                                    break
+                                end
+                            end
+                        end
+
+                        if waitBuyDD then
+                            break
+                        end
+                    end
+                end
+
+                if waitBuyDD then
+                    break
+                end
+            end
+        end
+
+        if waitBuyDD then
+            break
+        end
+    end
+
+    -- หากไม่พบร้านค้าที่ต้องการให้หาใหม่จนกว่าจะพบ
+    if not foundShopDD then
+        return
+    end
+    
+    -- ซื้อของและปิด Toggle หลังจากซื้อสำเร็จ
+    if not waitBuyDD then
+        local args = shopDataCK[selectedShopCK]
+        args[3] = selectedAmountCK
+        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        wait(0.1)
+        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+        buyToggleDD:Set(false) -- ปิด Toggle ที่ชื่อ "Buy Item"
+    end
+end
 
 ------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -791,32 +869,73 @@ Tab4:AddDropdown({
     end
 })
 
-local itemBoughtFF = false
-
-Tab4:AddToggle({
+local buyToggleFF = Tab4:AddToggle({
     Name = "Buy Item",
     Default = false,
     Callback = function(value)
         BuyitemFF = value
-        while BuyitemFF and not itemBoughtFF do
-            for _, v in ipairs(game:GetService("Workspace").Dungeon:GetChildren()) do
-                if v.Name == "Rooms" then
-                    local args = shopDataFF[selectedShopFF]
-                    args[3] = selectedAmountFF
-                    game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-                    wait(0.1)
-                    game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-                    itemBoughtFF = true
-                    BuyitemFF = false
-                    wait(0.1)
-                end
+        if BuyitemFF then
+            while BuyitemFF do
+                AutoBuyItemFF()
+                wait(0.1)
             end
-        end
-        if itemBoughtFF then
-            BuyitemFF = false
         end
     end
 })
+
+local function AutoBuyItemFF()
+    local waitBuyFF = false
+    local foundShopFF = false
+
+    -- ตรวจสอบร้านค้าที่ต้องการ
+    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+        if v.ClassName == "Folder" then
+            for _, x in ipairs(v:GetChildren()) do
+                if x.ClassName == "Folder" then
+                    for _, c in ipairs(x:GetChildren()) do
+                        if c:IsA("Model") then
+                            for _, g in ipairs(x:GetChildren()) do
+                                if g.Name == "SecretShops" and g:FindFirstChild("SilentStash") then
+                                    waitBuyFF = true
+                                    foundShopFF = true
+                                    break
+                                end
+                            end
+                        end
+
+                        if waitBuyFF then
+                            break
+                        end
+                    end
+                end
+
+                if waitBuyFF then
+                    break
+                end
+            end
+        end
+
+        if waitBuyFF then
+            break
+        end
+    end
+
+    -- หากไม่พบร้านค้าที่ต้องการให้หาใหม่จนกว่าจะพบ
+    if not foundShopFF then
+        return
+    end
+    
+    -- ซื้อของและปิด Toggle หลังจากซื้อสำเร็จ
+    if not waitBuyFF then
+        local args = shopDataCK[selectedShopCK]
+        args[3] = selectedAmountCK
+        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        wait(0.1)
+        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+        buyToggleFF:Set(false) -- ปิด Toggle ที่ชื่อ "Buy Item"
+    end
+end
+
 
 ------------------------------------------------------------------------------------------------------------------------
 
