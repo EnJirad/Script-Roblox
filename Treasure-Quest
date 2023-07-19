@@ -263,10 +263,6 @@ Tab2:AddToggle({
                                                         local SKK = table.find(Skill, ignorePart.Name)
                                                         local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
 
-                                                        if SKK then
-                                                            ignorePart.Size = Vector3.new(100, 10, 100)
-                                                        end
-
                                                         if (SKK or AllPart) and EvilHumanoid.Health > 0 then
                                                             ignorePart.CFrame = CFrame.new(monsterPos)
                                                             ignorePart.Position = monsterPos
