@@ -133,11 +133,6 @@ local Section = Tab2:AddSection({
 	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
 })
 
-local Section = Tab2:AddSection({
-    Name =
-    "Choose only one of them to open or it will run slowly."
-})
-
 local function StartDungeon()
     local hasHumanoidRootPart = false
     for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
@@ -311,92 +306,6 @@ Tab2:AddToggle({
                                     wait(3)
                                     humanoidRootPart.CFrame = finishPart.CFrame
                                     end
-                                end
-                            end
-                        wait(0.1)
-                    end
-                end)
-                wait(0.01)
-            end
-        end
-    end
-})
-
-------------------------------------------------------------------------------------------------------------------------------------------------
-
-Tab2:AddToggle({
-    Name = "Speed Magic Weapon",
-    Default = false,
-    Callback = function(value)
-        AutoMobs = value
-        if AutoMobs then
-
-            while AutoMobs do
-            StartDungeon()
-            spawn(function()
-                while AutoMobs do
-                    wait(0.01)
-                    for _, v in ipairs(Workspace:GetChildren()) do
-                        if v.ClassName == "Folder" then
-                            for _, x in ipairs(v:GetChildren()) do
-                                if x.ClassName == "Folder" then
-                                    for _, c in ipairs(x:GetChildren()) do
-                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
-                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
-                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
-
-                                            if EvilHumanoid then
-                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-
-                                                    local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
-                                                                    "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
-                                                                    "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
-                                                                    "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
-                                                                    "MeteorShower", "MeteorBlast", "Stomp"}
-
-                                                for _, ignorePart in ipairs(ignoreParts) do
-                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
-                                                        local SKK = table.find(Skill, ignorePart.Name)
-                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
-
-                                                        if SKK then
-                                                            ignorePart.Size = Vector3.new(200, 50, 200)
-                                                        end
-
-                                                        if (SKK or AllPart) and EvilHumanoid.Health > 0 then
-                                                            ignorePart.CFrame = CFrame.new(monsterPos)
-                                                            ignorePart.Position = monsterPos
-                                                        end
-                                                    end
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end)
-
-                local function PerformAttack()
-                    pcall(function()
-                        if AutoMobs then
-                            ScriptFunction(Script)
-                            ScriptFunction2(Script)
-                        end
-                    end)
-                end
-                game:GetService("RunService").Stepped:Connect(PerformAttack)
-
-                spawn(function()
-                    while AutoMobs do
-                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
-                        if finishPart then
-                            local character = game.Players.LocalPlayer.Character
-                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                            if humanoidRootPart then
-                                    humanoidRootPart.CFrame = finishPart.CFrame
                                 end
                             end
                         wait(0.1)
