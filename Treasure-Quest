@@ -83,7 +83,7 @@ Tab1:AddToggle({
 	end
 })
 
-local rejoy = false
+local rejoy = true
 Tab1:AddButton({
     Name = "Rejoin",
     Callback = function(value)
