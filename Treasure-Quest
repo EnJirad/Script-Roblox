@@ -132,6 +132,13 @@ Tab2:AddToggle({
 local Section = Tab2:AddSection({
 	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
 })
+local Section = Tab2:AddSection({
+	Name = "Do not press open both functions at the same time."
+})
+local Section = Tab2:AddSection({
+	Name = "Magic skill Tsunami is the best."
+})
+
 
 local function StartDungeon()
     local hasHumanoidRootPart = false
@@ -162,8 +169,6 @@ local function StartDungeon()
         game.ReplicatedStorage.Dungeon.Remotes.StartWaveDefense:FireServer()
     end
 end
-
-
 
 -------------------------------------------------------------------------------------------------------------------------------------------------
 
@@ -221,6 +226,26 @@ end
 
 ---------------------------------------------------------------------------------------------------------------------------------
 
+local function visibleskill()
+    local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
+                   "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
+                   "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
+                   "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
+                   "MeteorShower", "MeteorBlast", "Stomp"}
+
+    local ignoreParts = game.Workspace:GetDescendants()
+
+    for _, ignorePart in ipairs(ignoreParts) do
+        if (ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
+            if table.find(Skill, ignorePart.Name) then
+                ignorePart.Transparency = 1
+            end
+        end
+    end
+end
+
+---------------------------------------------------------------------------------------------------------------------------------
+
 local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
 local ScriptFunction = Script.BasicAttack
 local ScriptFunction2 = Script.UseAbility
@@ -229,7 +254,7 @@ local Workspace = game:GetService("Workspace")
 local AutoMobs = false
 
 Tab2:AddToggle({
-    Name = "Magic Weapon",
+    Name = "Magic Weapon V.1",
     Default = false,
     Callback = function(value)
         AutoMobs = value
@@ -237,9 +262,10 @@ Tab2:AddToggle({
             
             while AutoMobs do
             StartDungeon()
+            visibleskill()
             spawn(function()
                 while AutoMobs do
-                    wait(0.01)
+                    wait(0.1)
                     for _, v in ipairs(Workspace:GetChildren()) do
                         if v.ClassName == "Folder" then
                             for _, x in ipairs(v:GetChildren()) do
@@ -262,8 +288,103 @@ Tab2:AddToggle({
                                                     if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
                                                         local SKK = table.find(Skill, ignorePart.Name)
                                                         local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
-
                                                         if (SKK or AllPart) and EvilHumanoid.Health > 0 then
+                                                            ignorePart.CFrame = CFrame.new(monsterPos)
+                                                            ignorePart.Position = monsterPos
+                                                        end
+                                                    end
+                                                end
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+
+                local function PerformAttack()
+                    pcall(function()
+                        if AutoMobs then
+                            ScriptFunction(Script)
+                            ScriptFunction2(Script)
+                        end
+                    end)
+                end
+                game:GetService("RunService").Stepped:Connect(PerformAttack)
+
+                spawn(function()
+                    while AutoMobs do
+                        local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
+                        if finishPart then
+                            local character = game.Players.LocalPlayer.Character
+                            local humanoidRootPart = character:FindFirstChild("HumanoidRootPart")
+                            if humanoidRootPart then
+                                local ChestPart = findNewChestInWorkspace(game:GetService("Workspace"))
+                                if ChestPart then
+                                    humanoidRootPart.CFrame = ChestPart.CFrame
+                                    wait(3)
+                                    humanoidRootPart.CFrame = finishPart.CFrame
+                                    end
+                                end
+                            end
+                        wait(0.1)
+                    end
+                end)
+                wait(0.01)
+            end
+        end
+    end
+})
+
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
+
+Tab2:AddToggle({
+    Name = "Magic Weapon V.2",
+    Default = false,
+    Callback = function(value)
+        AutoMobs = value
+        if AutoMobs then
+            
+            while AutoMobs do
+            StartDungeon()
+            visibleskill()
+            spawn(function()
+                while AutoMobs do
+                    wait(0.1)
+                    for _, v in ipairs(Workspace:GetChildren()) do
+                        if v.ClassName == "Folder" then
+                            for _, x in ipairs(v:GetChildren()) do
+                                if x.ClassName == "Folder" then
+                                    for _, c in ipairs(x:GetChildren()) do
+                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                            local humanoidRootPart = c:FindFirstChild("HumanoidRootPart")
+
+                                            if EvilHumanoid and humanoidRootPart then
+                                                local monsterPos = humanoidRootPart.Position
+                                                local player = game.Players.LocalPlayer
+                                                local playerPos = player.Character and player.Character:FindFirstChild("HumanoidRootPart") and player.Character.HumanoidRootPart.Position
+
+                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
+
+                                                local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
+                                                    "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
+                                                    "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
+                                                    "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
+                                                    "MeteorShower", "MeteorBlast", "Stomp"}
+
+                                                for _, ignorePart in ipairs(ignoreParts) do
+                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
+                                                        local SKK = table.find(Skill, ignorePart.Name)
+                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
+                                                        if (SKK or AllPart) and playerPos and EvilHumanoid.Health > 0 then
+                                                            local direction = (playerPos - monsterPos).unit
+                                                            local distanceToTeleport = 3
+                                                            local teleportPos = playerPos + direction * distanceToTeleport
+                                                            
+                                                            humanoidRootPart.Position = teleportPos
                                                             ignorePart.CFrame = CFrame.new(monsterPos)
                                                             ignorePart.Position = monsterPos
                                                         end
@@ -403,6 +524,7 @@ Tab3:AddToggle({
 
             while AutoMobs do
                 StartDungeon()
+                visibleskill()
                 MoveToClosestMonster()
                 local function PerformAttack()
                     pcall(function()
@@ -470,6 +592,7 @@ Tab3:AddToggle({
 
             while AutoMobs do
                 StartDungeon()
+                visibleskill()
                 MoveToClosestMonster1()
                 local function PerformAttack()
                     pcall(function()
@@ -506,8 +629,12 @@ Tab3:AddToggle({
 })
 
 ---------------------------------------------------------------------------------------------------------------------------------------
-
-
+local Section = Tab4:AddSection({
+	Name = "Must have passed through the mystery shop before."
+})
+local Section = Tab4:AddSection({
+	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
+})
 local Section = Tab4:AddSection({
 	Name = "Coral Kingdom"
 })
