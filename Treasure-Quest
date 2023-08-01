@@ -83,6 +83,8 @@ Tab1:AddToggle({
 	end
 })
 
+------------------------------------------------------------------------------------------------------------------------------
+
 local Section = Tab1:AddSection({
 	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
 })
@@ -226,23 +228,41 @@ end
 
 ---------------------------------------------------------------------------------------------------------------------------------
 
-local function visibleskill()
+local function Wskill()
     local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
-                   "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
-                   "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
-                   "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
-                   "MeteorShower", "MeteorBlast", "Stomp"}
-
-
-    for _, ignorePart in game:GetService("Workspace").Ignore:GetChildren() do
-        if (ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")) then
-            if table.find(Skill, ignorePart.Name) then
-                ignorePart.Transparency = 1
+                "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
+                "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
+                "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
+                "MeteorShower", "MeteorBlast", "Stomp"}
+    
+        for _, v in  pairs(game:GetService("Workspace"):GetChildren()) do
+            if table.find(Skill, v.Name) then
+                local SKK = table.find(Skill, v.Name)
+                local AllPart = v:IsA("BasePart") or v:IsA("MeshPart") or v:IsA("Part")
+                if (SKK or AllPart) then
+                v.Transparency = 1
             end
         end
     end
 end
 
+local function visibleskill()
+    local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
+                "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
+                "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
+                "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
+                "MeteorShower", "MeteorBlast", "Stomp"}
+    
+        for _, v in  pairs(game:GetService("Workspace").Ignore:GetChildren()) do
+            if table.find(Skill, v.Name) then
+                local SKK = table.find(Skill, v.Name)
+                local AllPart = v:IsA("BasePart") or v:IsA("MeshPart") or v:IsA("Part")
+                if (SKK or AllPart) then
+                v.Transparency = 1
+            end
+        end
+    end
+end
 
 local function visiblemob()
     local visible = {
@@ -250,7 +270,7 @@ local function visiblemob()
         "RightLowerArm", "RightUpperArm", "UpperTorso", "LeftFoot",
         "LeftLowerLeg", "LeftUpperLeg", "RightFoot", "RightLowerLeg",
         "RightUpperLeg", "LowerTorso","Head","Body Colors","FakeHead",
-        "+Appearance","Hat","Nametag"
+        "+Appearance","Hat"
     }
 
     for _, v in pairs(game:GetService("Workspace"):GetChildren()) do
@@ -272,6 +292,13 @@ local function visiblemob()
 end
 end
 
+local function allvis()
+    Wskill()
+    visibleskill()
+    visiblemob()
+end
+
+
 ---------------------------------------------------------------------------------------------------------------------------------
 
 local Script = require(Player.PlayerScripts.Shared.Client.CombatController)
@@ -292,7 +319,7 @@ Tab2:AddToggle({
             StartDungeon()
             spawn(function()
                 while AutoMobs do
-                    wait(0.1)
+                    wait(0.01)
                     for _, v in ipairs(Workspace:GetChildren()) do
                         if v.ClassName == "Folder" then
                             for _, x in ipairs(v:GetChildren()) do
@@ -303,24 +330,68 @@ Tab2:AddToggle({
                                             local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
 
                                             if EvilHumanoid then
-                                                local ignoreParts = game:GetService("Workspace").Ignore:GetChildren()
 
+                                            spawn(function()
+                                                while AutoMobs do
                                                     local Skill = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
                                                                     "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
                                                                     "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
                                                                     "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
                                                                     "MeteorShower", "MeteorBlast", "Stomp"}
-
-                                                for _, ignorePart in ipairs(ignoreParts) do
-                                                    if ignorePart.Name ~= "Medkit" or table.find(Skill, ignorePart.Name) then
-                                                        local SKK = table.find(Skill, ignorePart.Name)
-                                                        local AllPart = ignorePart:IsA("BasePart") or ignorePart:IsA("MeshPart") or ignorePart:IsA("Part")
-                                                        if (SKK or AllPart) and EvilHumanoid.Health > 0 then
-                                                            ignorePart.CFrame = CFrame.new(monsterPos)
-                                                            ignorePart.Position = monsterPos
+                                                    
+                                                for _, v in pairs (game:GetService("Workspace").Ignore:GetChildren()) do
+                                                    if v.Name ~= "Medkit" or table.find(Skill, v.Name) and v:IsA("BasePart") and v:IsA("MeshPart") and v:IsA("Part")then
+                                                        local SKK = table.find(Skill, v.Name)
+                                                        if SKK and EvilHumanoid.Health > 0 then
+                                                            v.CFrame = CFrame.new(monsterPos)
+                                                            v.Position = monsterPos
                                                         end
                                                     end
                                                 end
+                                                wait(0.01)
+                                            end
+                                            end)
+
+                                                spawn(function()
+                                                    while AutoMobs do
+                                                    local Skill1 = {"Fireball", "Tsunami", "Freeze", "Heal", "HealBlast", "Shockwave", "LaserBeam", "LightningStrike",
+                                                                    "Sandstorm", "Earthquake", "IceSpikes", "PolarVortex", "TeamHeal", "RainbowBlast", "PumpkinBlast", "Random",
+                                                                    "Camouflage", "Tumble", "Flurry", "Boomerang", "ShockArrows", "ShocFlameArrowskwave", "BoomArows", "FrostArrows",
+                                                                    "WeaponThrow", "WaveBlast", "InfernoWave", "SpikeField", "Berserk", "Pulsefire", "Cyclone", "BlackHole", "QuickSlash",
+                                                                    "MeteorShower", "MeteorBlast", "Stomp","Bullet"}
+
+                                                for _, v in pairs (game:GetService("Workspace"):GetChildren()) do
+                                                    if  table.find(Skill1, v.Name) then
+                                                        local SKK1 = table.find(Skill1, v.Name)
+                                                        if SKK1 and EvilHumanoid.Health > 0 then
+                                                            v.CFrame = CFrame.new(monsterPos)
+                                                            v.Position = monsterPos
+                                                        end
+                                                    end
+                                                end
+                                                wait(0.01)
+                                            end
+                                            end)
+
+                                            spawn(function()
+                                                while AutoMobs do
+                                                    for _, v in pairs (game:GetService("Workspace").Ignore:GetChildren()) do
+                                                    if v:IsA("Model") then
+                                                        for _, c in pairs(v:GetChildren()) do
+                                                            if c:IsA("BasePart") or c:IsA("MeshPart") or c:IsA("Part") then
+                                                                local AllPart = c:IsA("BasePart") or c:IsA("MeshPart") or c:IsA("Part")
+                                                                    if AllPart and EvilHumanoid.Health > 0 then
+                                                                        c.CFrame = CFrame.new(monsterPos)
+                                                                        c.Position = monsterPos
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                    wait(0.01)
+                                                end
+                                                end)
+
                                             end
                                         end
                                     end
@@ -343,9 +414,8 @@ Tab2:AddToggle({
 
                 spawn(function()
                 while AutoMobs do
-                    visibleskill()
-                    visiblemob()
-                        wait(0.1)
+                    allvis()
+                        wait(0.01)
                     end
                 end)
         
@@ -429,9 +499,8 @@ Tab2:AddToggle({
 
                 spawn(function()
                 while AutoMobs do
-                    visibleskill()
-                    visiblemob()
-                        wait(0.1)
+                    allvis()
+                        wait(0.01)
                     end
                 end)
 
@@ -519,9 +588,50 @@ local function FindClosestMonster()
     return closestMonsterPos
 end
 
+----------------------------------------------------------------------------------------------------------------------------------------
+
+local noci = false
+local originalAutoRotate = true  -- เก็บค่า AutoRotate ต้นฉบับของ Humanoid
+
+local function NoClipMovement(player, humanoid)
+    if noci then
+        Workspace.CurrentCamera.CameraSubject = humanoid
+        local rootPart = humanoid.RootPart
+        if rootPart then
+            rootPart.CFrame = CFrame.new(rootPart.Position)
+        end
+    end
+end
+
+-- Function to enable/disable NoClip
+local function ToggleNoClip()
+    local player = game.Players.LocalPlayer
+    local character = player.Character
+    if character then
+        local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+        if humanoid then
+            humanoid.AutoRotate = not noci
+            humanoid.AutoRotate = originalAutoRotate  -- กำหนดค่า AutoRotate เป็นค่าต้นฉบับเมื่อปิด NoClip
+            NoClipMovement(player, humanoid)
+        end
+    end
+end
+
+-- เก็บค่า AutoRotate ต้นฉบับของ Humanoid ก่อนที่จะใช้งาน NoClip
+local player = game.Players.LocalPlayer
+local character = player.Character
+if character then
+    local humanoid = character:FindFirstChildWhichIsA("Humanoid")
+    if humanoid then
+        originalAutoRotate = humanoid.AutoRotate
+    end
+end
+
+----------------------------------------------------------------------------------------------------------------------------------------
+
 local function MoveToClosestMonster()
     local closestMonsterPos = FindClosestMonster()
-    humanoidRootPart.Anchored = true
+    ToggleNoClip()
     if closestMonsterPos then
         closestMonsterPos = closestMonsterPos + Vector3.new(-5, 0, 0)
 
@@ -536,7 +646,6 @@ local function MoveToClosestMonster()
         local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
         local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(closestMonsterPos)})
         tween:Play()
-        humanoidRootPart.Anchored = false
     end
 end
 
@@ -551,8 +660,49 @@ Tab3:AddToggle({
 
             while AutoMobs do
                 StartDungeon()
-                visibleskill()
                 MoveToClosestMonster()
+
+            spawn(function()
+                while AutoMobs do
+                    wait(0.01)
+                    for _, v in ipairs(Workspace:GetChildren()) do
+                        if v.ClassName == "Folder" then
+                            for _, x in ipairs(v:GetChildren()) do
+                                if x.ClassName == "Folder" then
+                                    for _, c in ipairs(x:GetChildren()) do
+                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+                                            if EvilHumanoid then
+                                            spawn(function()
+                                                while AutoMobs do
+                                                    for _, v in pairs (game:GetService("Workspace").Ignore:GetChildren()) do
+                                                    if v:IsA("Model") then
+                                                        for _, c in pairs(v:GetChildren()) do
+                                                            if c:IsA("BasePart") or c:IsA("MeshPart") or c:IsA("Part") then
+                                                                local AllPart = c:IsA("BasePart") or c:IsA("MeshPart") or c:IsA("Part")
+                                                                    if AllPart and EvilHumanoid.Health > 0 then
+                                                                        c.CFrame = CFrame.new(monsterPos)
+                                                                        c.Position = monsterPos
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                    wait(0.01)
+                                                end
+                                                end)
+
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+
                 local function PerformAttack()
                     pcall(function()
                         if AutoMobs then
@@ -562,6 +712,13 @@ Tab3:AddToggle({
                     end)
                 end
                 game:GetService("RunService").Stepped:Connect(PerformAttack)
+
+                spawn(function()
+                while AutoMobs do
+                    allvis()
+                        wait(0.01)
+                    end
+                end)
 
                 spawn(function()
                     while AutoMobs do
@@ -581,15 +738,6 @@ Tab3:AddToggle({
                         wait(0.1)
                     end
                 end)
-
-                spawn(function()
-                while AutoMobs do
-                    visibleskill()
-                    visiblemob()
-                        wait(0.1)
-                    end
-                end)
-
                 wait(0.01)
             end
         end
@@ -600,6 +748,7 @@ Tab3:AddToggle({
 
 local function MoveToClosestMonster1()
     local closestMonsterPos = FindClosestMonster()
+    ToggleNoClip()
     if closestMonsterPos then
         closestMonsterPos = closestMonsterPos + Vector3.new(-8, 0, 0)
 
@@ -617,7 +766,7 @@ local function MoveToClosestMonster1()
     end
 end
 
--------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------
 
 Tab3:AddToggle({
     Name = "Bow Weapon",
@@ -629,6 +778,48 @@ Tab3:AddToggle({
             while AutoMobs do
                 StartDungeon()
                 MoveToClosestMonster1()
+
+            spawn(function()
+                while AutoMobs do
+                    wait(0.01)
+                    for _, v in ipairs(Workspace:GetChildren()) do
+                        if v.ClassName == "Folder" then
+                            for _, x in ipairs(v:GetChildren()) do
+                                if x.ClassName == "Folder" then
+                                    for _, c in ipairs(x:GetChildren()) do
+                                        if c:IsA("Model") and c:FindFirstChild("EvilHumanoid") then
+                                            local EvilHumanoid = c:FindFirstChild("EvilHumanoid")
+                                            local monsterPos = c:FindFirstChild("HumanoidRootPart").Position
+                                            if EvilHumanoid then
+                                            spawn(function()
+                                                while AutoMobs do
+                                                    for _, v in pairs (game:GetService("Workspace").Ignore:GetChildren()) do
+                                                    if v:IsA("Model") then
+                                                        for _, c in pairs(v:GetChildren()) do
+                                                            if c:IsA("BasePart") or c:IsA("MeshPart") or c:IsA("Part") then
+                                                                local AllPart = c:IsA("BasePart") or c:IsA("MeshPart") or c:IsA("Part")
+                                                                    if AllPart and EvilHumanoid.Health > 0 then
+                                                                        c.CFrame = CFrame.new(monsterPos)
+                                                                        c.Position = monsterPos
+                                                                    end
+                                                                end
+                                                            end
+                                                        end
+                                                    end
+                                                    wait(0.01)
+                                                end
+                                                end)
+
+                                            end
+                                        end
+                                    end
+                                end
+                            end
+                        end
+                    end
+                end
+            end)
+
                 local function PerformAttack()
                     pcall(function()
                         if AutoMobs then
@@ -638,6 +829,13 @@ Tab3:AddToggle({
                     end)
                 end
                 game:GetService("RunService").Stepped:Connect(PerformAttack)
+
+                spawn(function()
+                while AutoMobs do
+                    allvis()
+                        wait(0.01)
+                    end
+                end)
 
                 spawn(function()
                     while AutoMobs do
@@ -657,15 +855,6 @@ Tab3:AddToggle({
                         wait(0.1)
                     end
                 end)
-
-                spawn(function()
-                while AutoMobs do
-                    visibleskill()
-                    visiblemob()
-                        wait(0.1)
-                    end
-                end)
-
                 wait(0.01)
             end
         end
