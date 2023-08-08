@@ -866,6 +866,9 @@ local Section = Tab4:AddSection({
 	Name = "Must have passed through the mystery shop before."
 })
 local Section = Tab4:AddSection({
+	Name = "Only activate it when you've encountered a mysterious shop."
+})
+local Section = Tab4:AddSection({
 	Name = "----------------------------------------------------------------------------------------------------------------------------------------------"
 })
 local Section = Tab4:AddSection({
