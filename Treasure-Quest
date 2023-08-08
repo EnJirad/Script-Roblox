@@ -226,6 +226,87 @@ local function findFinishPartInWorkspace(workspace)
     return searchInChildren(workspace)
 end
 
+--------------------------------------------------------------------------------------------------------------------------------------------
+
+
+local function findBossRoomInWorkspace(workspace)
+    local function searchInChildren(parent)
+        for _, child in pairs(parent:GetChildren()) do
+            if child:IsA("Model") and child.Name == "BossRoom" then
+                local BossPart = child:FindFirstChild("PlayerSpawn")
+                if BossPart then
+                    return BossPart
+                end
+            end
+
+            local foundPart = searchInChildren(child)
+            if foundPart then
+                return foundPart
+            end
+        end
+
+        return nil
+    end
+
+    return searchInChildren(workspace)
+end
+
+local BossPartInstance = nil
+
+local function CreateBossPart()
+    local partSize = Vector3.new(20000, 10, 20000)
+    
+    if BossPartInstance and BossPartInstance:IsDescendantOf(workspace) then
+        BossPartInstance:Destroy()
+    end
+    
+    local createdPart = Instance.new("Part")
+    createdPart.Name = "PartฺBossGGez"
+    createdPart.Size = partSize
+
+    local PlayerSpawn = findBossRoomInWorkspace(workspace)
+    if PlayerSpawn then
+        createdPart.Position = PlayerSpawn.Position - Vector3.new(0, 10, 0)
+    else
+        createdPart.Position = Vector3.new(0, -10, 0)
+    end
+    createdPart.Anchored = true
+    createdPart.Parent = workspace
+
+    BossPartInstance = createdPart
+    
+    local HitboxPart = findFinishPartInWorkspace(workspace)
+    if HitboxPart then
+        for _, part in pairs(workspace:GetChildren()) do
+            if part:IsA("Part") and part.Name == "PartฺBossGGez" then
+                part:Destroy()
+            end
+        end
+    end
+    return createdPart
+end
+
+local function MoveOutFromBossRoom()
+    CreateBossPart()
+    wait(3)
+    local PlayerSpawn = findBossRoomInWorkspace(workspace)
+    if PlayerSpawn then
+        local targetPosition = PlayerSpawn.Position - Vector3.new(0, 0, -500)
+        local movementSpeed = 70
+
+        local TweenService = game:GetService("TweenService")
+        local HumanoidRootPart = game.Players.LocalPlayer.Character.HumanoidRootPart
+
+        local distance = (targetPosition - HumanoidRootPart.Position).Magnitude
+        local duration = distance / movementSpeed
+
+        local tweenInfo = TweenInfo.new(duration, Enum.EasingStyle.Linear)
+        local tween = TweenService:Create(HumanoidRootPart, tweenInfo, {CFrame = CFrame.new(targetPosition)})
+
+        tween:Play()
+    end
+end
+
 ---------------------------------------------------------------------------------------------------------------------------------
 
 local function Wskill()
@@ -415,10 +496,17 @@ Tab2:AddToggle({
                 spawn(function()
                 while AutoMobs do
                     allvis()
-                        wait(0.01)
+                    wait(0.01)
                     end
                 end)
-        
+
+                spawn(function()
+                while AutoMobs do
+                    MoveOutFromBossRoom()
+                    wait(0.01)
+                    end
+                end)
+
                 spawn(function()
                     while AutoMobs do
                         local finishPart = findFinishPartInWorkspace(game:GetService("Workspace"))
@@ -501,6 +589,13 @@ Tab2:AddToggle({
                 while AutoMobs do
                     allvis()
                         wait(0.01)
+                    end
+                end)
+
+                spawn(function()
+                while AutoMobs do
+                    MoveOutFromBossRoom()
+                    wait(0.01)
                     end
                 end)
 
@@ -591,7 +686,7 @@ end
 ----------------------------------------------------------------------------------------------------------------------------------------
 
 local noci = false
-local originalAutoRotate = true  -- เก็บค่า AutoRotate ต้นฉบับของ Humanoid
+local originalAutoRotate = true
 
 local function NoClipMovement(player, humanoid)
     if noci then
@@ -603,7 +698,6 @@ local function NoClipMovement(player, humanoid)
     end
 end
 
--- Function to enable/disable NoClip
 local function ToggleNoClip()
     local player = game.Players.LocalPlayer
     local character = player.Character
@@ -611,13 +705,12 @@ local function ToggleNoClip()
         local humanoid = character:FindFirstChildWhichIsA("Humanoid")
         if humanoid then
             humanoid.AutoRotate = not noci
-            humanoid.AutoRotate = originalAutoRotate  -- กำหนดค่า AutoRotate เป็นค่าต้นฉบับเมื่อปิด NoClip
+            humanoid.AutoRotate = originalAutoRotate
             NoClipMovement(player, humanoid)
         end
     end
 end
 
--- เก็บค่า AutoRotate ต้นฉบับของ Humanoid ก่อนที่จะใช้งาน NoClip
 local player = game.Players.LocalPlayer
 local character = player.Character
 if character then
@@ -627,7 +720,7 @@ if character then
     end
 end
 
-----------------------------------------------------------------------------------------------------------------------------------------
+--------------------------------------------------------------------------------------------------------------------------------------------
 
 local function MoveToClosestMonster()
     local closestMonsterPos = FindClosestMonster()
