@@ -34,6 +34,42 @@ Tab1:AddButton({
     end
 })
 
+
+local NoClip = false
+
+Tab1:AddToggle({
+    Name = "No Clip",
+    Default = false,
+    Callback = function(value)
+        NoClip = value
+        if NoClip then
+            local character = game.Players.LocalPlayer.Character
+            while NoClip do
+                for i,v in pairs(character:GetDescendants()) do
+                    pcall(function()
+                        if v:IsA("BasePart") then
+                            v.CanCollide = false
+                        end
+                    end)
+                end
+                task.wait()
+                if not NoClip then
+                    break
+                end
+            end
+        else
+            local character = game.Players.LocalPlayer.Character
+            for i,v in pairs(character:GetDescendants()) do
+                pcall(function()
+                    if v:IsA("BasePart") then
+                        v.CanCollide = true
+                    end
+                end)
+            end
+        end
+    end
+})
+
 InfJump = false
 Tab1:AddToggle({
     Name = "InfJump",
@@ -76,7 +112,7 @@ local Section = Tab1:AddSection({
 
 TPEVEN = true
 Tab1:AddButton({
-    Name = "Christmas",
+    Name = "StartRaid Christmas",
     Callback = function(value)
         if TPEVEN then
             local args = {
@@ -155,10 +191,22 @@ Tab2:AddToggle({
     Callback = function(value)
         TPMon = value
         while TPMon do
+            local foundMonster = false
             for i, v in pairs(game:GetService("Workspace").NPCs:GetChildren()) do
                 if v:FindFirstChild("HumanoidRootPart") and v:FindFirstChild("Humanoid") and v.Humanoid.Health > 0 then
                     game.Players.LocalPlayer.Character.HumanoidRootPart.CFrame = v.HumanoidRootPart.CFrame * CFrame.new(0, -30, 0)
+                    foundMonster = true
+                    break
                 end
+            end
+            
+            if not foundMonster then
+                local args = {
+                    [1] = "StartRaid",
+                    [2] = "Christmas"
+                }
+                
+                game:GetService("ReplicatedStorage").RemoteEvent:FireServer(unpack(args))
             end
             wait(0.1)
             if not TPMon then
