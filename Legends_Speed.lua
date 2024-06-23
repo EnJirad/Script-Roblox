@@ -1,5 +1,5 @@
 -- Load Xlib
-local Xlib = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnJirad/GUI/main/Xlib.lua'))()
+local Xlib = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnJirad/GUI/main/Xlib'))()
 
 -- Create main window
 local Window = Xlib:MakeWindow({Name = "Legends Speed"})
@@ -41,10 +41,10 @@ Xlib:MakeToggle({
         AntiAFK = value
         if AntiAFK then
             wait(3)
-            local VirtualUser=game:service'VirtualUser'
+            local VirtualUser = game:service('VirtualUser')
             game:service('Players').LocalPlayer.Idled:connect(function()
-            VirtualUser:CaptureController()
-            VirtualUser:ClickButton2(Vector2.new())
+                VirtualUser:CaptureController()
+                VirtualUser:ClickButton2(Vector2.new())
             end)
         end
     end
