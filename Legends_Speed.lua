@@ -1,18 +1,19 @@
-local Xlib = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnJirad/GUI/main/Xlib'))()
+-- Load Xlib
+local Xlib = loadstring(game:HttpGet('https://raw.githubusercontent.com/EnJirad/GUI/main/Xlib.lua'))()
 
+-- Create main window
 local Window = Xlib:MakeWindow({Name = "Legends Speed"})
 
-local TweenService = game:GetService("TweenService")
+-- Services and variables
 local Players = game:GetService("Players")
 local LocalPlayer = Players.LocalPlayer
 local HumanoidRootPart = LocalPlayer.Character.HumanoidRootPart
 local Workspace = game:GetService("Workspace")
 local StarterGui = game:GetService("StarterGui")
+local UserInputService = game:GetService("UserInputService")
 
-local Tab1 = Xlib:MakeTab({
-    Name = "Farm Gem, Ore",
-    Parent = Window
-})
+-- Tab 1: Farm Gem, Ore
+local Tab1 = Xlib:MakeTab({Name = "Farm Gem, Ore", Parent = Window})
 
 local InfJump = false
 Xlib:MakeToggle({
@@ -29,7 +30,25 @@ local function onJumpRequest()
         LocalPlayer.Character:FindFirstChildOfClass("Humanoid"):ChangeState("Jumping")
     end
 end
-game:GetService("UserInputService").JumpRequest:Connect(onJumpRequest)
+UserInputService.JumpRequest:Connect(onJumpRequest)
+
+local AntiAFK
+Xlib:MakeToggle({
+    Name = "Anti AFK",
+    Parent = Tab1,
+    Default = false,
+    Callback = function(value)
+        AntiAFK = value
+        if AntiAFK then
+            wait(3)
+            local VirtualUser=game:service'VirtualUser'
+            game:service('Players').LocalPlayer.Idled:connect(function()
+            VirtualUser:CaptureController()
+            VirtualUser:ClickButton2(Vector2.new())
+            end)
+        end
+    end
+})
 
 local teleportingOrbs = false
 local teleportingGems = false
@@ -47,12 +66,12 @@ local function teleportToOrbs()
                     if innerOrb then
                         HumanoidRootPart.CFrame = innerOrb.CFrame
                         visitedOrbs[orb] = true
-                        wait(0.1)  -- Wait before teleporting to the next orb
+                        wait(0.1)
                     end
                 end
             end
         end
-        wait(0.1)  -- Ensure the loop doesn't run too quickly
+        wait(0.1)
     end
 end
 
@@ -67,39 +86,164 @@ local function teleportToGems()
                     if innerGem then
                         HumanoidRootPart.CFrame = innerGem.CFrame
                         visitedGems[gem] = true
-                        wait(0.1)  -- Wait before teleporting to the next gem
+                        wait(0.1)
                     end
                 end
             end
         end
-        wait(0.1)  -- Ensure the loop doesn't run too quickly
+        wait(0.1)
     end
 end
 
 Xlib:MakeToggle({
-    Name = "Tp Orb",
+    Name = "Tp Orb, Gem",
     Parent = Tab1,
     Default = false,
     Callback = function(value)
         teleportingOrbs = value
-        if teleportingOrbs then
-            coroutine.wrap(teleportToOrbs)()  -- Start teleporting in a coroutine
+        teleportingGems = value
+        if value then
+            coroutine.wrap(teleportToOrbs)()
+            coroutine.wrap(teleportToGems)()
         else
-            visitedOrbs = {}  -- Clear the visited orbs when stopping
+            visitedOrbs = {}
+            visitedGems = {}
         end
     end
 })
 
+-- Tab 2: Pet
+local Tab2 = Xlib:MakeTab({Name = "Pet", Parent = Window})
+
+local Open_Crystal = false
+local All_Crystal = {
+    ["Red Crystal : 300"] = function()
+        local rounds = 0
+        spawn(function()
+            while Open_Crystal do
+                local args = {"openCrystal", "Red Crystal"}
+                game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer(unpack(args))
+                rounds = rounds + 1
+                StarterGui:SetCore("SendNotification", {
+                    Title = "Check Open",
+                    Text = "Open Red Crystal " .. rounds .. " Egg",
+                    Duration = 5
+                })
+                wait(0.5)
+            end
+        end)
+    end,
+    
+    ["Blue Crystal : 600"] = function()
+        local rounds = 0
+        spawn(function()
+            while Open_Crystal do
+                local args = {"openCrystal", "Blue Crystal"}
+                game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer(unpack(args))
+                rounds = rounds + 1
+                StarterGui:SetCore("SendNotification", {
+                    Title = "Check Open",
+                    Text = "Open Blue Crystal " .. rounds .. " Egg",
+                    Duration = 5
+                })
+                wait(0.5)
+            end
+        end)
+    end,
+    
+    ["Lightning Crystal : 2.5K"] = function()
+        local rounds = 0
+        spawn(function()
+            while Open_Crystal do
+                local args = {"openCrystal", "Lightning Crystal"}
+                game:GetService("ReplicatedStorage").rEvents.openCrystalRemote:InvokeServer(unpack(args))
+                rounds = rounds + 1
+                StarterGui:SetCore("SendNotification", {
+                    Title = "Check Open",
+                    Text = "Open Lightning Crystal " .. rounds .. " Egg",
+                    Duration = 5
+                })
+                wait(0.5)
+            end
+        end)
+    end,
+}
+
+local Secret_Crystal
+Xlib:MakeDropdown({
+    Name = "Crystal World 1",
+    Parent = Tab2,
+    Options = {"Red Crystal : 300", "Blue Crystal : 600", "Lightning Crystal : 2.5K"},
+    Callback = function(option)
+        Secret_Crystal = All_Crystal[option]
+    end
+})
+
 Xlib:MakeToggle({
-    Name = "Tp Gem",
-    Parent = Tab1,
+    Name = "Open Crystal",
+    Parent = Tab2,
     Default = false,
     Callback = function(value)
-        teleportingGems = value
-        if teleportingGems then
-            coroutine.wrap(teleportToGems)()  -- Start teleporting in a coroutine
-        else
-            visitedGems = {}  -- Clear the visited gems when stopping
+        Open_Crystal = value
+        if value and Secret_Crystal then
+            Secret_Crystal()
+        end
+    end
+})
+
+-- Tab 3: Teleport World
+local Tab3 = Xlib:MakeTab({Name = "Teleport World", Parent = Window})
+
+local All_World = {
+    ["City"] = function()
+        local city = Workspace:FindFirstChild("areaTeleportParts")
+        if city then
+            for _, v in pairs(city:GetChildren()) do
+                if v.Name == "cityToFrostCourse" then
+                    HumanoidRootPart.CFrame = v.CFrame
+                    StarterGui:SetCore("SendNotification", {
+                        Title = "Teleport",
+                        Text = "TP to City Successfully",
+                        Duration = 5
+                    })
+                end
+            end
+        end
+    end,
+    
+    ["Snow City"] = function()
+        local city = Workspace:FindFirstChild("areaTeleportParts")
+        if city then
+            for _, v in pairs(city:GetChildren()) do
+                if v.Name == "infernoCaveToSnowCity" then
+                    HumanoidRootPart.CFrame = v.CFrame
+                    StarterGui:SetCore("SendNotification", {
+                        Title = "Teleport",
+                        Text = "TP to Snow City Successfully",
+                        Duration = 5
+                    })
+                end
+            end
+        end
+    end,
+}
+
+local Secret_World
+Xlib:MakeDropdown({
+    Name = "Select World",
+    Parent = Tab3,
+    Options = {"City", "Snow City"},
+    Callback = function(option)
+        Secret_World = All_World[option]
+    end
+})
+
+Xlib:MakeButton({
+    Name = "TP World",
+    Parent = Tab3,
+    Callback = function()
+        if Secret_World then
+            Secret_World()
         end
     end
 })
