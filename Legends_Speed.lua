@@ -51,63 +51,41 @@ Xlib:MakeToggle({
 })
 
 local teleportingOrbs = false
-local teleportingGems = false
 local visitedOrbs = {}
-local visitedGems = {}
 
 local function teleportToOrbs()
     while teleportingOrbs do
-        local cityFolder = Workspace:FindFirstChild("orbFolder"):FindFirstChild("City")
-        if cityFolder then
-            for _, orb in pairs(cityFolder:GetChildren()) do
-                if not teleportingOrbs then break end
-                if (orb.Name == "Blue Orb" or orb.Name == "Orange Orb" or orb.Name == "Red Orb" or orb.Name == "Yellow Orb") and not visitedOrbs[orb] then
-                    local innerOrb = orb:FindFirstChild("innerOrb")
-                    if innerOrb then
-                        HumanoidRootPart.CFrame = innerOrb.CFrame
-                        visitedOrbs[orb] = true
-                        wait(0.1)
-                    end
-                end
-            end
-        end
-        wait(0.1)
-    end
-end
-
-local function teleportToGems()
-    while teleportingGems do
-        local cityFolder = Workspace:FindFirstChild("orbFolder"):FindFirstChild("City")
-        if cityFolder then
-            for _, gem in pairs(cityFolder:GetChildren()) do
-                if not teleportingGems then break end
-                if gem.Name == "Gem" and not visitedGems[gem] then
-                    local innerGem = gem:FindFirstChild("innerGem")
-                    if innerGem then
-                        HumanoidRootPart.CFrame = innerGem.CFrame
-                        visitedGems[gem] = true
-                        wait(0.1)
-                    end
-                end
-            end
-        end
-        wait(0.1)
-    end
+	    local cityFolder = Workspace:FindFirstChild("orbFolder")
+	    for _, cityName in ipairs({"City", "Snow City", "Magma City", "Legends Highway", "Desert Race", "Grass Race", "Magma Race"}) do
+	        local city = cityFolder:FindFirstChild(cityName)
+	        if city then
+	            for _, orb in pairs(city:GetChildren()) do
+	                if not teleportingOrbs then break end
+	                if (orb.Name == "Blue Orb" or orb.Name == "Orange Orb" or orb.Name == "Red Orb" or orb.Name == "Yellow Orb" or orb.Name == "Gem") and not visitedOrbs[orb] then
+	                    local innerOrb = orb:FindFirstChild("innerOrb") or orb:FindFirstChild("innerGem")
+	                    if innerOrb then
+	                        HumanoidRootPart.CFrame = innerOrb.CFrame
+	                        visitedOrbs[orb] = true
+	                        wait(0.00001)
+	                    end
+	                end
+	            end
+	        end
+	    end
+	    wait(0.00001)
+	end
 end
 
 Xlib:MakeToggle({
-    Name = "Tp Orb, Gem",
+    Name = "All Orb, Gem",
     Parent = Tab1,
     Default = false,
     Callback = function(value)
         teleportingOrbs = value
-        teleportingGems = value
         if value then
             coroutine.wrap(teleportToOrbs)()
-            coroutine.wrap(teleportToGems)()
         else
             visitedOrbs = {}
-            visitedGems = {}
         end
     end
 })
@@ -199,7 +177,7 @@ local All_World = {
         local city = Workspace:FindFirstChild("areaTeleportParts")
         if city then
             for _, v in pairs(city:GetChildren()) do
-                if v.Name == "cityToFrostCourse" then
+                if v.Name == "rebirthTeleportPart" then
                     HumanoidRootPart.CFrame = v.CFrame
                     StarterGui:SetCore("SendNotification", {
                         Title = "Teleport",
@@ -215,7 +193,7 @@ local All_World = {
         local city = Workspace:FindFirstChild("areaTeleportParts")
         if city then
             for _, v in pairs(city:GetChildren()) do
-                if v.Name == "infernoCaveToSnowCity" then
+                if v.Name == "mysteriousCaveToSnowCity" then
                     HumanoidRootPart.CFrame = v.CFrame
                     StarterGui:SetCore("SendNotification", {
                         Title = "Teleport",
@@ -226,13 +204,29 @@ local All_World = {
             end
         end
     end,
+    
+    ["Magma City"] = function()
+        local city = Workspace:FindFirstChild("areaTeleportParts")
+        if city then
+            for _, v in pairs(city:GetChildren()) do
+                if v.Name == "infernoCaveToMagmaCity" then
+                    HumanoidRootPart.CFrame = v.CFrame
+                    StarterGui:SetCore("SendNotification", {
+                        Title = "Teleport",
+                        Text = "TP to Magma City Successfully",
+                        Duration = 5
+                    })
+                end
+            end
+        end
+    end,
 }
 
 local Secret_World
 Xlib:MakeDropdown({
-    Name = "Select World",
+    Name = "World 1",
     Parent = Tab3,
-    Options = {"City", "Snow City"},
+    Options = {"City", "Snow City", "Magma City"},
     Callback = function(option)
         Secret_World = All_World[option]
     end
@@ -247,3 +241,5 @@ Xlib:MakeButton({
         end
     end
 })
+
+
